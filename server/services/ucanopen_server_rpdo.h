@@ -1,8 +1,8 @@
 #pragma once
 
 
-#include <mcu_c28x/f2837xd/chrono/mcu_chrono.h>
-#include <ucanopen_c28x/server/impl/ucanopen_impl_server.h>
+#include <c28x_mcu/f2837xd/chrono/mcu_chrono.h>
+#include <c28x_ucanopen/server/impl/ucanopen_impl_server.h>
 #include <new>
 
 #include "sys/syslog/syslog.h"

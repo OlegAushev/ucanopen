@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include <ucanopen_c28x/server/ucanopen_server.h>
+#include <c28x_ucanopen/server/ucanopen_server.h>
 #include "sys/sysinfo/sysinfo.h"
 #include "auto-generated/git_version.h"
 

@@ -1,4 +1,4 @@
-#include <ucanopen_c28x/server/services/ucanopen_server_sdo.h>
+#include <c28x_ucanopen/server/services/ucanopen_server_sdo.h>
 
 
 namespace ucanopen {

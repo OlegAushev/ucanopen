@@ -1,9 +1,9 @@
 #pragma once
 
 
-#include <mcu_c28x/f2837xd/can/mcu_can.h>
-#include <mcu_c28x/f2837xd/ipc/mcu_ipc.h>
-#include <ucanopen_c28x/ucanopen_def.h>
+#include <c28x_mcu/f2837xd/can/mcu_can.h>
+#include <c28x_mcu/f2837xd/ipc/mcu_ipc.h>
+#include <c28x_ucanopen/ucanopen_def.h>
 #include <algorithm>
 
 

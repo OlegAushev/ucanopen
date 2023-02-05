@@ -1,14 +1,14 @@
 #pragma once
 
 
-#include <mcu_c28x/f2837xd/chrono/mcu_chrono.h>
-#include <ucanopen_c28x/server/impl/ucanopen_impl_server.h>
-#include <ucanopen_c28x/server/impl/ucanopen_impl_server.h>
-#include <ucanopen_c28x/server/services/ucanopen_server_heartbeat.h>
-#include <ucanopen_c28x/server/services/ucanopen_server_rpdo.h>
-#include <ucanopen_c28x/server/services/ucanopen_server_sdo.h>
-#include <ucanopen_c28x/server/services/ucanopen_server_tpdo.h>
-#include <ucanopen_c28x/ucanopen_def.h>
+#include <c28x_mcu/f2837xd/chrono/mcu_chrono.h>
+#include <c28x_ucanopen/server/impl/ucanopen_impl_server.h>
+#include <c28x_ucanopen/server/impl/ucanopen_impl_server.h>
+#include <c28x_ucanopen/server/services/ucanopen_server_heartbeat.h>
+#include <c28x_ucanopen/server/services/ucanopen_server_rpdo.h>
+#include <c28x_ucanopen/server/services/ucanopen_server_sdo.h>
+#include <c28x_ucanopen/server/services/ucanopen_server_tpdo.h>
+#include <c28x_ucanopen/ucanopen_def.h>
 #include "sys/syslog/syslog.h"
 
 
