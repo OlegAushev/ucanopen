@@ -11,7 +11,7 @@ unsigned char object_alloc[sizeof(Object)] __attribute__((section("shared_ucanop
 
 namespace od {
 
-inline ODAccessStatus get_device_name(CobSdoData& retval)
+inline ODAccessStatus get_device_name(ExpeditedSdoData& retval)
 {
 	char name[4] = {0};
 	strncpy(name, sysinfo::device_name_short, 4);
@@ -22,7 +22,7 @@ inline ODAccessStatus get_device_name(CobSdoData& retval)
 }
 
 
-inline ODAccessStatus get_firmware_version(CobSdoData& retval)
+inline ODAccessStatus get_firmware_version(ExpeditedSdoData& retval)
 {
 	char name[4] = {0};
 	strncpy(name, GIT_HASH, 4);
@@ -33,7 +33,7 @@ inline ODAccessStatus get_firmware_version(CobSdoData& retval)
 }
 
 
-inline ODAccessStatus get_build_configuration(CobSdoData& retval)
+inline ODAccessStatus get_build_configuration(ExpeditedSdoData& retval)
 {
 	char name[4] = {0};
 	strncpy(name, sysinfo::build_configuration_short, 4);
@@ -44,7 +44,7 @@ inline ODAccessStatus get_build_configuration(CobSdoData& retval)
 }
 
 
-inline ODAccessStatus reset_device(CobSdoData& retval)
+inline ODAccessStatus reset_device(ExpeditedSdoData& retval)
 {
 	syslog::add_message(sys::Message::device_software_resetting);
 	mcu::chrono::system_clock::register_delayed_task(mcu::reset_device, 2000);
@@ -52,21 +52,21 @@ inline ODAccessStatus reset_device(CobSdoData& retval)
 }
 
 
-inline ODAccessStatus reset_errors(CobSdoData& retval)
+inline ODAccessStatus reset_errors(ExpeditedSdoData& retval)
 {
 	syslog::reset_errors_warnings();
 	return ODAccessStatus::success;
 }
 
 
-inline ODAccessStatus get_syslog_message(CobSdoData& retval)
+inline ODAccessStatus get_syslog_message(ExpeditedSdoData& retval)
 {
 	retval.u32 = syslog::read_message().underlying_value();
 	syslog::pop_message();
 	return ODAccessStatus::success;
 }
 
-inline ODAccessStatus get_uptime(CobSdoData& retval)
+inline ODAccessStatus get_uptime(ExpeditedSdoData& retval)
 {
 	retval.f32 = mcu::chrono::system_clock::now() / 1000.f;
 	return ODAccessStatus::success;

@@ -173,7 +173,7 @@ inline CobType to_cob_type(RpdoType rpdo_type)
 }
 
 
-union CobSdoData
+union ExpeditedSdoData
 {
 	int32_t i32;
 	uint32_t u32;
@@ -181,7 +181,7 @@ union CobSdoData
 };
 
 
-struct CobSdo
+struct ExpeditedSdo
 {
 	uint32_t data_size_indicated : 1;
 	uint32_t expedited_transfer : 1;
@@ -190,23 +190,23 @@ struct CobSdo
 	uint32_t cs : 3;
 	uint32_t index : 16;
 	uint32_t subindex : 8;
-	CobSdoData data;
-	CobSdo() { memset(this, 0, sizeof(CobSdo)); }
-	CobSdo(uint64_t raw_msg) { memcpy(this, &raw_msg, sizeof(CobSdo)); }
+	ExpeditedSdoData data;
+	ExpeditedSdo() { memset(this, 0, sizeof(ExpeditedSdo)); }
+	ExpeditedSdo(uint64_t raw_msg) { memcpy(this, &raw_msg, sizeof(ExpeditedSdo)); }
 	uint64_t all() const
 	{
 		uint64_t data = 0;
-		memcpy(&data, this, sizeof(CobSdo));
+		memcpy(&data, this, sizeof(ExpeditedSdo));
 		return data;
 	}
 };
 
 
-namespace cs_codes {
-const uint32_t sdo_ccs_write = 1;
-const uint32_t sdo_scs_write = 3;
-const uint32_t sdo_ccs_read = 2;
-const uint32_t sdo_scs_read = 2;
+namespace sdo_cs_codes {
+const uint32_t ccs_init_write = 1;
+const uint32_t scs_init_write = 3;
+const uint32_t ccs_init_read = 2;
+const uint32_t scs_init_read = 2;
 }
 
 
@@ -261,8 +261,8 @@ struct ODEntryValue
 	ODEntryDataType data_type;
 	ODEntryAccessPermission access_permission;
 	uint32_t* data_ptr;
-	ODAccessStatus (*read_func)(CobSdoData& retval);
-	ODAccessStatus (*write_func)(CobSdoData val);
+	ODAccessStatus (*read_func)(ExpeditedSdoData& retval);
+	ODAccessStatus (*write_func)(ExpeditedSdoData val);
 };
 
 
@@ -320,11 +320,11 @@ inline bool operator==(const ODEntryKeyAux& lhs, const ODEntry& rhs)
 
 
 // Used in OD-entries which don't have read access to data through function.
-inline ODAccessStatus OD_NO_INDIRECT_READ_ACCESS(CobSdoData& retval) { return ODAccessStatus::no_access; }
+inline ODAccessStatus OD_NO_INDIRECT_READ_ACCESS(ExpeditedSdoData& retval) { return ODAccessStatus::no_access; }
 
 
 // Used in OD-entries which don't have write access to data through function.
-inline ODAccessStatus OD_NO_INDIRECT_WRITE_ACCESS(CobSdoData val) { return ODAccessStatus::no_access; }
+inline ODAccessStatus OD_NO_INDIRECT_WRITE_ACCESS(ExpeditedSdoData val) { return ODAccessStatus::no_access; }
 
 
 SCOPED_ENUM_DECLARE_BEGIN(ODExecStatus)

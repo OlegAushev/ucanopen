@@ -52,8 +52,8 @@ void ServerSdoService::handle_received()
 	ODAccessStatus status = ODAccessStatus::no_access;
 	ODEntry* dictionary_end = _server->_dictionary + _server->_dictionary_size;
 
-	CobSdo rsdo = from_payload<CobSdo>(*_rsdo_data);
-	CobSdo tsdo;
+	ExpeditedSdo rsdo = from_payload<ExpeditedSdo>(*_rsdo_data);
+	ExpeditedSdo tsdo;
 
 	_rsdo_flag.reset();
 
@@ -62,7 +62,7 @@ void ServerSdoService::handle_received()
 
 	if (od_entry == dictionary_end) return;	// OD-entry not found
 
-	if (rsdo.cs == cs_codes::sdo_ccs_read)
+	if (rsdo.cs == sdo_cs_codes::ccs_init_read)
 	{
 		if ((od_entry->value.data_ptr != OD_NO_DIRECT_ACCESS) && od_entry->has_read_permission())
 		{
@@ -74,7 +74,7 @@ void ServerSdoService::handle_received()
 			status = od_entry->value.read_func(tsdo.data);
 		}
 	}
-	else if (rsdo.cs == cs_codes::sdo_ccs_write)
+	else if (rsdo.cs == sdo_cs_codes::ccs_init_write)
 	{
 		if ((od_entry->value.data_ptr != OD_NO_DIRECT_ACCESS) && od_entry->has_write_permission())
 		{
@@ -96,16 +96,16 @@ void ServerSdoService::handle_received()
 		case ODAccessStatus::success:
 			tsdo.index = rsdo.index;
 			tsdo.subindex = rsdo.subindex;
-			if (rsdo.cs == cs_codes::sdo_ccs_read)
+			if (rsdo.cs == sdo_cs_codes::ccs_init_read)
 			{
-				tsdo.cs = cs_codes::sdo_scs_read;	// read/upload response
+				tsdo.cs = sdo_cs_codes::scs_init_read;	// read/upload response
 				tsdo.expedited_transfer = 1;
 				tsdo.data_size_indicated = 1;
 				tsdo.data_empty_bytes = 0;
 			}
-			else if (rsdo.cs == cs_codes::sdo_ccs_write)
+			else if (rsdo.cs == sdo_cs_codes::ccs_init_write)
 			{
-				tsdo.cs = cs_codes::sdo_scs_write;	// write/download response
+				tsdo.cs = sdo_cs_codes::scs_init_write;	// write/download response
 				tsdo.expedited_transfer = 0;
 				tsdo.data_size_indicated = 0;
 				tsdo.data_empty_bytes = 0;
@@ -114,7 +114,7 @@ void ServerSdoService::handle_received()
 			{
 				return;
 			}
-			to_payload<CobSdo>(*_tsdo_data, tsdo);
+			to_payload<ExpeditedSdo>(*_tsdo_data, tsdo);
 			_tsdo_flag.local.set();
 			break;
 		case ODAccessStatus::fail:
