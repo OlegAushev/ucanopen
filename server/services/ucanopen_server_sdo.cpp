@@ -106,9 +106,6 @@ void ServerSdoService::handle_received()
 			else if (rsdo.cs == sdo_cs_codes::ccs_init_write)
 			{
 				tsdo.cs = sdo_cs_codes::scs_init_write;	// write/download response
-				tsdo.expedited_transfer = 0;
-				tsdo.data_size_indicated = 0;
-				tsdo.data_empty_bytes = 0;
 			}
 			else
 			{
