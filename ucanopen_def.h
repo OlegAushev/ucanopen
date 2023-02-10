@@ -173,6 +173,16 @@ inline CobType to_cob_type(RpdoType rpdo_type)
 }
 
 
+namespace sdo_cs_codes {
+const uint32_t client_init_write = 1;
+const uint32_t server_init_write = 3;
+const uint32_t client_init_read = 2;
+const uint32_t server_init_read = 2;
+
+const uint32_t abort = 4;
+}
+
+
 union ExpeditedSdoData
 {
 	int32_t i32;
@@ -192,31 +202,39 @@ struct ExpeditedSdo
 	uint32_t subindex : 8;
 	ExpeditedSdoData data;
 	ExpeditedSdo() { memset(this, 0, sizeof(ExpeditedSdo)); }
-	ExpeditedSdo(uint64_t raw_msg) { memcpy(this, &raw_msg, sizeof(ExpeditedSdo)); }
-	uint64_t all() const
+};
+
+
+struct AbortSdo
+{
+	uint32_t _reserved : 5;
+	uint32_t cs : 3;
+	uint32_t index : 16;
+	uint32_t subindex : 8;
+	uint32_t error_code;
+	AbortSdo()
 	{
-		uint64_t data = 0;
-		memcpy(&data, this, sizeof(ExpeditedSdo));
-		return data;
+		memset(this, 0, sizeof(AbortSdo));
+		cs = sdo_cs_codes::abort;
 	}
 };
 
 
-namespace sdo_cs_codes {
-const uint32_t ccs_init_write = 1;
-const uint32_t scs_init_write = 3;
-const uint32_t ccs_init_read = 2;
-const uint32_t scs_init_read = 2;
-}
-
-
-SCOPED_ENUM_DECLARE_BEGIN(ODAccessStatus)
+SCOPED_ENUM_UT_DECLARE_BEGIN(SdoAbortCode, uint32_t)
 {
-	success = 0,
-	fail = 1,
-	no_access = 2
+	no_error 			= 0,
+	invalid_cs 			= 0x05040001,
+	unsupported_access 		= 0x06010000,
+	read_access_wo 			= 0x06010001,
+	write_access_ro 		= 0x06010002,
+	no_object 			= 0x06020000,
+	hardware_error 			= 0x06060000,
+	general_error 			= 0x08000000,
+	data_store_error 		= 0x08000020,
+	local_control_error 		= 0x08000021,
+	state_error 			= 0x08000022
 }
-SCOPED_ENUM_DECLARE_END(ODAccessStatus)
+SCOPED_ENUM_DECLARE_END(SdoAbortCode)
 
 
 enum ODEntryDataType
@@ -261,8 +279,8 @@ struct ODEntryValue
 	ODEntryDataType data_type;
 	ODEntryAccessPermission access_permission;
 	uint32_t* data_ptr;
-	ODAccessStatus (*read_func)(ExpeditedSdoData& retval);
-	ODAccessStatus (*write_func)(ExpeditedSdoData val);
+	SdoAbortCode (*read_func)(ExpeditedSdoData& retval);
+	SdoAbortCode (*write_func)(ExpeditedSdoData val);
 };
 
 
@@ -320,11 +338,11 @@ inline bool operator==(const ODEntryKeyAux& lhs, const ODEntry& rhs)
 
 
 // Used in OD-entries which don't have read access to data through function.
-inline ODAccessStatus OD_NO_INDIRECT_READ_ACCESS(ExpeditedSdoData& retval) { return ODAccessStatus::no_access; }
+inline SdoAbortCode OD_NO_INDIRECT_READ_ACCESS(ExpeditedSdoData& retval) { return SdoAbortCode::unsupported_access; }
 
 
 // Used in OD-entries which don't have write access to data through function.
-inline ODAccessStatus OD_NO_INDIRECT_WRITE_ACCESS(ExpeditedSdoData val) { return ODAccessStatus::no_access; }
+inline SdoAbortCode OD_NO_INDIRECT_WRITE_ACCESS(ExpeditedSdoData val) { return SdoAbortCode::unsupported_access; }
 
 
 SCOPED_ENUM_DECLARE_BEGIN(ODExecStatus)

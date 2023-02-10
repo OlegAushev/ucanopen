@@ -47,77 +47,106 @@ void ServerSdoService::handle_received()
 {
 	assert(_server->_ipc_mode == mcu::ipc::Mode::singlecore || _server->_ipc_role == mcu::ipc::Role::secondary);
 
-	if (!_rsdo_flag.is_set()) return;
-
-	ODAccessStatus status = ODAccessStatus::no_access;
-	ODEntry* dictionary_end = _server->_dictionary + _server->_dictionary_size;
+	if (!_rsdo_flag.is_set())
+	{
+		return; // no RSDO received
+	}
 
 	ExpeditedSdo rsdo = from_payload<ExpeditedSdo>(*_rsdo_data);
-	ExpeditedSdo tsdo;
-
 	_rsdo_flag.reset();
-
-	const ODEntry* od_entry = emb::binary_find(_server->_dictionary, dictionary_end,
-			ODEntryKeyAux(rsdo.index, rsdo.subindex));
-
-	if (od_entry == dictionary_end) return;	// OD-entry not found
-
-	if (rsdo.cs == sdo_cs_codes::ccs_init_read)
-	{
-		if ((od_entry->value.data_ptr != OD_NO_DIRECT_ACCESS) && od_entry->has_read_permission())
-		{
-			memcpy(&tsdo.data.u32, od_entry->value.data_ptr, od_entry_data_sizes[od_entry->value.data_type]);
-			status = ODAccessStatus::success;
-		}
-		else
-		{
-			status = od_entry->value.read_func(tsdo.data);
-		}
-	}
-	else if (rsdo.cs == sdo_cs_codes::ccs_init_write)
-	{
-		if ((od_entry->value.data_ptr != OD_NO_DIRECT_ACCESS) && od_entry->has_write_permission())
-		{
-			memcpy(od_entry->value.data_ptr, &rsdo.data.u32, od_entry_data_sizes[od_entry->value.data_type]);
-			status = ODAccessStatus::success;
-		}
-		else
-		{
-			status = od_entry->value.write_func(rsdo.data);
-		}
-	}
-	else
+	if (rsdo.cs == sdo_cs_codes::abort)
 	{
 		return;
 	}
 
-	switch (status.underlying_value())
+	ExpeditedSdo tsdo;
+	SdoAbortCode abort_code = SdoAbortCode::general_error;
+	ODEntry* dictionary_end = _server->_dictionary + _server->_dictionary_size;
+
+	const ODEntry* od_entry = emb::binary_find(_server->_dictionary, dictionary_end,
+			ODEntryKeyAux(rsdo.index, rsdo.subindex));
+
+	if (od_entry == dictionary_end)
 	{
-		case ODAccessStatus::success:
-			tsdo.index = rsdo.index;
-			tsdo.subindex = rsdo.subindex;
-			if (rsdo.cs == sdo_cs_codes::ccs_init_read)
-			{
-				tsdo.cs = sdo_cs_codes::scs_init_read;	// read/upload response
-				tsdo.expedited_transfer = 1;
-				tsdo.data_size_indicated = 1;
-				tsdo.data_empty_bytes = 0;
-			}
-			else if (rsdo.cs == sdo_cs_codes::ccs_init_write)
-			{
-				tsdo.cs = sdo_cs_codes::scs_init_write;	// write/download response
-			}
-			else
-			{
-				return;
-			}
-			to_payload<ExpeditedSdo>(*_tsdo_data, tsdo);
-			_tsdo_flag.local.set();
-			break;
-		case ODAccessStatus::fail:
-		case ODAccessStatus::no_access:
-			return;
+		abort_code = SdoAbortCode::no_object;
 	}
+	else if (rsdo.cs == sdo_cs_codes::client_init_read)
+	{
+		abort_code = _read_expedited(od_entry, tsdo, rsdo);
+	}
+	else if (rsdo.cs == sdo_cs_codes::client_init_write)
+	{
+		abort_code = _write_expedited(od_entry, tsdo, rsdo);
+	}
+	else
+	{
+		abort_code = SdoAbortCode::invalid_cs;
+	}
+
+	switch (abort_code.native_value())
+	{
+		case SdoAbortCode::no_error:
+			to_payload<ExpeditedSdo>(*_tsdo_data, tsdo);
+			break;
+		default:
+			AbortSdo abort_tsdo;
+			abort_tsdo.index = rsdo.index;
+			abort_tsdo.subindex = rsdo.subindex;
+			abort_tsdo.error_code = abort_code.underlying_value();
+			to_payload<AbortSdo>(*_tsdo_data, abort_tsdo);
+			break;
+	}
+
+	_tsdo_flag.local.set();
+}
+
+
+SdoAbortCode ServerSdoService::_read_expedited(const ODEntry* od_entry, ExpeditedSdo& tsdo, const ExpeditedSdo& rsdo)
+{
+	SdoAbortCode abort_code;
+	if ((od_entry->value.data_ptr != OD_NO_DIRECT_ACCESS) && od_entry->has_read_permission())
+	{
+		memcpy(&tsdo.data.u32, od_entry->value.data_ptr, od_entry_data_sizes[od_entry->value.data_type]);
+		abort_code = SdoAbortCode::no_error;
+	}
+	else
+	{
+		abort_code = od_entry->value.read_func(tsdo.data);
+	}
+
+	if (abort_code == SdoAbortCode::no_error)
+	{
+		tsdo.index = rsdo.index;
+		tsdo.subindex = rsdo.subindex;
+		tsdo.cs = sdo_cs_codes::server_init_read;
+		tsdo.expedited_transfer = 1;
+		tsdo.data_size_indicated = 1;
+		tsdo.data_empty_bytes = 4 - 2 * od_entry_data_sizes[od_entry->value.data_type];
+	}
+	return abort_code;
+}
+
+
+SdoAbortCode ServerSdoService::_write_expedited(const ODEntry* od_entry, ExpeditedSdo& tsdo, const ExpeditedSdo& rsdo)
+{
+	SdoAbortCode abort_code;
+	if ((od_entry->value.data_ptr != OD_NO_DIRECT_ACCESS) && od_entry->has_write_permission())
+	{
+		memcpy(od_entry->value.data_ptr, &rsdo.data.u32, od_entry_data_sizes[od_entry->value.data_type]);
+		abort_code = SdoAbortCode::no_error;
+	}
+	else
+	{
+		abort_code = od_entry->value.write_func(rsdo.data);
+	}
+
+	if (abort_code == SdoAbortCode::no_error)
+	{
+		tsdo.index = rsdo.index;
+		tsdo.subindex = rsdo.subindex;
+		tsdo.cs = sdo_cs_codes::server_init_write;
+	}
+	return abort_code;
 }
 
 } // namespace ucanopen

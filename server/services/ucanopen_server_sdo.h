@@ -50,6 +50,10 @@ public:
 		_server->_can_module->send(CobType::tsdo, _tsdo_data->data, cob_sizes[CobType::tsdo]);
 		_tsdo_flag.reset();
 	}
+private:
+	SdoAbortCode _read_expedited(const ODEntry* od_entry, ExpeditedSdo& tsdo, const ExpeditedSdo& rsdo);
+	SdoAbortCode _write_expedited(const ODEntry* od_entry, ExpeditedSdo& tsdo, const ExpeditedSdo& rsdo);
+	void _make_tsdo(uint32_t rsdo_ccs, SdoAbortCode abort_code);
 };
 
 } // namespace ucanopen
