@@ -344,15 +344,5 @@ inline SdoAbortCode OD_NO_INDIRECT_READ_ACCESS(ExpeditedSdoData& retval) { retur
 // Used in OD-entries which don't have write access to data through function.
 inline SdoAbortCode OD_NO_INDIRECT_WRITE_ACCESS(ExpeditedSdoData val) { return SdoAbortCode::unsupported_access; }
 
-
-SCOPED_ENUM_DECLARE_BEGIN(ODExecStatus)
-{
-	success = 0,
-	fail = 1,
-	in_progress = 2,
-	started = 3
-}
-SCOPED_ENUM_DECLARE_END(ODExecStatus)
-
 } // namespace ucanopen
 
