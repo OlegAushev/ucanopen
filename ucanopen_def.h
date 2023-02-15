@@ -247,7 +247,7 @@ enum ODEntryDataType
 	OD_FLOAT32,
 	OD_ENUM16,
 	OD_EXEC,
-	OD_STRING_4CHARS
+	OD_STRING
 };
 
 

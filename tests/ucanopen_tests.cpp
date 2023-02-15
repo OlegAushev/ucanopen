@@ -11,35 +11,70 @@ unsigned char object_alloc[sizeof(Object)] __attribute__((section("shared_ucanop
 
 namespace od {
 
-inline SdoAbortCode get_device_name(ExpeditedSdoData& retval)
+SdoAbortCode get_device_name(ExpeditedSdoData& retval)
 {
-	char name[4] = {0};
-	strncpy(name, sysinfo::device_name_short, 4);
-	uint32_t name_raw = 0;
-	emb::c28x::from_bytes<uint32_t>(name_raw, reinterpret_cast<uint16_t*>(name));
-	retval.u32 = name_raw;
+	const size_t len = strlen(sysinfo::device_name) + 1;
+	const size_t word_count = (len + 3) / 4;
+	static size_t counter = 0;
+
+	char word[4] = {0};
+	strncpy(word, sysinfo::device_name + 4*counter, 4);
+	emb::c28x::from_bytes<uint32_t>(retval.u32, reinterpret_cast<uint16_t*>(word));
+
+	counter = (counter + 1) % word_count;
+
 	return SdoAbortCode::no_error;
 }
 
 
-inline SdoAbortCode get_firmware_version(ExpeditedSdoData& retval)
+SdoAbortCode get_hardware_version(ExpeditedSdoData& retval)
 {
-	char name[4] = {0};
-	strncpy(name, GIT_HASH, 4);
-	uint32_t name_raw = 0;
-	emb::c28x::from_bytes<uint32_t>(name_raw, reinterpret_cast<uint16_t*>(name));
-	retval.u32 = name_raw;
+	const size_t len = strlen(sysinfo::hardware_version) + 1;
+	const size_t word_count = (len + 3) / 4;
+	static size_t counter = 0;
+
+	char word[4] = {0};
+	strncpy(word, sysinfo::hardware_version + 4*counter, 4);
+	emb::c28x::from_bytes<uint32_t>(retval.u32, reinterpret_cast<uint16_t*>(word));
+
+	counter = (counter + 1) % word_count;
+
 	return SdoAbortCode::no_error;
 }
 
 
-inline SdoAbortCode get_build_configuration(ExpeditedSdoData& retval)
+SdoAbortCode get_firmware_version(ExpeditedSdoData& retval)
 {
-	char name[4] = {0};
-	strncpy(name, sysinfo::build_configuration_short, 4);
-	uint32_t name_raw = 0;
-	emb::c28x::from_bytes<uint32_t>(name_raw, reinterpret_cast<uint16_t*>(name));
-	retval.u32 = name_raw;
+	const size_t len = strlen(sysinfo::firmware_version) + 1;
+	const size_t word_count = (len + 3) / 4;
+	static size_t counter = 0;
+
+	char word[4] = {0};
+	strncpy(word, sysinfo::firmware_version + 4*counter, 4);
+	emb::c28x::from_bytes<uint32_t>(retval.u32, reinterpret_cast<uint16_t*>(word));
+
+	counter = (counter + 1) % word_count;
+
+	return SdoAbortCode::no_error;
+}
+
+
+SdoAbortCode save_all_parameters(ExpeditedSdoData val)
+{
+	return SdoAbortCode::no_error;
+}
+
+
+SdoAbortCode restore_all_default_parameters(ExpeditedSdoData val)
+{
+	return SdoAbortCode::no_error;
+}
+
+
+SdoAbortCode get_serial_number(ExpeditedSdoData& retval)
+{
+	uint32_t* uid_ptr = reinterpret_cast<uint32_t*>(0x000703CC);
+	retval.u32 = *uid_ptr;
 	return SdoAbortCode::no_error;
 }
 
@@ -76,12 +111,18 @@ inline SdoAbortCode get_uptime(ExpeditedSdoData& retval)
 
 
 ODEntry object_dictionary[] = {
-{{0x1008, 0x00}, {"system", "info", "device_name", "", OD_STRING_4CHARS, OD_ACCESS_RO, OD_NO_DIRECT_ACCESS, od::get_device_name, OD_NO_INDIRECT_WRITE_ACCESS}},
-{{0x5FFF, 0x00}, {"system", "info", "firmware_version", "", OD_STRING_4CHARS, OD_ACCESS_RO, OD_NO_DIRECT_ACCESS, od::get_firmware_version, OD_NO_INDIRECT_WRITE_ACCESS}},
-{{0x5FFF, 0x01}, {"system", "info", "build_configuration", "", OD_STRING_4CHARS, OD_ACCESS_RO, OD_NO_DIRECT_ACCESS, od::get_build_configuration, OD_NO_INDIRECT_WRITE_ACCESS}},
+{{0x1008, 0x00}, {"sys", "info", "device_name", "", OD_STRING, OD_ACCESS_RO, OD_NO_DIRECT_ACCESS, od::get_device_name, OD_NO_INDIRECT_WRITE_ACCESS}},
+{{0x1009, 0x00}, {"sys", "info", "hardware_version", "", OD_STRING, OD_ACCESS_RO, OD_NO_DIRECT_ACCESS, od::get_hardware_version, OD_NO_INDIRECT_WRITE_ACCESS}},
+{{0x100A, 0x00}, {"sys", "info", "firmware_version", "", OD_STRING, OD_ACCESS_RO, OD_NO_DIRECT_ACCESS, od::get_firmware_version, OD_NO_INDIRECT_WRITE_ACCESS}},
 
-{{0x2000, 0x00}, {"system", "device", "reset_device", "", OD_EXEC, OD_ACCESS_WO, OD_NO_DIRECT_ACCESS, OD_NO_INDIRECT_READ_ACCESS, od::reset_device}},
-{{0x2000, 0x01}, {"system", "syslog", "reset_errors", "", OD_EXEC, OD_ACCESS_WO, OD_NO_DIRECT_ACCESS, OD_NO_INDIRECT_READ_ACCESS, od::reset_errors}},
+{{0x1010, 0x01}, {"sys", "ctl", "save_all_parameters", "", OD_EXEC, OD_ACCESS_WO, OD_NO_DIRECT_ACCESS, OD_NO_INDIRECT_READ_ACCESS, od::save_all_parameters}},
+{{0x1011, 0x01}, {"sys", "ctl", "restore_all_default_parameters", "", OD_EXEC, OD_ACCESS_WO, OD_NO_DIRECT_ACCESS, OD_NO_INDIRECT_READ_ACCESS, od::restore_all_default_parameters}},
+
+{{0x1018, 0x04}, {"sys", "info", "serial_number", "", OD_UINT32, OD_ACCESS_RO, OD_NO_DIRECT_ACCESS, od::get_serial_number, OD_NO_INDIRECT_WRITE_ACCESS}},
+
+
+{{0x2000, 0x00}, {"sys", "ctl", "reset_device", "", OD_EXEC, OD_ACCESS_WO, OD_NO_DIRECT_ACCESS, OD_NO_INDIRECT_READ_ACCESS, od::reset_device}},
+{{0x2000, 0x01}, {"sys", "ctl", "reset_errors", "", OD_EXEC, OD_ACCESS_WO, OD_NO_DIRECT_ACCESS, OD_NO_INDIRECT_READ_ACCESS, od::reset_errors}},
 
 {{0x5000, 0x00}, {"watch", "watch", "uptime", "s", OD_FLOAT32, OD_ACCESS_RO, OD_NO_DIRECT_ACCESS, od::get_uptime, OD_NO_INDIRECT_WRITE_ACCESS}},
 {{0x5000, 0x01}, {"watch", "watch", "syslog_message", "", OD_UINT32, OD_ACCESS_RO, OD_NO_DIRECT_ACCESS, od::get_syslog_message, OD_NO_INDIRECT_WRITE_ACCESS}},
