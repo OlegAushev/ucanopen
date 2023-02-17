@@ -107,6 +107,13 @@ inline SdoAbortCode get_uptime(ExpeditedSdoData& retval)
 	return SdoAbortCode::no_error;
 }
 
+
+uint32_t parameter_1;
+float parameter_2;
+uint32_t parameter_3;
+float parameter_4;
+uint32_t parameter_5;
+
 } // namespace od
 
 
@@ -120,13 +127,17 @@ ODEntry object_dictionary[] = {
 
 {{0x1018, 0x04}, {"sys", "info", "serial_number", "", OD_UINT32, OD_ACCESS_RO, OD_NO_DIRECT_ACCESS, od::get_serial_number, OD_NO_INDIRECT_WRITE_ACCESS}},
 
+{{0x2000, 0x01}, {"sys", "ctl", "reset_device", "", OD_EXEC, OD_ACCESS_WO, OD_NO_DIRECT_ACCESS, OD_NO_INDIRECT_READ_ACCESS, od::reset_device}},
+{{0x2000, 0x02}, {"sys", "ctl", "reset_errors", "", OD_EXEC, OD_ACCESS_WO, OD_NO_DIRECT_ACCESS, OD_NO_INDIRECT_READ_ACCESS, od::reset_errors}},
 
-{{0x2000, 0x00}, {"sys", "ctl", "reset_device", "", OD_EXEC, OD_ACCESS_WO, OD_NO_DIRECT_ACCESS, OD_NO_INDIRECT_READ_ACCESS, od::reset_device}},
-{{0x2000, 0x01}, {"sys", "ctl", "reset_errors", "", OD_EXEC, OD_ACCESS_WO, OD_NO_DIRECT_ACCESS, OD_NO_INDIRECT_READ_ACCESS, od::reset_errors}},
+{{0x5000, 0x01}, {"watch", "watch", "uptime", "s", OD_FLOAT32, OD_ACCESS_RO, OD_NO_DIRECT_ACCESS, od::get_uptime, OD_NO_INDIRECT_WRITE_ACCESS}},
+{{0x5000, 0x02}, {"watch", "watch", "syslog_message", "", OD_UINT32, OD_ACCESS_RO, OD_NO_DIRECT_ACCESS, od::get_syslog_message, OD_NO_INDIRECT_WRITE_ACCESS}},
 
-{{0x5000, 0x00}, {"watch", "watch", "uptime", "s", OD_FLOAT32, OD_ACCESS_RO, OD_NO_DIRECT_ACCESS, od::get_uptime, OD_NO_INDIRECT_WRITE_ACCESS}},
-{{0x5000, 0x01}, {"watch", "watch", "syslog_message", "", OD_UINT32, OD_ACCESS_RO, OD_NO_DIRECT_ACCESS, od::get_syslog_message, OD_NO_INDIRECT_WRITE_ACCESS}},
-
+{{0x3000, 0x01}, {"config", "group 1", "parameter 1", "", OD_UINT32, OD_ACCESS_RW, OD_PTR(&od::parameter_1), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
+{{0x3000, 0x02}, {"config", "group 1", "parameter 2", "", OD_FLOAT32, OD_ACCESS_RW, OD_PTR(&od::parameter_2), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
+{{0x3001, 0x01}, {"config", "group 2", "parameter 3", "", OD_UINT32, OD_ACCESS_RW, OD_PTR(&od::parameter_3), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
+{{0x3001, 0x02}, {"config", "group 2", "parameter 4", "", OD_FLOAT32, OD_ACCESS_RW, OD_PTR(&od::parameter_4), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
+{{0x3001, 0x03}, {"config", "group 2", "parameter 5", "", OD_UINT32, OD_ACCESS_RW, OD_PTR(&od::parameter_5), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
 };
 
 
