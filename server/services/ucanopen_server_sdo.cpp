@@ -62,9 +62,9 @@ void ServerSdoService::handle_received()
 	ExpeditedSdo tsdo;
 	SdoAbortCode abort_code = SdoAbortCode::general_error;
 	ODEntry* dictionary_end = _server->_dictionary + _server->_dictionary_size;
+	ODObjectKey key = {rsdo.index, rsdo.subindex};
 
-	const ODEntry* od_entry = emb::binary_find(_server->_dictionary, dictionary_end,
-			ODEntryKeyAux(rsdo.index, rsdo.subindex));
+	const ODEntry* od_entry = emb::binary_find(_server->_dictionary, dictionary_end, key);
 
 	if (od_entry == dictionary_end)
 	{
@@ -104,14 +104,14 @@ void ServerSdoService::handle_received()
 SdoAbortCode ServerSdoService::_read_expedited(const ODEntry* od_entry, ExpeditedSdo& tsdo, const ExpeditedSdo& rsdo)
 {
 	SdoAbortCode abort_code;
-	if ((od_entry->value.data_ptr != OD_NO_DIRECT_ACCESS) && od_entry->has_read_permission())
+	if ((od_entry->object.data_ptr != OD_NO_DIRECT_ACCESS) && od_entry->object.has_read_permission())
 	{
-		memcpy(&tsdo.data.u32, od_entry->value.data_ptr, od_entry_data_sizes[od_entry->value.data_type]);
+		memcpy(&tsdo.data.u32, od_entry->object.data_ptr, od_entry_data_sizes[od_entry->object.type]);
 		abort_code = SdoAbortCode::no_error;
 	}
 	else
 	{
-		abort_code = od_entry->value.read_func(tsdo.data);
+		abort_code = od_entry->object.read_func(tsdo.data);
 	}
 
 	if (abort_code == SdoAbortCode::no_error)
@@ -121,7 +121,7 @@ SdoAbortCode ServerSdoService::_read_expedited(const ODEntry* od_entry, Expedite
 		tsdo.cs = sdo_cs_codes::server_init_read;
 		tsdo.expedited_transfer = 1;
 		tsdo.data_size_indicated = 1;
-		tsdo.data_empty_bytes = 4 - 2 * od_entry_data_sizes[od_entry->value.data_type];
+		tsdo.data_empty_bytes = 4 - 2 * od_entry_data_sizes[od_entry->object.type];
 	}
 	return abort_code;
 }
@@ -130,14 +130,14 @@ SdoAbortCode ServerSdoService::_read_expedited(const ODEntry* od_entry, Expedite
 SdoAbortCode ServerSdoService::_write_expedited(const ODEntry* od_entry, ExpeditedSdo& tsdo, const ExpeditedSdo& rsdo)
 {
 	SdoAbortCode abort_code;
-	if ((od_entry->value.data_ptr != OD_NO_DIRECT_ACCESS) && od_entry->has_write_permission())
+	if ((od_entry->object.data_ptr != OD_NO_DIRECT_ACCESS) && od_entry->object.has_write_permission())
 	{
-		memcpy(od_entry->value.data_ptr, &rsdo.data.u32, od_entry_data_sizes[od_entry->value.data_type]);
+		memcpy(od_entry->object.data_ptr, &rsdo.data.u32, od_entry_data_sizes[od_entry->object.type]);
 		abort_code = SdoAbortCode::no_error;
 	}
 	else
 	{
-		abort_code = od_entry->value.write_func(rsdo.data);
+		abort_code = od_entry->object.write_func(rsdo.data);
 	}
 
 	if (abort_code == SdoAbortCode::no_error)

@@ -128,32 +128,32 @@ void impl::Server::_init_object_dictionary()
 				|| (_dictionary[i].key.subindex != _dictionary[j].key.subindex));
 
 			// no od-entries with equal {category, subcategory, name}
-			bool categoryEqual = ((strcmp(_dictionary[i].value.category, _dictionary[j].value.category) == 0) ? true : false);
-			bool subcategoryEqual = ((strcmp(_dictionary[i].value.subcategory, _dictionary[j].value.subcategory) == 0) ? true : false);
-			bool nameEqual = ((strcmp(_dictionary[i].value.name, _dictionary[j].value.name) == 0) ? true : false);
+			bool categoryEqual = ((strcmp(_dictionary[i].object.category, _dictionary[j].object.category) == 0) ? true : false);
+			bool subcategoryEqual = ((strcmp(_dictionary[i].object.subcategory, _dictionary[j].object.subcategory) == 0) ? true : false);
+			bool nameEqual = ((strcmp(_dictionary[i].object.name, _dictionary[j].object.name) == 0) ? true : false);
 			assert(!categoryEqual || !subcategoryEqual || !nameEqual);
 		}
 
-		if (_dictionary[i].has_read_permission())
+		if (_dictionary[i].object.has_read_permission())
 		{
-			assert((_dictionary[i].value.read_func != OD_NO_INDIRECT_READ_ACCESS)
-					|| (_dictionary[i].value.data_ptr != OD_NO_DIRECT_ACCESS));
+			assert((_dictionary[i].object.read_func != OD_NO_INDIRECT_READ_ACCESS)
+					|| (_dictionary[i].object.data_ptr != OD_NO_DIRECT_ACCESS));
 		}
 		else
 		{
-			assert(_dictionary[i].value.read_func == OD_NO_INDIRECT_READ_ACCESS
-					&& (_dictionary[i].value.data_ptr == OD_NO_DIRECT_ACCESS));
+			assert(_dictionary[i].object.read_func == OD_NO_INDIRECT_READ_ACCESS
+					&& (_dictionary[i].object.data_ptr == OD_NO_DIRECT_ACCESS));
 		}
 
-		if (_dictionary[i].has_write_permission())
+		if (_dictionary[i].object.has_write_permission())
 		{
-			assert(_dictionary[i].value.write_func != OD_NO_INDIRECT_WRITE_ACCESS
-					|| (_dictionary[i].value.data_ptr != OD_NO_DIRECT_ACCESS));
+			assert(_dictionary[i].object.write_func != OD_NO_INDIRECT_WRITE_ACCESS
+					|| (_dictionary[i].object.data_ptr != OD_NO_DIRECT_ACCESS));
 		}
 		else
 		{
-			assert(_dictionary[i].value.write_func == OD_NO_INDIRECT_WRITE_ACCESS
-					&& (_dictionary[i].value.data_ptr == OD_NO_DIRECT_ACCESS));
+			assert(_dictionary[i].object.write_func == OD_NO_INDIRECT_WRITE_ACCESS
+					&& (_dictionary[i].object.data_ptr == OD_NO_DIRECT_ACCESS));
 		}
 	}
 }

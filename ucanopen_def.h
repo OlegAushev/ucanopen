@@ -237,7 +237,7 @@ SCOPED_ENUM_UT_DECLARE_BEGIN(SdoAbortCode, uint32_t)
 SCOPED_ENUM_DECLARE_END(SdoAbortCode)
 
 
-enum ODEntryDataType
+enum ODObjectType
 {
 	OD_BOOL,
 	OD_INT16,
@@ -251,7 +251,7 @@ enum ODEntryDataType
 };
 
 
-enum ODEntryAccessPermission
+enum ODObjectAccessPermission
 {
 	OD_ACCESS_RW,
 	OD_ACCESS_RO,
@@ -263,41 +263,41 @@ const size_t od_entry_data_sizes[9] = {sizeof(bool), sizeof(int16_t), sizeof(int
 		sizeof(uint16_t), sizeof(uint32_t), sizeof(float), sizeof(uint16_t), 0, 0};
 
 
-struct ODEntryKey
+struct ODObjectKey
 {
 	uint32_t index;
 	uint32_t subindex;
 };
 
 
-struct ODEntryValue
+struct ODObject
 {
 	const char* category;
 	const char* subcategory;
 	const char* name;
 	const char* unit;
-	ODEntryDataType data_type;
-	ODEntryAccessPermission access_permission;
+	ODObjectType type;
+	ODObjectAccessPermission access_permission;
 	uint32_t* data_ptr;
 	SdoAbortCode (*read_func)(ExpeditedSdoData& retval);
 	SdoAbortCode (*write_func)(ExpeditedSdoData val);
+
+	bool has_read_permission() const
+	{
+		return (access_permission == OD_ACCESS_RW) || (access_permission == OD_ACCESS_RO);
+	}
+
+	bool has_write_permission() const
+	{
+		return (access_permission == OD_ACCESS_RW) || (access_permission == OD_ACCESS_WO);
+	}
 };
 
 
 struct ODEntry
 {
-	ODEntryKey key;
-	ODEntryValue value;
-
-	bool has_read_permission() const
-	{
-		return (value.access_permission == OD_ACCESS_RW) || (value.access_permission == OD_ACCESS_RO);
-	}
-
-	bool has_write_permission() const
-	{
-		return (value.access_permission == OD_ACCESS_RW) || (value.access_permission == OD_ACCESS_WO);
-	}
+	ODObjectKey key;
+	ODObject object;
 };
 
 
@@ -308,22 +308,14 @@ inline bool operator<(const ODEntry& lhs, const ODEntry& rhs)
 }
 
 
-struct ODEntryKeyAux
-{
-	uint32_t index;
-	uint32_t subindex;
-	ODEntryKeyAux(uint32_t _index, uint32_t _subindex) : index(_index), subindex(_subindex) {}
-};
-
-
-inline bool operator<(const ODEntryKeyAux& lhs, const ODEntry& rhs)
+inline bool operator<(const ODObjectKey& lhs, const ODEntry& rhs)
 {
 	return (lhs.index < rhs.key.index)
 			|| ((lhs.index == rhs.key.index) && (lhs.subindex < rhs.key.subindex));
 }
 
 
-inline bool operator==(const ODEntryKeyAux& lhs, const ODEntry& rhs)
+inline bool operator==(const ODObjectKey& lhs, const ODEntry& rhs)
 {
 	return (lhs.index == rhs.key.index) && (lhs.subindex == rhs.key.subindex);
 }
