@@ -103,10 +103,15 @@ void ServerSdoService::handle_received()
 
 SdoAbortCode ServerSdoService::_read_expedited(const ODEntry* od_entry, ExpeditedSdo& tsdo, const ExpeditedSdo& rsdo)
 {
-	SdoAbortCode abort_code;
-	if ((od_entry->object.data_ptr != OD_NO_DIRECT_ACCESS) && od_entry->object.has_read_permission())
+	if (!od_entry->object.has_read_permission())
 	{
-		memcpy(&tsdo.data.u32, od_entry->object.data_ptr, od_entry_data_sizes[od_entry->object.type]);
+		return SdoAbortCode::read_access_wo;
+	}
+
+	SdoAbortCode abort_code;
+	if (od_entry->object.has_direct_access())
+	{
+		memcpy(&tsdo.data.u32, od_entry->object.ptr, od_object_type_sizes[od_entry->object.type]);
 		abort_code = SdoAbortCode::no_error;
 	}
 	else
@@ -121,7 +126,7 @@ SdoAbortCode ServerSdoService::_read_expedited(const ODEntry* od_entry, Expedite
 		tsdo.cs = sdo_cs_codes::server_init_read;
 		tsdo.expedited_transfer = 1;
 		tsdo.data_size_indicated = 1;
-		tsdo.data_empty_bytes = 4 - 2 * od_entry_data_sizes[od_entry->object.type];
+		tsdo.data_empty_bytes = 4 - 2 * od_object_type_sizes[od_entry->object.type];
 	}
 	return abort_code;
 }
@@ -129,10 +134,15 @@ SdoAbortCode ServerSdoService::_read_expedited(const ODEntry* od_entry, Expedite
 
 SdoAbortCode ServerSdoService::_write_expedited(const ODEntry* od_entry, ExpeditedSdo& tsdo, const ExpeditedSdo& rsdo)
 {
-	SdoAbortCode abort_code;
-	if ((od_entry->object.data_ptr != OD_NO_DIRECT_ACCESS) && od_entry->object.has_write_permission())
+	if (!od_entry->object.has_write_permission())
 	{
-		memcpy(od_entry->object.data_ptr, &rsdo.data.u32, od_entry_data_sizes[od_entry->object.type]);
+		return SdoAbortCode::write_access_ro;
+	}
+
+	SdoAbortCode abort_code;
+	if (od_entry->object.has_direct_access())
+	{
+		memcpy(od_entry->object.ptr, &rsdo.data.u32, od_object_type_sizes[od_entry->object.type]);
 		abort_code = SdoAbortCode::no_error;
 	}
 	else

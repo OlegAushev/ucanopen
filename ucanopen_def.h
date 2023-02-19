@@ -256,10 +256,27 @@ enum ODObjectAccessPermission
 	OD_ACCESS_RW,
 	OD_ACCESS_RO,
 	OD_ACCESS_WO,
+	OD_ACCESS_CONST
 };
 
 
-const size_t od_entry_data_sizes[9] = {sizeof(bool), sizeof(int16_t), sizeof(int32_t),
+// Used in OD-entries which doesn't have direct access to data through pointer.
+#define OD_NO_DIRECT_ACCESS static_cast<uint32_t*>(NULL)
+
+
+// Used in OD-entries which have direct access to data through pointer.
+#define OD_PTR(ptr) reinterpret_cast<uint32_t*>(ptr)
+
+
+// Used in OD-entries which don't have read access to data through function.
+inline SdoAbortCode OD_NO_INDIRECT_READ_ACCESS(ExpeditedSdoData& retval) { return SdoAbortCode::unsupported_access; }
+
+
+// Used in OD-entries which don't have write access to data through function.
+inline SdoAbortCode OD_NO_INDIRECT_WRITE_ACCESS(ExpeditedSdoData val) { return SdoAbortCode::unsupported_access; }
+
+
+const size_t od_object_type_sizes[9] = {sizeof(bool), sizeof(int16_t), sizeof(int32_t),
 		sizeof(uint16_t), sizeof(uint32_t), sizeof(float), sizeof(uint16_t), 0, 0};
 
 
@@ -278,13 +295,18 @@ struct ODObject
 	const char* unit;
 	ODObjectType type;
 	ODObjectAccessPermission access_permission;
-	uint32_t* data_ptr;
+	uint32_t* ptr;
 	SdoAbortCode (*read_func)(ExpeditedSdoData& retval);
 	SdoAbortCode (*write_func)(ExpeditedSdoData val);
 
+	bool has_direct_access() const
+	{
+		return ptr != OD_NO_DIRECT_ACCESS;
+	}
+
 	bool has_read_permission() const
 	{
-		return (access_permission == OD_ACCESS_RW) || (access_permission == OD_ACCESS_RO);
+		return access_permission != OD_ACCESS_WO;
 	}
 
 	bool has_write_permission() const
@@ -319,22 +341,6 @@ inline bool operator==(const ODObjectKey& lhs, const ODEntry& rhs)
 {
 	return (lhs.index == rhs.key.index) && (lhs.subindex == rhs.key.subindex);
 }
-
-
-// Used in OD-entries which doesn't have direct access to data through pointer.
-#define OD_NO_DIRECT_ACCESS static_cast<uint32_t*>(NULL)
-
-
-// Used in OD-entries which have direct access to data through pointer.
-#define OD_PTR(ptr) reinterpret_cast<uint32_t*>(ptr)
-
-
-// Used in OD-entries which don't have read access to data through function.
-inline SdoAbortCode OD_NO_INDIRECT_READ_ACCESS(ExpeditedSdoData& retval) { return SdoAbortCode::unsupported_access; }
-
-
-// Used in OD-entries which don't have write access to data through function.
-inline SdoAbortCode OD_NO_INDIRECT_WRITE_ACCESS(ExpeditedSdoData val) { return SdoAbortCode::unsupported_access; }
 
 } // namespace ucanopen
 

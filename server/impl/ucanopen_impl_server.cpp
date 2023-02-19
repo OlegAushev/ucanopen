@@ -137,23 +137,23 @@ void impl::Server::_init_object_dictionary()
 		if (_dictionary[i].object.has_read_permission())
 		{
 			assert((_dictionary[i].object.read_func != OD_NO_INDIRECT_READ_ACCESS)
-					|| (_dictionary[i].object.data_ptr != OD_NO_DIRECT_ACCESS));
+					|| (_dictionary[i].object.ptr != OD_NO_DIRECT_ACCESS));
 		}
 		else
 		{
 			assert(_dictionary[i].object.read_func == OD_NO_INDIRECT_READ_ACCESS
-					&& (_dictionary[i].object.data_ptr == OD_NO_DIRECT_ACCESS));
+					&& (_dictionary[i].object.ptr == OD_NO_DIRECT_ACCESS));
 		}
 
 		if (_dictionary[i].object.has_write_permission())
 		{
 			assert(_dictionary[i].object.write_func != OD_NO_INDIRECT_WRITE_ACCESS
-					|| (_dictionary[i].object.data_ptr != OD_NO_DIRECT_ACCESS));
+					|| (_dictionary[i].object.ptr != OD_NO_DIRECT_ACCESS));
 		}
 		else
 		{
 			assert(_dictionary[i].object.write_func == OD_NO_INDIRECT_WRITE_ACCESS
-					&& (_dictionary[i].object.data_ptr == OD_NO_DIRECT_ACCESS));
+					&& (_dictionary[i].object.ptr == OD_NO_DIRECT_ACCESS));
 		}
 	}
 }
