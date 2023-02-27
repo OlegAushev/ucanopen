@@ -8,7 +8,7 @@ Server::Server(mcu::ipc::traits::singlecore, mcu::ipc::traits::primary, const Ip
 		ODEntry* object_dictionary, size_t object_dictionary_size)
 	: impl::Server(mcu::ipc::traits::singlecore(), mcu::ipc::traits::primary(),
 			nodeId, can_module, object_dictionary, object_dictionary_size)
-	, emb::c28x::interrupt_invoker_array<Server, mcu::can::peripheral_count>(this, can_module->peripheral().underlying_value())
+	, emb::c28x::InterruptInvokerArray<Server, mcu::can::peripheral_count>(this, can_module->peripheral().underlying_value())
 {
 	heartbeat_service = new ServerHeartbeatService(this, 1000);
 	tpdo_service = new ServerTpdoService(this);
@@ -32,7 +32,7 @@ Server::Server(mcu::ipc::traits::singlecore, mcu::ipc::traits::primary, const Ip
 Server::Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::primary, const IpcFlags& ipc_flags,
 		NodeId nodeId, mcu::can::Module* can_module)
 	: impl::Server(mcu::ipc::traits::dualcore(), mcu::ipc::traits::primary(), nodeId, can_module)
-	, emb::c28x::interrupt_invoker_array<Server, mcu::can::peripheral_count>(this, can_module->peripheral().underlying_value())
+	, emb::c28x::InterruptInvokerArray<Server, mcu::can::peripheral_count>(this, can_module->peripheral().underlying_value())
 {
 	heartbeat_service = new ServerHeartbeatService(this, 1000);
 	tpdo_service = new ServerTpdoService(this);
@@ -56,7 +56,7 @@ Server::Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::primary, const IpcF
 Server::Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::secondary, const IpcFlags& ipc_flags,
 		mcu::can::Peripheral can_peripheral, ODEntry* object_dictionary, size_t object_dictionary_size)
 	: impl::Server(mcu::ipc::traits::dualcore(), mcu::ipc::traits::secondary(), can_peripheral, object_dictionary, object_dictionary_size)
-	, emb::c28x::interrupt_invoker_array<Server, mcu::can::peripheral_count>(this, can_peripheral.underlying_value())
+	, emb::c28x::InterruptInvokerArray<Server, mcu::can::peripheral_count>(this, can_peripheral.underlying_value())
 {
 	rpdo_service = new ServerRpdoService(this, ipc_flags);
 	sdo_service = new ServerSdoService(this, ipc_flags);
