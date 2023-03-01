@@ -8,14 +8,14 @@ ServerTpdoService::ServerTpdoService(impl::Server* server)
 {
 	for (size_t i = 0; i < _tpdo_list.size(); ++i)
 	{
-		_tpdo_list[i].period = 0;
+		_tpdo_list[i].period = emb::chrono::milliseconds(-1);
 		_tpdo_list[i].timepoint = mcu::chrono::system_clock::now();
 		_tpdo_list[i].creator = reinterpret_cast<can_payload(*)()>(NULL);
 	}
 }
 
 
-void ServerTpdoService::registerTpdo(TpdoType tpdo_type, uint64_t period, can_payload (*creator)())
+void ServerTpdoService::registerTpdo(TpdoType tpdo_type, emb::chrono::milliseconds period, can_payload (*creator)())
 {
 	assert(_server->_ipc_role == mcu::ipc::Role::primary);
 

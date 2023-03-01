@@ -12,16 +12,16 @@ class ServerHeartbeatService
 {
 private:
 	impl::Server* const _server;
-	uint64_t _period;
-	uint64_t _timepoint;
+	emb::chrono::milliseconds _period;
+	emb::chrono::milliseconds _timepoint;
 public:
-	ServerHeartbeatService(impl::Server* server, uint64_t period_ms);
+	ServerHeartbeatService(impl::Server* server, emb::chrono::milliseconds period);
 
 	void send()
 	{
 		assert(_server->_ipc_role == mcu::ipc::Role::primary);
 
-		if (_period == 0) return;
+		if (_period.count() <= 0) return;
 
 		if (mcu::chrono::system_clock::now() >= _timepoint + _period)
 		{

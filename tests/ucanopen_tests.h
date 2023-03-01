@@ -12,7 +12,7 @@ namespace tests {
 
 struct CobTpdo1
 {
-	uint64_t clock;
+	int64_t clock;
 	CobTpdo1()
 	{
 		EMB_STATIC_ASSERT(sizeof(CobTpdo1) == 4);
@@ -146,18 +146,18 @@ public:
 	{
 		_object = object;
 
-		this->tpdo_service->registerTpdo(TpdoType::tpdo1, 50, _create_tpdo1);
-		this->tpdo_service->registerTpdo(TpdoType::tpdo2, 50, _create_tpdo2);
-		this->tpdo_service->registerTpdo(TpdoType::tpdo3, 100, _create_tpdo3);
-		this->tpdo_service->registerTpdo(TpdoType::tpdo4, 100, _create_tpdo4);
+		this->tpdo_service->registerTpdo(TpdoType::tpdo1, emb::chrono::milliseconds(50), _create_tpdo1);
+		this->tpdo_service->registerTpdo(TpdoType::tpdo2, emb::chrono::milliseconds(50), _create_tpdo2);
+		this->tpdo_service->registerTpdo(TpdoType::tpdo3, emb::chrono::milliseconds(100), _create_tpdo3);
+		this->tpdo_service->registerTpdo(TpdoType::tpdo4, emb::chrono::milliseconds(100), _create_tpdo4);
 
-		this->rpdo_service->register_rpdo(RpdoType::rpdo1, 1000, 0x182);
+		this->rpdo_service->register_rpdo(RpdoType::rpdo1, emb::chrono::milliseconds(1000), 0x182);
 		this->rpdo_service->register_rpdo_handler(RpdoType::rpdo1, _handle_rpdo1);
-		this->rpdo_service->register_rpdo(RpdoType::rpdo2, 1000, 0x282);
+		this->rpdo_service->register_rpdo(RpdoType::rpdo2, emb::chrono::milliseconds(1000), 0x282);
 		this->rpdo_service->register_rpdo_handler(RpdoType::rpdo2, _handle_rpdo2);
-		this->rpdo_service->register_rpdo(RpdoType::rpdo3, 1000);
+		this->rpdo_service->register_rpdo(RpdoType::rpdo3, emb::chrono::milliseconds(1000));
 		this->rpdo_service->register_rpdo_handler(RpdoType::rpdo3, _handle_rpdo3);
-		this->rpdo_service->register_rpdo(RpdoType::rpdo4, 1000);
+		this->rpdo_service->register_rpdo(RpdoType::rpdo4, emb::chrono::milliseconds(1000));
 		this->rpdo_service->register_rpdo_handler(RpdoType::rpdo4, _handle_rpdo4);
 	}
 
@@ -169,15 +169,15 @@ public:
 	{
 		_object = object;
 
-		this->tpdo_service->registerTpdo(TpdoType::tpdo1, 50, _create_tpdo1);
-		this->tpdo_service->registerTpdo(TpdoType::tpdo2, 50, _create_tpdo2);
-		this->tpdo_service->registerTpdo(TpdoType::tpdo3, 100, _create_tpdo3);
-		this->tpdo_service->registerTpdo(TpdoType::tpdo4, 100, _create_tpdo4);
+		this->tpdo_service->registerTpdo(TpdoType::tpdo1, emb::chrono::milliseconds(50), _create_tpdo1);
+		this->tpdo_service->registerTpdo(TpdoType::tpdo2, emb::chrono::milliseconds(50), _create_tpdo2);
+		this->tpdo_service->registerTpdo(TpdoType::tpdo3, emb::chrono::milliseconds(100), _create_tpdo3);
+		this->tpdo_service->registerTpdo(TpdoType::tpdo4, emb::chrono::milliseconds(100), _create_tpdo4);
 
-		this->rpdo_service->register_rpdo(RpdoType::rpdo1, 1000, 0x182);
-		this->rpdo_service->register_rpdo(RpdoType::rpdo2, 1000, 0x282);
-		this->rpdo_service->register_rpdo(RpdoType::rpdo3, 1000);
-		this->rpdo_service->register_rpdo(RpdoType::rpdo4, 1000);
+		this->rpdo_service->register_rpdo(RpdoType::rpdo1, emb::chrono::milliseconds(1000), 0x182);
+		this->rpdo_service->register_rpdo(RpdoType::rpdo2, emb::chrono::milliseconds(1000), 0x282);
+		this->rpdo_service->register_rpdo(RpdoType::rpdo3, emb::chrono::milliseconds(1000));
+		this->rpdo_service->register_rpdo(RpdoType::rpdo4, emb::chrono::milliseconds(1000));
 	}
 
 	Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::secondary, const IpcFlags& ipc_flags,
@@ -198,7 +198,7 @@ protected:
 	{
 		CobTpdo1 tpdo;
 
-		tpdo.clock = mcu::chrono::system_clock::now();
+		tpdo.clock = mcu::chrono::system_clock::now().count();
 
 		return to_payload<CobTpdo1>(tpdo);
 	}
@@ -207,8 +207,8 @@ protected:
 	{
 		CobTpdo2 tpdo;
 
-		tpdo.seconds = mcu::chrono::system_clock::now() / 1000;
-		tpdo.milliseconds = mcu::chrono::system_clock::now() - 1000 * tpdo.seconds;
+		tpdo.seconds = mcu::chrono::system_clock::now().count() / 1000;
+		tpdo.milliseconds = mcu::chrono::system_clock::now().count() - 1000 * tpdo.seconds;
 
 		return to_payload<CobTpdo2>(tpdo);
 	}
@@ -265,7 +265,7 @@ protected:
 	virtual void on_run()
 	{
 		static bool warning_detected = false;
-		static uint64_t warning_timepoint = 0;
+		static emb::chrono::milliseconds warning_timepoint = emb::chrono::milliseconds(0);
 
 		if (syslog::has_warning(sys::Warning::can_bus_connection_lost))
 		{
@@ -275,7 +275,7 @@ protected:
 				warning_timepoint = mcu::chrono::system_clock::now();
 			}
 
-			if (mcu::chrono::system_clock::now() > warning_timepoint + 5000)
+			if (mcu::chrono::system_clock::now() > warning_timepoint + emb::chrono::milliseconds(5000))
 			{
 				syslog::set_error(sys::Error::can_bus_connection_lost);
 			}

@@ -32,7 +32,7 @@ ServerRpdoService::ServerRpdoService(impl::Server* server, const IpcFlags& ipc_f
 
 	for (size_t i = 0; i < _rpdo_list->size(); ++i)
 	{
-		(*_rpdo_list)[i].timeout = 0;
+		(*_rpdo_list)[i].timeout = emb::chrono::milliseconds(-1);
 		(*_rpdo_list)[i].timepoint = mcu::chrono::system_clock::now();
 	}
 
@@ -48,7 +48,7 @@ ServerRpdoService::ServerRpdoService(impl::Server* server, const IpcFlags& ipc_f
 }
 
 
-void ServerRpdoService::register_rpdo(RpdoType rpdo_type, uint64_t timeout, unsigned int id)
+void ServerRpdoService::register_rpdo(RpdoType rpdo_type, emb::chrono::milliseconds timeout, unsigned int id)
 {
 	assert(_server->_ipc_role == mcu::ipc::Role::primary);
 

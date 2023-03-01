@@ -3,9 +3,9 @@
 
 namespace ucanopen {
 
-ServerHeartbeatService::ServerHeartbeatService(impl::Server* server, uint64_t period_ms)
+ServerHeartbeatService::ServerHeartbeatService(impl::Server* server, emb::chrono::milliseconds period)
 	: _server(server)
-	, _period(period_ms)
+	, _period(period)
 {
 	_timepoint = mcu::chrono::system_clock::now();
 }

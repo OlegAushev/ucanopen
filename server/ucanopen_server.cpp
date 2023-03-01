@@ -10,7 +10,7 @@ Server::Server(mcu::ipc::traits::singlecore, mcu::ipc::traits::primary, const Ip
 			nodeId, can_module, object_dictionary, object_dictionary_size)
 	, emb::c28x::InterruptInvokerArray<Server, mcu::can::peripheral_count>(this, can_module->peripheral().underlying_value())
 {
-	heartbeat_service = new ServerHeartbeatService(this, 1000);
+	heartbeat_service = new ServerHeartbeatService(this, emb::chrono::milliseconds(1000));
 	tpdo_service = new ServerTpdoService(this);
 	rpdo_service = new ServerRpdoService(this, ipc_flags);
 	sdo_service = new ServerSdoService(this, ipc_flags);
@@ -34,7 +34,7 @@ Server::Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::primary, const IpcF
 	: impl::Server(mcu::ipc::traits::dualcore(), mcu::ipc::traits::primary(), nodeId, can_module)
 	, emb::c28x::InterruptInvokerArray<Server, mcu::can::peripheral_count>(this, can_module->peripheral().underlying_value())
 {
-	heartbeat_service = new ServerHeartbeatService(this, 1000);
+	heartbeat_service = new ServerHeartbeatService(this, emb::chrono::milliseconds(1000));
 	tpdo_service = new ServerTpdoService(this);
 	rpdo_service = new ServerRpdoService(this, ipc_flags);
 	sdo_service = new ServerSdoService(this, ipc_flags);
