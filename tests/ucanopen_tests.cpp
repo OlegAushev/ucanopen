@@ -19,7 +19,7 @@ SdoAbortCode get_device_name(ExpeditedSdoData& retval)
 
 	char word[4] = {0};
 	strncpy(word, sysinfo::device_name + 4*counter, 4);
-	emb::c28x::from_bytes<uint32_t>(retval.u32, reinterpret_cast<uint16_t*>(word));
+	emb::c28x::from_bytes<uint32_t>(retval.u32, reinterpret_cast<uint8_t*>(word));
 
 	counter = (counter + 1) % word_count;
 
@@ -35,7 +35,7 @@ SdoAbortCode get_hardware_version(ExpeditedSdoData& retval)
 
 	char word[4] = {0};
 	strncpy(word, sysinfo::hardware_version + 4*counter, 4);
-	emb::c28x::from_bytes<uint32_t>(retval.u32, reinterpret_cast<uint16_t*>(word));
+	emb::c28x::from_bytes<uint32_t>(retval.u32, reinterpret_cast<uint8_t*>(word));
 
 	counter = (counter + 1) % word_count;
 
@@ -51,7 +51,7 @@ SdoAbortCode get_firmware_version(ExpeditedSdoData& retval)
 
 	char word[4] = {0};
 	strncpy(word, sysinfo::firmware_version + 4*counter, 4);
-	emb::c28x::from_bytes<uint32_t>(retval.u32, reinterpret_cast<uint16_t*>(word));
+	emb::c28x::from_bytes<uint32_t>(retval.u32, reinterpret_cast<uint8_t*>(word));
 
 	counter = (counter + 1) % word_count;
 

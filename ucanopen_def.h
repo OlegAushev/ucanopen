@@ -8,7 +8,7 @@
 
 namespace ucanopen {
 
-typedef emb::Array<uint16_t, 8> can_payload;
+typedef emb::Array<uint8_t, 8> can_payload;
 
 
 template <typename T>
