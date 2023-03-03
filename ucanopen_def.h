@@ -47,7 +47,7 @@ private:
 	unsigned int _value;
 public:
 	explicit NodeId(unsigned int value) : _value(value) {}
-	unsigned int value() const { return _value; }
+	unsigned int get() const { return _value; }
 	bool is_valid() const { return (_value >= 1) && (_value <= 127); }
 };
 
@@ -116,7 +116,7 @@ inline uint32_t calculate_cob_id(CobType cob_type, NodeId node_id)
 	{
 		return cob_function_codes[cob_type.underlying_value()];
 	}
-	return cob_function_codes[cob_type.underlying_value()] + node_id.value();
+	return cob_function_codes[cob_type.underlying_value()] + node_id.get();
 }
 
 
