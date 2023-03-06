@@ -1,4 +1,4 @@
-#include <c28x_ucanopen/server/services/ucanopen_server_rpdo.h>
+#include "rpdo_service.h"
 
 
 namespace ucanopen {

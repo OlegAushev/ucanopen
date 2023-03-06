@@ -1,4 +1,4 @@
-#include "ucanopen_tests.h"
+#include <c28x_ucanopen/tests/tests.h>
 
 
 namespace ucanopen {

@@ -1,8 +1,8 @@
 #pragma once
 
 
-#include <c28x_emb/emb_algorithm.h>
-#include <c28x_ucanopen/server/impl/ucanopen_impl_server.h>
+#include "../impl/impl_server.h"
+#include <c28x_emblib/algorithm.h>
 #include <new>
 #include "sys/syslog/syslog.h"
 

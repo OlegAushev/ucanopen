@@ -1,4 +1,4 @@
-#include <c28x_ucanopen/server/ucanopen_server.h>
+#include "server.h"
 
 
 namespace ucanopen {
