@@ -2,7 +2,7 @@
 
 
 #include "../impl/impl_server.h"
-#include <c28x_emblib/algorithm.h>
+#include <emblib_c28x/algorithm.h>
 #include <new>
 #include "sys/syslog/syslog.h"
 

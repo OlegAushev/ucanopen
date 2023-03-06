@@ -7,7 +7,7 @@
 #include "services/rpdo_service.h"
 #include "services/sdo_service.h"
 #include "services/tpdo_service.h"
-#include <c28x_mcu_drivers/f2837xd/chrono/chrono.h>
+#include <mculib_c28x/f2837xd/chrono/chrono.h>
 #include "sys/syslog/syslog.h"
 
 
