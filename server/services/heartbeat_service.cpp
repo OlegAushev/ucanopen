@@ -3,7 +3,7 @@
 
 namespace ucanopen {
 
-ServerHeartbeatService::ServerHeartbeatService(impl::Server* server, emb::chrono::milliseconds period)
+HeartbeatService::HeartbeatService(impl::Server* server, emb::chrono::milliseconds period)
 	: _server(server)
 	, _period(period)
 {

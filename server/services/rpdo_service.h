@@ -9,7 +9,7 @@
 
 namespace ucanopen {
 
-class ServerRpdoService
+class RpdoService
 {
 private:
 	impl::Server* const _server;
@@ -26,7 +26,7 @@ private:
 	emb::Array<mcu::ipc::Flag, 4> _received_flags;
 	emb::Array<void(*)(const can_payload& payload), 4> _handlers;
 public:
-	ServerRpdoService(impl::Server* server, const IpcFlags& ipc_flags);
+	RpdoService(impl::Server* server, const IpcFlags& ipc_flags);
 	void register_rpdo(RpdoType rpdo_type, emb::chrono::milliseconds timeout, unsigned int id = 0);
 	void register_rpdo_handler(RpdoType rpdo_type, void (*handler)(const can_payload& data));
 

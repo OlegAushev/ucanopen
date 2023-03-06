@@ -10,10 +10,10 @@ Server::Server(mcu::ipc::traits::singlecore, mcu::ipc::traits::primary, const Ip
 			nodeId, can_module, object_dictionary, object_dictionary_size)
 	, emb::c28x::InterruptInvokerArray<Server, mcu::can::peripheral_count>(this, can_module->peripheral().underlying_value())
 {
-	heartbeat_service = new ServerHeartbeatService(this, emb::chrono::milliseconds(1000));
-	tpdo_service = new ServerTpdoService(this);
-	rpdo_service = new ServerRpdoService(this, ipc_flags);
-	sdo_service = new ServerSdoService(this, ipc_flags);
+	heartbeat_service = new HeartbeatService(this, emb::chrono::milliseconds(1000));
+	tpdo_service = new TpdoService(this);
+	rpdo_service = new RpdoService(this, ipc_flags);
+	sdo_service = new SdoService(this, ipc_flags);
 
 	switch (can_module->peripheral().native_value())
 	{
@@ -34,10 +34,10 @@ Server::Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::primary, const IpcF
 	: impl::Server(mcu::ipc::traits::dualcore(), mcu::ipc::traits::primary(), nodeId, can_module)
 	, emb::c28x::InterruptInvokerArray<Server, mcu::can::peripheral_count>(this, can_module->peripheral().underlying_value())
 {
-	heartbeat_service = new ServerHeartbeatService(this, emb::chrono::milliseconds(1000));
-	tpdo_service = new ServerTpdoService(this);
-	rpdo_service = new ServerRpdoService(this, ipc_flags);
-	sdo_service = new ServerSdoService(this, ipc_flags);
+	heartbeat_service = new HeartbeatService(this, emb::chrono::milliseconds(1000));
+	tpdo_service = new TpdoService(this);
+	rpdo_service = new RpdoService(this, ipc_flags);
+	sdo_service = new SdoService(this, ipc_flags);
 
 	switch (can_module->peripheral().native_value())
 	{
@@ -58,8 +58,8 @@ Server::Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::secondary, const Ip
 	: impl::Server(mcu::ipc::traits::dualcore(), mcu::ipc::traits::secondary(), can_peripheral, object_dictionary, object_dictionary_size)
 	, emb::c28x::InterruptInvokerArray<Server, mcu::can::peripheral_count>(this, can_peripheral.underlying_value())
 {
-	rpdo_service = new ServerRpdoService(this, ipc_flags);
-	sdo_service = new ServerSdoService(this, ipc_flags);
+	rpdo_service = new RpdoService(this, ipc_flags);
+	sdo_service = new SdoService(this, ipc_flags);
 }
 
 } // namespace ucanopen

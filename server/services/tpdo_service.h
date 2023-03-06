@@ -8,7 +8,7 @@
 
 namespace ucanopen {
 
-class ServerTpdoService
+class TpdoService
 {
 private:
 	impl::Server* const _server;
@@ -21,7 +21,7 @@ private:
 	};
 	emb::Array<Message, 4> _tpdo_list;
 public:
-	ServerTpdoService(impl::Server* server);
+	TpdoService(impl::Server* server);
 	void registerTpdo(TpdoType tpdo_type, emb::chrono::milliseconds period, can_payload (*creator)());
 
 	void send()

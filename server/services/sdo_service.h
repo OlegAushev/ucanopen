@@ -9,7 +9,7 @@
 
 namespace ucanopen {
 
-class ServerSdoService
+class SdoService
 {
 private:
 	impl::Server* const _server;
@@ -23,7 +23,7 @@ private:
 	static unsigned char cana_tsdo_dualcore_alloc[sizeof(can_payload)];
 	static unsigned char canb_tsdo_dualcore_alloc[sizeof(can_payload)];
 public:
-	ServerSdoService(impl::Server* server, const IpcFlags& ipc_flags);
+	SdoService(impl::Server* server, const IpcFlags& ipc_flags);
 	void handle_received();
 
 	void recv()

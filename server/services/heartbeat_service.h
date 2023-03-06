@@ -8,14 +8,14 @@
 
 namespace ucanopen {
 
-class ServerHeartbeatService
+class HeartbeatService
 {
 private:
 	impl::Server* const _server;
 	emb::chrono::milliseconds _period;
 	emb::chrono::milliseconds _timepoint;
 public:
-	ServerHeartbeatService(impl::Server* server, emb::chrono::milliseconds period);
+	HeartbeatService(impl::Server* server, emb::chrono::milliseconds period);
 
 	void send()
 	{

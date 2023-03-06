@@ -27,10 +27,10 @@ extern unsigned char canb_tsdo_dualcore_alloc[sizeof(can_payload)];
 class Server : public impl::Server, public emb::c28x::InterruptInvokerArray<Server, mcu::can::peripheral_count>
 {
 protected:
-	ServerHeartbeatService* heartbeat_service;
-	ServerTpdoService* tpdo_service;
-	ServerRpdoService* rpdo_service;
-	ServerSdoService* sdo_service;
+	HeartbeatService* heartbeat_service;
+	TpdoService* tpdo_service;
+	RpdoService* rpdo_service;
+	SdoService* sdo_service;
 
 	virtual void on_run() {}
 public:

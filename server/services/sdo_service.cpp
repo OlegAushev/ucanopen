@@ -3,18 +3,18 @@
 
 namespace ucanopen {
 
-unsigned char ServerSdoService::cana_rsdo_dualcore_alloc[sizeof(can_payload)]
+unsigned char SdoService::cana_rsdo_dualcore_alloc[sizeof(can_payload)]
 		__attribute__((section("shared_ucanopen_cana_rsdo_data"), retain));
-unsigned char ServerSdoService::canb_rsdo_dualcore_alloc[sizeof(can_payload)]
+unsigned char SdoService::canb_rsdo_dualcore_alloc[sizeof(can_payload)]
 		__attribute__((section("shared_ucanopen_canb_rsdo_data"), retain));
 
-unsigned char ServerSdoService::cana_tsdo_dualcore_alloc[sizeof(can_payload)]
+unsigned char SdoService::cana_tsdo_dualcore_alloc[sizeof(can_payload)]
 		__attribute__((section("shared_ucanopen_cana_tsdo_data"), retain));
-unsigned char ServerSdoService::canb_tsdo_dualcore_alloc[sizeof(can_payload)]
+unsigned char SdoService::canb_tsdo_dualcore_alloc[sizeof(can_payload)]
 		__attribute__((section("shared_ucanopen_canb_tsdo_data"), retain));
 
 
-ServerSdoService::ServerSdoService(impl::Server* server, const IpcFlags& ipc_flags)
+SdoService::SdoService(impl::Server* server, const IpcFlags& ipc_flags)
 	: _server(server)
 {
 	_rsdo_flag = ipc_flags.rsdo_received;
@@ -43,7 +43,7 @@ ServerSdoService::ServerSdoService(impl::Server* server, const IpcFlags& ipc_fla
 }
 
 
-void ServerSdoService::handle_received()
+void SdoService::handle_received()
 {
 	assert(_server->_ipc_mode == mcu::ipc::Mode::singlecore || _server->_ipc_role == mcu::ipc::Role::secondary);
 
@@ -101,7 +101,7 @@ void ServerSdoService::handle_received()
 }
 
 
-SdoAbortCode ServerSdoService::_read_expedited(const ODEntry* od_entry, ExpeditedSdo& tsdo, const ExpeditedSdo& rsdo)
+SdoAbortCode SdoService::_read_expedited(const ODEntry* od_entry, ExpeditedSdo& tsdo, const ExpeditedSdo& rsdo)
 {
 	if (!od_entry->object.has_read_permission())
 	{
@@ -132,7 +132,7 @@ SdoAbortCode ServerSdoService::_read_expedited(const ODEntry* od_entry, Expedite
 }
 
 
-SdoAbortCode ServerSdoService::_write_expedited(const ODEntry* od_entry, ExpeditedSdo& tsdo, const ExpeditedSdo& rsdo)
+SdoAbortCode SdoService::_write_expedited(const ODEntry* od_entry, ExpeditedSdo& tsdo, const ExpeditedSdo& rsdo)
 {
 	if (!od_entry->object.has_write_permission())
 	{

@@ -3,13 +3,13 @@
 
 namespace ucanopen {
 
-unsigned char ServerRpdoService::cana_rpdo_dualcore_alloc[sizeof(emb::Array<ServerRpdoService::Message, 4>)]
+unsigned char RpdoService::cana_rpdo_dualcore_alloc[sizeof(emb::Array<RpdoService::Message, 4>)]
 		__attribute__((section("shared_ucanopen_cana_rpdo_data"), retain));
-unsigned char ServerRpdoService::canb_rpdo_dualcore_alloc[sizeof(emb::Array<ServerRpdoService::Message, 4>)]
+unsigned char RpdoService::canb_rpdo_dualcore_alloc[sizeof(emb::Array<RpdoService::Message, 4>)]
 		__attribute__((section("shared_ucanopen_canb_rpdo_data"), retain));
 
 
-ServerRpdoService::ServerRpdoService(impl::Server* server, const IpcFlags& ipc_flags)
+RpdoService::RpdoService(impl::Server* server, const IpcFlags& ipc_flags)
 	: _server(server)
 {
 	switch (_server->_ipc_mode.underlying_value())
@@ -48,7 +48,7 @@ ServerRpdoService::ServerRpdoService(impl::Server* server, const IpcFlags& ipc_f
 }
 
 
-void ServerRpdoService::register_rpdo(RpdoType rpdo_type, emb::chrono::milliseconds timeout, unsigned int id)
+void RpdoService::register_rpdo(RpdoType rpdo_type, emb::chrono::milliseconds timeout, unsigned int id)
 {
 	assert(_server->_ipc_role == mcu::ipc::Role::primary);
 
@@ -62,7 +62,7 @@ void ServerRpdoService::register_rpdo(RpdoType rpdo_type, emb::chrono::milliseco
 }
 
 
-void ServerRpdoService::register_rpdo_handler(RpdoType rpdo_type, void (*handler)(const can_payload& data))
+void RpdoService::register_rpdo_handler(RpdoType rpdo_type, void (*handler)(const can_payload& data))
 {
 	assert(_server->_ipc_mode == mcu::ipc::Mode::singlecore || _server->_ipc_role == mcu::ipc::Role::secondary);
 

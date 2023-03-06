@@ -20,20 +20,20 @@ struct IpcFlags
 };
 
 
-class ServerHeartbeatService;
-class ServerTpdoService;
-class ServerRpdoService;
-class ServerSdoService;
+class HeartbeatService;
+class TpdoService;
+class RpdoService;
+class SdoService;
 
 
 namespace impl {
 
 class Server
 {
-	friend class ucanopen::ServerHeartbeatService;
-	friend class ucanopen::ServerTpdoService;
-	friend class ucanopen::ServerRpdoService;
-	friend class ucanopen::ServerSdoService;
+	friend class ucanopen::HeartbeatService;
+	friend class ucanopen::TpdoService;
+	friend class ucanopen::RpdoService;
+	friend class ucanopen::SdoService;
 protected:
 	const mcu::ipc::Mode _ipc_mode;
 	const mcu::ipc::Role _ipc_role;
