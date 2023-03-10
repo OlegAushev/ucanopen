@@ -24,7 +24,7 @@ extern unsigned char canb_tsdo_dualcore_alloc[sizeof(can_payload)];
 } // namespace impl
 
 
-class Server : public impl::Server, public emb::c28x::InterruptInvokerArray<Server, mcu::can::peripheral_count>
+class Server : public impl::Server, public emb::c28x::interrupt_invoker_array<Server, mcu::can::peripheral_count>
 {
 protected:
 	HeartbeatService* heartbeat_service;

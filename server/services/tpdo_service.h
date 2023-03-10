@@ -19,7 +19,7 @@ private:
 		emb::chrono::milliseconds timepoint;
 		can_payload (*creator)();
 	};
-	emb::Array<Message, 4> _tpdo_list;
+	emb::array<Message, 4> _tpdo_list;
 public:
 	TpdoService(impl::Server* server);
 	void registerTpdo(TpdoType tpdo_type, emb::chrono::milliseconds period, can_payload (*creator)());

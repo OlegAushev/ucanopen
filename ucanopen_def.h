@@ -8,7 +8,7 @@
 
 namespace ucanopen {
 
-typedef emb::Array<uint8_t, 8> can_payload;
+typedef emb::array<uint8_t, 8> can_payload;
 
 
 template <typename T>
@@ -87,7 +87,7 @@ SCOPED_ENUM_DECLARE_END(CobType)
 const size_t cob_type_count = 16;
 
 
-const emb::Array<uint32_t, cob_type_count> cob_function_codes =
+const emb::array<uint32_t, cob_type_count> cob_function_codes =
 {
 	0x000,	// DUMMY
 	0x000,	// NMT
@@ -120,7 +120,7 @@ inline uint32_t calculate_cob_id(CobType cob_type, NodeId node_id)
 }
 
 
-const emb::Array<unsigned int, cob_type_count> cob_sizes =
+const emb::array<unsigned int, cob_type_count> cob_sizes =
 {
 	0,	// DUMMY
 	2,	// NMT

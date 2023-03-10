@@ -20,11 +20,11 @@ private:
 		emb::chrono::milliseconds timepoint;
 		can_payload payload;
 	};
-	emb::Array<Message, 4>* _rpdo_list;
-	static unsigned char cana_rpdo_dualcore_alloc[sizeof(emb::Array<Message, 4>)];
-	static unsigned char canb_rpdo_dualcore_alloc[sizeof(emb::Array<Message, 4>)];
-	emb::Array<mcu::ipc::Flag, 4> _received_flags;
-	emb::Array<void(*)(const can_payload& payload), 4> _handlers;
+	emb::array<Message, 4>* _rpdo_list;
+	static unsigned char cana_rpdo_dualcore_alloc[sizeof(emb::array<Message, 4>)];
+	static unsigned char canb_rpdo_dualcore_alloc[sizeof(emb::array<Message, 4>)];
+	emb::array<mcu::ipc::Flag, 4> _received_flags;
+	emb::array<void(*)(const can_payload& payload), 4> _handlers;
 public:
 	RpdoService(impl::Server* server, const IpcFlags& ipc_flags);
 	void register_rpdo(RpdoType rpdo_type, emb::chrono::milliseconds timeout, unsigned int id = 0);

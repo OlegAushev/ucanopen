@@ -3,9 +3,9 @@
 
 namespace ucanopen {
 
-unsigned char RpdoService::cana_rpdo_dualcore_alloc[sizeof(emb::Array<RpdoService::Message, 4>)]
+unsigned char RpdoService::cana_rpdo_dualcore_alloc[sizeof(emb::array<RpdoService::Message, 4>)]
 		__attribute__((section("shared_ucanopen_cana_rpdo_data"), retain));
-unsigned char RpdoService::canb_rpdo_dualcore_alloc[sizeof(emb::Array<RpdoService::Message, 4>)]
+unsigned char RpdoService::canb_rpdo_dualcore_alloc[sizeof(emb::array<RpdoService::Message, 4>)]
 		__attribute__((section("shared_ucanopen_canb_rpdo_data"), retain));
 
 
@@ -15,16 +15,16 @@ RpdoService::RpdoService(impl::Server* server, const IpcFlags& ipc_flags)
 	switch (_server->_ipc_mode.underlying_value())
 	{
 		case mcu::ipc::Mode::singlecore:
-			_rpdo_list = new emb::Array<Message, 4>;
+			_rpdo_list = new emb::array<Message, 4>;
 			break;
 		case mcu::ipc::Mode::dualcore:
 			switch (_server->_can_peripheral.native_value())
 			{
 				case mcu::can::Peripheral::cana:
-					_rpdo_list = new(cana_rpdo_dualcore_alloc) emb::Array<Message, 4>;
+					_rpdo_list = new(cana_rpdo_dualcore_alloc) emb::array<Message, 4>;
 					break;
 				case mcu::can::Peripheral::canb:
-					_rpdo_list = new(canb_rpdo_dualcore_alloc) emb::Array<Message, 4>;
+					_rpdo_list = new(canb_rpdo_dualcore_alloc) emb::array<Message, 4>;
 					break;
 			}
 			break;
