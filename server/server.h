@@ -24,6 +24,12 @@ extern unsigned char canb_tsdo_dualcore_alloc[sizeof(can_payload)];
 } // namespace impl
 
 
+struct ServerConfig
+{
+	uint32_t node_id;
+};
+
+
 class Server : public impl::Server, public emb::c28x::interrupt_invoker_array<Server, mcu::can::peripheral_count>
 {
 protected:
