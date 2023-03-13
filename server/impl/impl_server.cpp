@@ -4,7 +4,7 @@
 namespace ucanopen {
 
 impl::Server::Server(mcu::ipc::traits::singlecore, mcu::ipc::traits::primary,
-		NodeId node_id, mcu::can::Module* can_module,
+		mcu::can::Module* can_module, NodeId node_id,
 		ODEntry* object_dictionary, size_t object_dictionary_size)
 	: _ipc_mode(mcu::ipc::Mode::singlecore)
 	, _ipc_role(mcu::ipc::Role::primary)
@@ -21,7 +21,7 @@ impl::Server::Server(mcu::ipc::traits::singlecore, mcu::ipc::traits::primary,
 
 
 impl::Server::Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::primary,
-		NodeId node_id, mcu::can::Module* can_module)
+		mcu::can::Module* can_module, NodeId node_id)
 	: _ipc_mode(mcu::ipc::Mode::dualcore)
 	, _ipc_role(mcu::ipc::Role::primary)
 	, _node_id(node_id)

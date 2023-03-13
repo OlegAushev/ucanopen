@@ -139,10 +139,9 @@ private:
 	static Object* _object;
 public:
 	Server(mcu::ipc::traits::singlecore, mcu::ipc::traits::primary, const IpcFlags& ipc_flags,
-			NodeId node_id, mcu::can::Module* can_module,
-			Object* object)
+			mcu::can::Module* can_module, const ServerConfig& config, Object* object)
 		: ucanopen::Server(mcu::ipc::traits::singlecore(), mcu::ipc::traits::primary(), ipc_flags,
-				node_id, can_module, object_dictionary, object_dictionary_size)
+				can_module, NodeId(config.node_id), object_dictionary, object_dictionary_size)
 	{
 		_object = object;
 
@@ -162,10 +161,9 @@ public:
 	}
 
 	Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::primary, const IpcFlags& ipc_flags,
-			NodeId node_id, mcu::can::Module* can_module,
-			Object* object)
+			mcu::can::Module* can_module, const ServerConfig& config, Object* object)
 		: ucanopen::Server(mcu::ipc::traits::dualcore(), mcu::ipc::traits::primary(), ipc_flags,
-				node_id, can_module)
+				can_module, NodeId(config.node_id))
 	{
 		_object = object;
 

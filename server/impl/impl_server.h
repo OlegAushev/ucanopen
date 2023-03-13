@@ -50,11 +50,11 @@ private:
 	emb::array<mcu::can::MessageObject, cob_type_count> _message_objects;
 public:
 	Server(mcu::ipc::traits::singlecore, mcu::ipc::traits::primary,
-			NodeId node_id, mcu::can::Module* can_module,
+			mcu::can::Module* can_module, NodeId node_id,
 			ODEntry* object_dictionary, size_t object_dictionary_size);
 
 	Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::primary,
-			NodeId node_id, mcu::can::Module* can_module);
+			mcu::can::Module* can_module, NodeId node_id);
 
 	Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::secondary,
 			mcu::can::Peripheral can_peripheral, ODEntry* object_dictionary, size_t object_dictionary_size);

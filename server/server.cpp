@@ -4,10 +4,10 @@
 namespace ucanopen {
 
 Server::Server(mcu::ipc::traits::singlecore, mcu::ipc::traits::primary, const IpcFlags& ipc_flags,
-		NodeId nodeId, mcu::can::Module* can_module,
+		mcu::can::Module* can_module, NodeId node_id,
 		ODEntry* object_dictionary, size_t object_dictionary_size)
 	: impl::Server(mcu::ipc::traits::singlecore(), mcu::ipc::traits::primary(),
-			nodeId, can_module, object_dictionary, object_dictionary_size)
+			can_module, node_id, object_dictionary, object_dictionary_size)
 	, emb::c28x::interrupt_invoker_array<Server, mcu::can::peripheral_count>(this, can_module->peripheral().underlying_value())
 {
 	assert(ipc_flags.rpdo1_received.mode() == mcu::ipc::Mode::singlecore);
@@ -37,8 +37,8 @@ Server::Server(mcu::ipc::traits::singlecore, mcu::ipc::traits::primary, const Ip
 
 
 Server::Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::primary, const IpcFlags& ipc_flags,
-		NodeId nodeId, mcu::can::Module* can_module)
-	: impl::Server(mcu::ipc::traits::dualcore(), mcu::ipc::traits::primary(), nodeId, can_module)
+		mcu::can::Module* can_module, NodeId node_id)
+	: impl::Server(mcu::ipc::traits::dualcore(), mcu::ipc::traits::primary(), can_module, node_id)
 	, emb::c28x::interrupt_invoker_array<Server, mcu::can::peripheral_count>(this, can_module->peripheral().underlying_value())
 {
 	assert(ipc_flags.rpdo1_received.mode() == mcu::ipc::Mode::dualcore);
