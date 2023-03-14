@@ -1,4 +1,5 @@
 #include <ucanopen_c28x/tests/tests.h>
+#include <settings/settings.h>
 
 
 namespace ucanopen {
@@ -107,13 +108,6 @@ inline SdoAbortCode get_uptime(ExpeditedSdoData& retval)
 	return SdoAbortCode::no_error;
 }
 
-
-uint32_t parameter_1;
-float parameter_2;
-uint32_t parameter_3;
-float parameter_4;
-uint32_t parameter_5;
-
 } // namespace od
 
 
@@ -133,11 +127,22 @@ ODEntry object_dictionary[] = {
 {{0x5000, 0x01}, {"watch", "watch", "uptime", "s", OD_FLOAT32, OD_ACCESS_RO, OD_NO_DIRECT_ACCESS, od::get_uptime, OD_NO_INDIRECT_WRITE_ACCESS}},
 {{0x5000, 0x02}, {"watch", "watch", "syslog_message", "", OD_UINT32, OD_ACCESS_RO, OD_NO_DIRECT_ACCESS, od::get_syslog_message, OD_NO_INDIRECT_WRITE_ACCESS}},
 
-{{0x3000, 0x01}, {"config", "group 1", "parameter 1", "", OD_UINT32, OD_ACCESS_RW, OD_PTR(&od::parameter_1), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
-{{0x3000, 0x02}, {"config", "group 1", "parameter 2", "", OD_FLOAT32, OD_ACCESS_RW, OD_PTR(&od::parameter_2), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
-{{0x3001, 0x01}, {"config", "group 2", "parameter 3", "", OD_UINT32, OD_ACCESS_RW, OD_PTR(&od::parameter_3), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
-{{0x3001, 0x02}, {"config", "group 2", "parameter 4", "", OD_FLOAT32, OD_ACCESS_RW, OD_PTR(&od::parameter_4), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
-{{0x3001, 0x03}, {"config", "group 2", "parameter 5", "", OD_UINT32, OD_ACCESS_RW, OD_PTR(&od::parameter_5), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
+{{0x3000, 0x01}, {"config", "ucanopen", "node_id", "", OD_UINT32, OD_ACCESS_RW, OD_PTR(&settings::configs.ucanopen_server.node_id), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
+{{0x3000, 0x02}, {"config", "ucanopen", "heartbeat_period", "ms", OD_UINT32, OD_ACCESS_RW, OD_PTR(&settings::configs.ucanopen_server.heartbeat_period_ms), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
+{{0x3000, 0x03}, {"config", "ucanopen", "tpdo1_period", "ms", OD_UINT32, OD_ACCESS_RW, OD_PTR(&settings::configs.ucanopen_server.tpdo1_period_ms), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
+{{0x3000, 0x04}, {"config", "ucanopen", "tpdo2_period", "ms", OD_UINT32, OD_ACCESS_RW, OD_PTR(&settings::configs.ucanopen_server.tpdo2_period_ms), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
+{{0x3000, 0x05}, {"config", "ucanopen", "tpdo3_period", "ms", OD_UINT32, OD_ACCESS_RW, OD_PTR(&settings::configs.ucanopen_server.tpdo3_period_ms), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
+{{0x3000, 0x06}, {"config", "ucanopen", "tpdo4_period", "ms", OD_UINT32, OD_ACCESS_RW, OD_PTR(&settings::configs.ucanopen_server.tpdo4_period_ms), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
+{{0x3000, 0x07}, {"config", "ucanopen", "rpdo1_timeout", "ms", OD_UINT32, OD_ACCESS_RW, OD_PTR(&settings::configs.ucanopen_server.rpdo1_timeout_ms), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
+{{0x3000, 0x08}, {"config", "ucanopen", "rpdo2_timeout", "ms", OD_UINT32, OD_ACCESS_RW, OD_PTR(&settings::configs.ucanopen_server.rpdo2_timeout_ms), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
+{{0x3000, 0x09}, {"config", "ucanopen", "rpdo3_timeout", "ms", OD_UINT32, OD_ACCESS_RW, OD_PTR(&settings::configs.ucanopen_server.rpdo3_timeout_ms), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
+{{0x3000, 0x0A}, {"config", "ucanopen", "rpdo4_timeout", "ms", OD_UINT32, OD_ACCESS_RW, OD_PTR(&settings::configs.ucanopen_server.rpdo4_timeout_ms), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
+{{0x3000, 0x0B}, {"config", "ucanopen", "rpdo1_id", "", OD_UINT32, OD_ACCESS_RW, OD_PTR(&settings::configs.ucanopen_server.rpdo1_id), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
+{{0x3000, 0x0C}, {"config", "ucanopen", "rpdo2_id", "", OD_UINT32, OD_ACCESS_RW, OD_PTR(&settings::configs.ucanopen_server.rpdo2_id), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
+{{0x3000, 0x0D}, {"config", "ucanopen", "rpdo3_id", "", OD_UINT32, OD_ACCESS_RW, OD_PTR(&settings::configs.ucanopen_server.rpdo3_id), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
+{{0x3000, 0x0E}, {"config", "ucanopen", "rpdo4_id", "", OD_UINT32, OD_ACCESS_RW, OD_PTR(&settings::configs.ucanopen_server.rpdo4_id), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
+
+
 };
 
 
