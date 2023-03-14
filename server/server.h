@@ -27,6 +27,19 @@ extern unsigned char canb_tsdo_dualcore_alloc[sizeof(can_payload)];
 struct ServerConfig
 {
 	uint32_t node_id;
+	uint32_t heartbeat_period_ms;
+	uint32_t tpdo1_period_ms;	// 0 - TPDO is inactive
+	uint32_t tpdo2_period_ms;
+	uint32_t tpdo3_period_ms;
+	uint32_t tpdo4_period_ms;
+	uint32_t rpdo1_timeout_ms;	// 0 - no RPDO timeout
+	uint32_t rpdo2_timeout_ms;
+	uint32_t rpdo3_timeout_ms;
+	uint32_t rpdo4_timeout_ms;
+	uint32_t rpdo1_id;			// 0 - use default RPDO ID
+	uint32_t rpdo2_id;
+	uint32_t rpdo3_id;
+	uint32_t rpdo4_id;
 };
 
 
@@ -41,11 +54,11 @@ protected:
 	virtual void on_run() {}
 public:
 	Server(mcu::ipc::traits::singlecore, mcu::ipc::traits::primary, const IpcFlags& ipc_flags,
-			mcu::can::Module* can_module, NodeId node_id,
+			mcu::can::Module* can_module, const ServerConfig& config,
 			ODEntry* object_dictionary, size_t object_dictionary_size);
 
 	Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::primary, const IpcFlags& ipc_flags,
-			mcu::can::Module* can_module, NodeId node_id);
+			mcu::can::Module* can_module, const ServerConfig& config);
 
 	Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::secondary, const IpcFlags& ipc_flags,
 			mcu::can::Peripheral can_peripheral, ODEntry* object_dictionary, size_t object_dictionary_size);

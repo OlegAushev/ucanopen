@@ -30,7 +30,7 @@ public:
 
 		for (size_t i = 0; i < _tpdo_list.size(); ++i)
 		{
-			if (!_tpdo_list[i].creator) continue;
+			if (!_tpdo_list[i].creator || _tpdo_list[i].period.count() <= 0) continue;
 			if (mcu::chrono::system_clock::now() < _tpdo_list[i].timepoint + _tpdo_list[i].period) continue;
 
 			can_payload payload = _tpdo_list[i].creator();

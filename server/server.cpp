@@ -4,10 +4,10 @@
 namespace ucanopen {
 
 Server::Server(mcu::ipc::traits::singlecore, mcu::ipc::traits::primary, const IpcFlags& ipc_flags,
-		mcu::can::Module* can_module, NodeId node_id,
+		mcu::can::Module* can_module, const ServerConfig& config,
 		ODEntry* object_dictionary, size_t object_dictionary_size)
 	: impl::Server(mcu::ipc::traits::singlecore(), mcu::ipc::traits::primary(),
-			can_module, node_id, object_dictionary, object_dictionary_size)
+			can_module, NodeId(config.node_id), object_dictionary, object_dictionary_size)
 	, emb::c28x::interrupt_invoker_array<Server, mcu::can::peripheral_count>(this, can_module->peripheral().underlying_value())
 {
 	assert(ipc_flags.rpdo1_received.mode() == mcu::ipc::Mode::singlecore);
@@ -17,7 +17,7 @@ Server::Server(mcu::ipc::traits::singlecore, mcu::ipc::traits::primary, const Ip
 	assert(ipc_flags.rsdo_received.mode() == mcu::ipc::Mode::singlecore);
 	assert(ipc_flags.tsdo_ready.mode() == mcu::ipc::Mode::singlecore);
 
-	heartbeat_service = new HeartbeatService(this, emb::chrono::milliseconds(1000));
+	heartbeat_service = new HeartbeatService(this, emb::chrono::milliseconds(config.heartbeat_period_ms));
 	tpdo_service = new TpdoService(this);
 	rpdo_service = new RpdoService(this, ipc_flags);
 	sdo_service = new SdoService(this, ipc_flags);
@@ -37,8 +37,8 @@ Server::Server(mcu::ipc::traits::singlecore, mcu::ipc::traits::primary, const Ip
 
 
 Server::Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::primary, const IpcFlags& ipc_flags,
-		mcu::can::Module* can_module, NodeId node_id)
-	: impl::Server(mcu::ipc::traits::dualcore(), mcu::ipc::traits::primary(), can_module, node_id)
+		mcu::can::Module* can_module, const ServerConfig& config)
+	: impl::Server(mcu::ipc::traits::dualcore(), mcu::ipc::traits::primary(), can_module, NodeId(config.node_id))
 	, emb::c28x::interrupt_invoker_array<Server, mcu::can::peripheral_count>(this, can_module->peripheral().underlying_value())
 {
 	assert(ipc_flags.rpdo1_received.mode() == mcu::ipc::Mode::dualcore);
@@ -48,7 +48,7 @@ Server::Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::primary, const IpcF
 	assert(ipc_flags.rsdo_received.mode() == mcu::ipc::Mode::dualcore);
 	assert(ipc_flags.tsdo_ready.mode() == mcu::ipc::Mode::dualcore);
 
-	heartbeat_service = new HeartbeatService(this, emb::chrono::milliseconds(1000));
+	heartbeat_service = new HeartbeatService(this, emb::chrono::milliseconds(config.heartbeat_period_ms));
 	tpdo_service = new TpdoService(this);
 	rpdo_service = new RpdoService(this, ipc_flags);
 	sdo_service = new SdoService(this, ipc_flags);
