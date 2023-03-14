@@ -12,8 +12,7 @@ unsigned char object_alloc[sizeof(Object)] __attribute__((section("shared_ucanop
 
 namespace od {
 
-SdoAbortCode get_device_name(ExpeditedSdoData& retval)
-{
+SdoAbortCode get_device_name(ExpeditedSdoData& retval) {
 	const size_t len = strlen(sysinfo::device_name) + 1;
 	const size_t word_count = (len + 3) / 4;
 	static size_t counter = 0;
@@ -28,8 +27,7 @@ SdoAbortCode get_device_name(ExpeditedSdoData& retval)
 }
 
 
-SdoAbortCode get_hardware_version(ExpeditedSdoData& retval)
-{
+SdoAbortCode get_hardware_version(ExpeditedSdoData& retval) {
 	const size_t len = strlen(sysinfo::hardware_version) + 1;
 	const size_t word_count = (len + 3) / 4;
 	static size_t counter = 0;
@@ -44,8 +42,7 @@ SdoAbortCode get_hardware_version(ExpeditedSdoData& retval)
 }
 
 
-SdoAbortCode get_firmware_version(ExpeditedSdoData& retval)
-{
+SdoAbortCode get_firmware_version(ExpeditedSdoData& retval) {
 	const size_t len = strlen(sysinfo::firmware_version) + 1;
 	const size_t word_count = (len + 3) / 4;
 	static size_t counter = 0;
@@ -60,50 +57,43 @@ SdoAbortCode get_firmware_version(ExpeditedSdoData& retval)
 }
 
 
-SdoAbortCode save_all_parameters(ExpeditedSdoData val)
-{
+SdoAbortCode save_all_parameters(ExpeditedSdoData val) {
 	return SdoAbortCode::no_error;
 }
 
 
-SdoAbortCode restore_all_default_parameters(ExpeditedSdoData val)
-{
+SdoAbortCode restore_all_default_parameters(ExpeditedSdoData val) {
 	return SdoAbortCode::no_error;
 }
 
 
-SdoAbortCode get_serial_number(ExpeditedSdoData& retval)
-{
+SdoAbortCode get_serial_number(ExpeditedSdoData& retval) {
 	uint32_t* uid_ptr = reinterpret_cast<uint32_t*>(0x000703CC);
 	retval.u32 = *uid_ptr;
 	return SdoAbortCode::no_error;
 }
 
 
-inline SdoAbortCode reset_device(ExpeditedSdoData val)
-{
+inline SdoAbortCode reset_device(ExpeditedSdoData val) {
 	syslog::add_message(sys::Message::device_software_resetting);
 	mcu::chrono::system_clock::register_delayed_task(mcu::reset_device, emb::chrono::milliseconds(2000));
 	return SdoAbortCode::no_error;
 }
 
 
-inline SdoAbortCode reset_errors(ExpeditedSdoData val)
-{
+inline SdoAbortCode reset_errors(ExpeditedSdoData val) {
 	syslog::reset_errors_warnings();
 	return SdoAbortCode::no_error;
 }
 
 
-inline SdoAbortCode get_syslog_message(ExpeditedSdoData& retval)
-{
+inline SdoAbortCode get_syslog_message(ExpeditedSdoData& retval) {
 	retval.u32 = syslog::read_message().underlying_value();
 	syslog::pop_message();
 	return SdoAbortCode::no_error;
 }
 
-inline SdoAbortCode get_uptime(ExpeditedSdoData& retval)
-{
+inline SdoAbortCode get_uptime(ExpeditedSdoData& retval) {
 	retval.f32 = mcu::chrono::system_clock::now().count() / 1000.f;
 	return SdoAbortCode::no_error;
 }

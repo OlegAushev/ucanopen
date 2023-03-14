@@ -4,15 +4,14 @@
 namespace ucanopen {
 
 impl::Server::Server(mcu::ipc::traits::singlecore, mcu::ipc::traits::primary,
-		mcu::can::Module* can_module, NodeId node_id,
-		ODEntry* object_dictionary, size_t object_dictionary_size)
-	: _ipc_mode(mcu::ipc::Mode::singlecore)
-	, _ipc_role(mcu::ipc::Role::primary)
-	, _node_id(node_id)
-	, _can_module(can_module)
-	, _dictionary(object_dictionary)
-	, _dictionary_size(object_dictionary_size)
-{
+						mcu::can::Module* can_module, NodeId node_id,
+						ODEntry* object_dictionary, size_t object_dictionary_size)
+		: _ipc_mode(mcu::ipc::Mode::singlecore)
+		, _ipc_role(mcu::ipc::Role::primary)
+		, _node_id(node_id)
+		, _can_module(can_module)
+		, _dictionary(object_dictionary)
+		, _dictionary_size(object_dictionary_size) {
 	_can_peripheral = _can_module->peripheral();
 	_nmt_state = NmtState::initializing;
 	_init_message_objects();
@@ -21,14 +20,13 @@ impl::Server::Server(mcu::ipc::traits::singlecore, mcu::ipc::traits::primary,
 
 
 impl::Server::Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::primary,
-		mcu::can::Module* can_module, NodeId node_id)
-	: _ipc_mode(mcu::ipc::Mode::dualcore)
-	, _ipc_role(mcu::ipc::Role::primary)
-	, _node_id(node_id)
-	, _can_module(can_module)
-	, _dictionary(static_cast<ODEntry*>(NULL))
-	, _dictionary_size(0)
-{
+						mcu::can::Module* can_module, NodeId node_id)
+		: _ipc_mode(mcu::ipc::Mode::dualcore)
+		, _ipc_role(mcu::ipc::Role::primary)
+		, _node_id(node_id)
+		, _can_module(can_module)
+		, _dictionary(static_cast<ODEntry*>(NULL))
+		, _dictionary_size(0) {
 	_can_peripheral = _can_module->peripheral();
 	_nmt_state = NmtState::initializing;
 	_init_message_objects();
@@ -36,24 +34,21 @@ impl::Server::Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::primary,
 
 
 impl::Server::Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::secondary,
-		mcu::can::Peripheral can_peripheral, ODEntry* object_dictionary, size_t object_dictionary_size)
-	: _ipc_mode(mcu::ipc::Mode::dualcore)
-	, _ipc_role(mcu::ipc::Role::secondary)
-	, _node_id(NodeId(0))
-	, _can_module(static_cast<mcu::can::Module*>(NULL))
-	, _dictionary(object_dictionary)
-	, _dictionary_size(object_dictionary_size)
-{
+						mcu::can::Peripheral can_peripheral, ODEntry* object_dictionary, size_t object_dictionary_size)
+		: _ipc_mode(mcu::ipc::Mode::dualcore)
+		, _ipc_role(mcu::ipc::Role::secondary)
+		, _node_id(NodeId(0))
+		, _can_module(static_cast<mcu::can::Module*>(NULL))
+		, _dictionary(object_dictionary)
+		, _dictionary_size(object_dictionary_size) {
 	_can_peripheral = can_peripheral;
 	_nmt_state = NmtState::initializing;
 	_init_object_dictionary();
 }
 
 
-void impl::Server::_init_message_objects()
-{
-	for (size_t i = 0; i < cob_type_count; ++i)
-	{
+void impl::Server::_init_message_objects() {
+	for (size_t i = 0; i < cob_type_count; ++i) {
 		_message_objects[i].obj_id = i;
 		_message_objects[i].frame_id = calculate_cob_id(CobType(i), this->_node_id);
 		_message_objects[i].frame_type = CAN_MSG_FRAME_STD;
@@ -99,33 +94,29 @@ void impl::Server::_init_message_objects()
 			= _message_objects[CobType::rsdo].flags
 			= CAN_MSG_OBJ_RX_INT_ENABLE;
 
-	for (size_t i = 1; i < cob_type_count; ++i)	// count from 1 - skip dummy COB
-	{
+	for (size_t i = 1; i < cob_type_count; ++i) {
+		// count from 1 - skip dummy COB
 		this->_can_module->setup_message_object(_message_objects[i]);
 	}
 }
 
 
-void impl::Server::_init_object_dictionary()
-{
+void impl::Server::_init_object_dictionary() {
 	assert(_dictionary != NULL);
 
 	std::sort(_dictionary, _dictionary + _dictionary_size);
 
 	// Check OBJECT DICTIONARY correctness
-	for (size_t i = 0; i < _dictionary_size; ++i)
-	{
+	for (size_t i = 0; i < _dictionary_size; ++i) {
 		// OD is sorted
-		if (i < (_dictionary_size - 1))
-		{
+		if (i < (_dictionary_size - 1)) {
 			assert(_dictionary[i] < _dictionary[i+1]);
 		}
 
-		for (size_t j = i+1; j < _dictionary_size; ++j)
-		{
+		for (size_t j = i+1; j < _dictionary_size; ++j) {
 			// no od-entries with equal {index, subinex}
 			assert((_dictionary[i].key.index != _dictionary[j].key.index)
-				|| (_dictionary[i].key.subindex != _dictionary[j].key.subindex));
+					|| (_dictionary[i].key.subindex != _dictionary[j].key.subindex));
 
 			// no od-entries with equal {category, subcategory, name}
 			bool categoryEqual = ((strcmp(_dictionary[i].object.category, _dictionary[j].object.category) == 0) ? true : false);
@@ -134,24 +125,18 @@ void impl::Server::_init_object_dictionary()
 			assert(!categoryEqual || !subcategoryEqual || !nameEqual);
 		}
 
-		if (_dictionary[i].object.has_read_permission())
-		{
+		if (_dictionary[i].object.has_read_permission()) {
 			assert((_dictionary[i].object.read_func != OD_NO_INDIRECT_READ_ACCESS)
 					|| (_dictionary[i].object.ptr != OD_NO_DIRECT_ACCESS));
-		}
-		else
-		{
+		} else {
 			assert(_dictionary[i].object.read_func == OD_NO_INDIRECT_READ_ACCESS
 					&& (_dictionary[i].object.ptr == OD_NO_DIRECT_ACCESS));
 		}
 
-		if (_dictionary[i].object.has_write_permission())
-		{
+		if (_dictionary[i].object.has_write_permission()) {
 			assert(_dictionary[i].object.write_func != OD_NO_INDIRECT_WRITE_ACCESS
 					|| (_dictionary[i].object.ptr != OD_NO_DIRECT_ACCESS));
-		}
-		else
-		{
+		} else {
 			assert(_dictionary[i].object.write_func == OD_NO_INDIRECT_WRITE_ACCESS
 					&& (_dictionary[i].object.ptr == OD_NO_DIRECT_ACCESS));
 		}

@@ -12,8 +12,7 @@ typedef emb::array<uint8_t, 8> can_payload;
 
 
 template <typename T>
-inline can_payload to_payload(const T& message)
-{
+inline can_payload to_payload(const T& message) {
 	EMB_STATIC_ASSERT(sizeof(T) <= 4);
 	can_payload payload;
 	payload.fill(0);
@@ -23,8 +22,7 @@ inline can_payload to_payload(const T& message)
 
 
 template <typename T>
-inline void to_payload(can_payload& payload, const T& message)
-{
+inline void to_payload(can_payload& payload, const T& message) {
 	EMB_STATIC_ASSERT(sizeof(T) <= 4);
 	payload.fill(0);
 	emb::c28x::to_bytes(payload.data, message);
@@ -32,8 +30,7 @@ inline void to_payload(can_payload& payload, const T& message)
 
 
 template <typename T>
-inline T from_payload(const can_payload& payload)
-{
+inline T from_payload(const can_payload& payload) {
 	EMB_STATIC_ASSERT(sizeof(T) <= 4);
 	T message;
 	emb::c28x::from_bytes(message, payload.data);
@@ -41,8 +38,7 @@ inline T from_payload(const can_payload& payload)
 }
 
 
-class NodeId
-{
+class NodeId {
 private:
 	unsigned int _value;
 public:
@@ -52,18 +48,15 @@ public:
 };
 
 
-SCOPED_ENUM_DECLARE_BEGIN(NmtState)
-{
+SCOPED_ENUM_DECLARE_BEGIN(NmtState) {
 	initializing = 0x00,
 	stopped = 0x04,
 	operational = 0x05,
 	pre_operational = 0x7F
-}
-SCOPED_ENUM_DECLARE_END(NmtState)
+} SCOPED_ENUM_DECLARE_END(NmtState)
 
 
-SCOPED_ENUM_DECLARE_BEGIN(CobType)
-{
+SCOPED_ENUM_DECLARE_BEGIN(CobType) {
 	dummy,
 	nmt,
 	sync,
@@ -80,15 +73,13 @@ SCOPED_ENUM_DECLARE_BEGIN(CobType)
 	tsdo,
 	rsdo,
 	heartbeat
-}
-SCOPED_ENUM_DECLARE_END(CobType)
+} SCOPED_ENUM_DECLARE_END(CobType)
 
 
 const size_t cob_type_count = 16;
 
 
-const emb::array<uint32_t, cob_type_count> cob_function_codes =
-{
+const emb::array<uint32_t, cob_type_count> cob_function_codes = {
 	0x000,	// DUMMY
 	0x000,	// NMT
 	0x080,	// SYNC
@@ -108,20 +99,15 @@ const emb::array<uint32_t, cob_type_count> cob_function_codes =
 };
 
 
-inline uint32_t calculate_cob_id(CobType cob_type, NodeId node_id)
-{
-	if ((cob_type == CobType::nmt)
-			|| (cob_type == CobType::sync)
-			|| (cob_type == CobType::time))
-	{
+inline uint32_t calculate_cob_id(CobType cob_type, NodeId node_id) {
+	if ((cob_type == CobType::nmt) || (cob_type == CobType::sync) || (cob_type == CobType::time)) {
 		return cob_function_codes[cob_type.underlying_value()];
 	}
 	return cob_function_codes[cob_type.underlying_value()] + node_id.get();
 }
 
 
-const emb::array<unsigned int, cob_type_count> cob_sizes =
-{
+const emb::array<unsigned int, cob_type_count> cob_sizes = {
 	0,	// DUMMY
 	2,	// NMT
 	0,	// SYNC
@@ -141,34 +127,28 @@ const emb::array<unsigned int, cob_type_count> cob_sizes =
 };
 
 
-SCOPED_ENUM_DECLARE_BEGIN(TpdoType)
-{
+SCOPED_ENUM_DECLARE_BEGIN(TpdoType) {
 	tpdo1,
 	tpdo2,
 	tpdo3,
 	tpdo4,
-}
-SCOPED_ENUM_DECLARE_END(TpdoType)
+} SCOPED_ENUM_DECLARE_END(TpdoType)
 
 
-inline CobType to_cob_type(TpdoType tpdo_type)
-{
+inline CobType to_cob_type(TpdoType tpdo_type) {
 	return static_cast<CobType>(static_cast<unsigned int>(CobType::tpdo1) + 2 * tpdo_type.underlying_value());
 }
 
 
-SCOPED_ENUM_DECLARE_BEGIN(RpdoType)
-{
+SCOPED_ENUM_DECLARE_BEGIN(RpdoType) {
 	rpdo1,
 	rpdo2,
 	rpdo3,
 	rpdo4,
-}
-SCOPED_ENUM_DECLARE_END(RpdoType)
+} SCOPED_ENUM_DECLARE_END(RpdoType)
 
 
-inline CobType to_cob_type(RpdoType rpdo_type)
-{
+inline CobType to_cob_type(RpdoType rpdo_type) {
 	return static_cast<CobType>(static_cast<unsigned int>(CobType::rpdo1) + 2 * rpdo_type.underlying_value());
 }
 
@@ -183,16 +163,14 @@ const uint32_t abort = 4;
 }
 
 
-union ExpeditedSdoData
-{
+union ExpeditedSdoData {
 	int32_t i32;
 	uint32_t u32;
 	float f32;
 };
 
 
-struct ExpeditedSdo
-{
+struct ExpeditedSdo {
 	uint32_t data_size_indicated : 1;
 	uint32_t expedited_transfer : 1;
 	uint32_t data_empty_bytes : 2;
@@ -205,23 +183,20 @@ struct ExpeditedSdo
 };
 
 
-struct AbortSdo
-{
+struct AbortSdo {
 	uint32_t _reserved : 5;
 	uint32_t cs : 3;
 	uint32_t index : 16;
 	uint32_t subindex : 8;
 	uint32_t error_code;
-	AbortSdo()
-	{
+	AbortSdo() {
 		memset(this, 0, sizeof(AbortSdo));
 		cs = sdo_cs_codes::abort;
 	}
 };
 
 
-SCOPED_ENUM_UT_DECLARE_BEGIN(SdoAbortCode, uint32_t)
-{
+SCOPED_ENUM_UT_DECLARE_BEGIN(SdoAbortCode, uint32_t) {
 	no_error 			= 0,
 	invalid_cs 			= 0x05040001,
 	unsupported_access 		= 0x06010000,
@@ -233,12 +208,10 @@ SCOPED_ENUM_UT_DECLARE_BEGIN(SdoAbortCode, uint32_t)
 	data_store_error 		= 0x08000020,
 	local_control_error 		= 0x08000021,
 	state_error 			= 0x08000022
-}
-SCOPED_ENUM_DECLARE_END(SdoAbortCode)
+} SCOPED_ENUM_DECLARE_END(SdoAbortCode)
 
 
-enum ODObjectType
-{
+enum ODObjectType {
 	OD_BOOL,
 	OD_INT16,
 	OD_INT32,
@@ -251,8 +224,7 @@ enum ODObjectType
 };
 
 
-enum ODObjectAccessPermission
-{
+enum ODObjectAccessPermission {
 	OD_ACCESS_RW,
 	OD_ACCESS_RO,
 	OD_ACCESS_WO,
@@ -277,18 +249,17 @@ inline SdoAbortCode OD_NO_INDIRECT_WRITE_ACCESS(ExpeditedSdoData val) { return S
 
 
 const size_t od_object_type_sizes[9] = {sizeof(bool), sizeof(int16_t), sizeof(int32_t),
-		sizeof(uint16_t), sizeof(uint32_t), sizeof(float), sizeof(uint16_t), 0, 0};
+										sizeof(uint16_t), sizeof(uint32_t), sizeof(float),
+										sizeof(uint16_t), 0, 0};
 
 
-struct ODObjectKey
-{
+struct ODObjectKey {
 	uint32_t index;
 	uint32_t subindex;
 };
 
 
-struct ODObject
-{
+struct ODObject {
 	const char* category;
 	const char* subcategory;
 	const char* name;
@@ -299,46 +270,39 @@ struct ODObject
 	SdoAbortCode (*read_func)(ExpeditedSdoData& retval);
 	SdoAbortCode (*write_func)(ExpeditedSdoData val);
 
-	bool has_direct_access() const
-	{
+	bool has_direct_access() const {
 		return ptr != OD_NO_DIRECT_ACCESS;
 	}
 
-	bool has_read_permission() const
-	{
+	bool has_read_permission() const {
 		return access_permission != OD_ACCESS_WO;
 	}
 
-	bool has_write_permission() const
-	{
+	bool has_write_permission() const {
 		return (access_permission == OD_ACCESS_RW) || (access_permission == OD_ACCESS_WO);
 	}
 };
 
 
-struct ODEntry
-{
+struct ODEntry {
 	ODObjectKey key;
 	ODObject object;
 };
 
 
-inline bool operator<(const ODEntry& lhs, const ODEntry& rhs)
-{
+inline bool operator<(const ODEntry& lhs, const ODEntry& rhs) {
 	return (lhs.key.index < rhs.key.index)
 			|| ((lhs.key.index == rhs.key.index) && (lhs.key.subindex < rhs.key.subindex));
 }
 
 
-inline bool operator<(const ODObjectKey& lhs, const ODEntry& rhs)
-{
+inline bool operator<(const ODObjectKey& lhs, const ODEntry& rhs) {
 	return (lhs.index < rhs.key.index)
 			|| ((lhs.index == rhs.key.index) && (lhs.subindex < rhs.key.subindex));
 }
 
 
-inline bool operator==(const ODObjectKey& lhs, const ODEntry& rhs)
-{
+inline bool operator==(const ODObjectKey& lhs, const ODEntry& rhs) {
 	return (lhs.index == rhs.key.index) && (lhs.subindex == rhs.key.subindex);
 }
 

@@ -4,12 +4,11 @@
 namespace ucanopen {
 
 Server::Server(mcu::ipc::traits::singlecore, mcu::ipc::traits::primary, const IpcFlags& ipc_flags,
-		mcu::can::Module* can_module, const ServerConfig& config,
-		ODEntry* object_dictionary, size_t object_dictionary_size)
-	: impl::Server(mcu::ipc::traits::singlecore(), mcu::ipc::traits::primary(),
-			can_module, NodeId(config.node_id), object_dictionary, object_dictionary_size)
-	, emb::c28x::interrupt_invoker_array<Server, mcu::can::peripheral_count>(this, can_module->peripheral().underlying_value())
-{
+				mcu::can::Module* can_module, const ServerConfig& config,
+				ODEntry* object_dictionary, size_t object_dictionary_size)
+		: impl::Server(mcu::ipc::traits::singlecore(), mcu::ipc::traits::primary(),
+				can_module, NodeId(config.node_id), object_dictionary, object_dictionary_size)
+		, emb::c28x::interrupt_invoker_array<Server, mcu::can::peripheral_count>(this, can_module->peripheral().underlying_value()) {
 	assert(ipc_flags.rpdo1_received.mode() == mcu::ipc::Mode::singlecore);
 	assert(ipc_flags.rpdo2_received.mode() == mcu::ipc::Mode::singlecore);
 	assert(ipc_flags.rpdo3_received.mode() == mcu::ipc::Mode::singlecore);
@@ -22,14 +21,13 @@ Server::Server(mcu::ipc::traits::singlecore, mcu::ipc::traits::primary, const Ip
 	rpdo_service = new RpdoService(this, ipc_flags);
 	sdo_service = new SdoService(this, ipc_flags);
 
-	switch (can_module->peripheral().native_value())
-	{
-		case mcu::can::Peripheral::cana:
-			this->_can_module->register_interrupt_callback(on_frame_received<mcu::can::Peripheral::cana>);
-			break;
-		case mcu::can::Peripheral::canb:
-			this->_can_module->register_interrupt_callback(on_frame_received<mcu::can::Peripheral::canb>);
-			break;
+	switch (can_module->peripheral().native_value()) {
+	case mcu::can::Peripheral::cana:
+		this->_can_module->register_interrupt_callback(on_frame_received<mcu::can::Peripheral::cana>);
+		break;
+	case mcu::can::Peripheral::canb:
+		this->_can_module->register_interrupt_callback(on_frame_received<mcu::can::Peripheral::canb>);
+		break;
 	}
 
 	this->_nmt_state = NmtState::pre_operational;
@@ -37,10 +35,9 @@ Server::Server(mcu::ipc::traits::singlecore, mcu::ipc::traits::primary, const Ip
 
 
 Server::Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::primary, const IpcFlags& ipc_flags,
-		mcu::can::Module* can_module, const ServerConfig& config)
-	: impl::Server(mcu::ipc::traits::dualcore(), mcu::ipc::traits::primary(), can_module, NodeId(config.node_id))
-	, emb::c28x::interrupt_invoker_array<Server, mcu::can::peripheral_count>(this, can_module->peripheral().underlying_value())
-{
+				mcu::can::Module* can_module, const ServerConfig& config)
+		: impl::Server(mcu::ipc::traits::dualcore(), mcu::ipc::traits::primary(), can_module, NodeId(config.node_id))
+		, emb::c28x::interrupt_invoker_array<Server, mcu::can::peripheral_count>(this, can_module->peripheral().underlying_value()) {
 	assert(ipc_flags.rpdo1_received.mode() == mcu::ipc::Mode::dualcore);
 	assert(ipc_flags.rpdo2_received.mode() == mcu::ipc::Mode::dualcore);
 	assert(ipc_flags.rpdo3_received.mode() == mcu::ipc::Mode::dualcore);
@@ -53,14 +50,13 @@ Server::Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::primary, const IpcF
 	rpdo_service = new RpdoService(this, ipc_flags);
 	sdo_service = new SdoService(this, ipc_flags);
 
-	switch (can_module->peripheral().native_value())
-	{
-		case mcu::can::Peripheral::cana:
-			this->_can_module->register_interrupt_callback(on_frame_received<mcu::can::Peripheral::cana>);
-			break;
-		case mcu::can::Peripheral::canb:
-			this->_can_module->register_interrupt_callback(on_frame_received<mcu::can::Peripheral::canb>);
-			break;
+	switch (can_module->peripheral().native_value()) {
+	case mcu::can::Peripheral::cana:
+		this->_can_module->register_interrupt_callback(on_frame_received<mcu::can::Peripheral::cana>);
+		break;
+	case mcu::can::Peripheral::canb:
+		this->_can_module->register_interrupt_callback(on_frame_received<mcu::can::Peripheral::canb>);
+		break;
 	}
 
 	this->_nmt_state = NmtState::pre_operational;
@@ -68,10 +64,9 @@ Server::Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::primary, const IpcF
 
 
 Server::Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::secondary, const IpcFlags& ipc_flags,
-		mcu::can::Peripheral can_peripheral, ODEntry* object_dictionary, size_t object_dictionary_size)
-	: impl::Server(mcu::ipc::traits::dualcore(), mcu::ipc::traits::secondary(), can_peripheral, object_dictionary, object_dictionary_size)
-	, emb::c28x::interrupt_invoker_array<Server, mcu::can::peripheral_count>(this, can_peripheral.underlying_value())
-{
+				mcu::can::Peripheral can_peripheral, ODEntry* object_dictionary, size_t object_dictionary_size)
+		: impl::Server(mcu::ipc::traits::dualcore(), mcu::ipc::traits::secondary(), can_peripheral, object_dictionary, object_dictionary_size)
+		, emb::c28x::interrupt_invoker_array<Server, mcu::can::peripheral_count>(this, can_peripheral.underlying_value()) {
 	assert(ipc_flags.rpdo1_received.mode() == mcu::ipc::Mode::dualcore);
 	assert(ipc_flags.rpdo2_received.mode() == mcu::ipc::Mode::dualcore);
 	assert(ipc_flags.rpdo3_received.mode() == mcu::ipc::Mode::dualcore);

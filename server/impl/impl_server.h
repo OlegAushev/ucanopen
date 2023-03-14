@@ -9,8 +9,7 @@
 
 namespace ucanopen {
 
-struct IpcFlags
-{
+struct IpcFlags {
 	mcu::ipc::Flag rpdo1_received;
 	mcu::ipc::Flag rpdo2_received;
 	mcu::ipc::Flag rpdo3_received;
@@ -28,8 +27,7 @@ class SdoService;
 
 namespace impl {
 
-class Server
-{
+class Server {
 	friend class ucanopen::HeartbeatService;
 	friend class ucanopen::TpdoService;
 	friend class ucanopen::RpdoService;
