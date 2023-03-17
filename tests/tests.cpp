@@ -13,89 +13,89 @@ unsigned char object_alloc[sizeof(Object)] __attribute__((section("shared_ucanop
 namespace od {
 
 SdoAbortCode get_device_name(ExpeditedSdoData& retval) {
-	const size_t len = strlen(sysinfo::device_name) + 1;
-	const size_t word_count = (len + 3) / 4;
-	static size_t counter = 0;
+    const size_t len = strlen(sysinfo::device_name) + 1;
+    const size_t word_count = (len + 3) / 4;
+    static size_t counter = 0;
 
-	char word[4] = {0};
-	strncpy(word, sysinfo::device_name + 4*counter, 4);
-	emb::c28x::from_bytes<uint32_t>(retval.u32, reinterpret_cast<uint8_t*>(word));
+    char word[4] = {0};
+    strncpy(word, sysinfo::device_name + 4*counter, 4);
+    emb::c28x::from_bytes<uint32_t>(retval.u32, reinterpret_cast<uint8_t*>(word));
 
-	counter = (counter + 1) % word_count;
+    counter = (counter + 1) % word_count;
 
-	return SdoAbortCode::no_error;
+    return SdoAbortCode::no_error;
 }
 
 
 SdoAbortCode get_hardware_version(ExpeditedSdoData& retval) {
-	const size_t len = strlen(sysinfo::hardware_version) + 1;
-	const size_t word_count = (len + 3) / 4;
-	static size_t counter = 0;
+    const size_t len = strlen(sysinfo::hardware_version) + 1;
+    const size_t word_count = (len + 3) / 4;
+    static size_t counter = 0;
 
-	char word[4] = {0};
-	strncpy(word, sysinfo::hardware_version + 4*counter, 4);
-	emb::c28x::from_bytes<uint32_t>(retval.u32, reinterpret_cast<uint8_t*>(word));
+    char word[4] = {0};
+    strncpy(word, sysinfo::hardware_version + 4*counter, 4);
+    emb::c28x::from_bytes<uint32_t>(retval.u32, reinterpret_cast<uint8_t*>(word));
 
-	counter = (counter + 1) % word_count;
+    counter = (counter + 1) % word_count;
 
-	return SdoAbortCode::no_error;
+    return SdoAbortCode::no_error;
 }
 
 
 SdoAbortCode get_firmware_version(ExpeditedSdoData& retval) {
-	const size_t len = strlen(sysinfo::firmware_version) + 1;
-	const size_t word_count = (len + 3) / 4;
-	static size_t counter = 0;
+    const size_t len = strlen(sysinfo::firmware_version) + 1;
+    const size_t word_count = (len + 3) / 4;
+    static size_t counter = 0;
 
-	char word[4] = {0};
-	strncpy(word, sysinfo::firmware_version + 4*counter, 4);
-	emb::c28x::from_bytes<uint32_t>(retval.u32, reinterpret_cast<uint8_t*>(word));
+    char word[4] = {0};
+    strncpy(word, sysinfo::firmware_version + 4*counter, 4);
+    emb::c28x::from_bytes<uint32_t>(retval.u32, reinterpret_cast<uint8_t*>(word));
 
-	counter = (counter + 1) % word_count;
+    counter = (counter + 1) % word_count;
 
-	return SdoAbortCode::no_error;
+    return SdoAbortCode::no_error;
 }
 
 
 SdoAbortCode save_all_parameters(ExpeditedSdoData val) {
-	return SdoAbortCode::no_error;
+    return SdoAbortCode::no_error;
 }
 
 
 SdoAbortCode restore_all_default_parameters(ExpeditedSdoData val) {
-	return SdoAbortCode::no_error;
+    return SdoAbortCode::no_error;
 }
 
 
 SdoAbortCode get_serial_number(ExpeditedSdoData& retval) {
-	uint32_t* uid_ptr = reinterpret_cast<uint32_t*>(0x000703CC);
-	retval.u32 = *uid_ptr;
-	return SdoAbortCode::no_error;
+    uint32_t* uid_ptr = reinterpret_cast<uint32_t*>(0x000703CC);
+    retval.u32 = *uid_ptr;
+    return SdoAbortCode::no_error;
 }
 
 
 inline SdoAbortCode reset_device(ExpeditedSdoData val) {
-	syslog::add_message(sys::Message::device_resetting);
-	mcu::chrono::system_clock::register_delayed_task(mcu::reset_device, emb::chrono::milliseconds(2000));
-	return SdoAbortCode::no_error;
+    syslog::add_message(sys::Message::device_resetting);
+    mcu::chrono::system_clock::register_delayed_task(mcu::reset_device, emb::chrono::milliseconds(2000));
+    return SdoAbortCode::no_error;
 }
 
 
 inline SdoAbortCode reset_errors(ExpeditedSdoData val) {
-	syslog::reset_errors_warnings();
-	return SdoAbortCode::no_error;
+    syslog::reset_errors_warnings();
+    return SdoAbortCode::no_error;
 }
 
 
 inline SdoAbortCode get_syslog_message(ExpeditedSdoData& retval) {
-	retval.u32 = syslog::read_message().underlying_value();
-	syslog::pop_message();
-	return SdoAbortCode::no_error;
+    retval.u32 = syslog::read_message().underlying_value();
+    syslog::pop_message();
+    return SdoAbortCode::no_error;
 }
 
 inline SdoAbortCode get_uptime(ExpeditedSdoData& retval) {
-	retval.f32 = mcu::chrono::system_clock::now().count() / 1000.f;
-	return SdoAbortCode::no_error;
+    retval.f32 = mcu::chrono::system_clock::now().count() / 1000.f;
+    return SdoAbortCode::no_error;
 }
 
 } // namespace od
