@@ -30,7 +30,7 @@ public:
 
         if (_rsdo_flag.local.is_set() || _tsdo_flag.is_set()) {
             syslog::set_warning(sys::Warning::can_bus_overrun);
-            syslog::add_message(sys::Message::can_lost_sdo_request);
+            syslog::add_message(sys::Message::ucanopen_sdo_request_lost);
         } else {
             _server->_can_module->recv(CobType::rsdo, _rsdo_data->data);
             _rsdo_flag.local.set();
