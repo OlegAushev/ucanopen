@@ -58,11 +58,13 @@ SdoAbortCode get_firmware_version(ExpeditedSdoData& retval) {
 
 
 SdoAbortCode save_all_parameters(ExpeditedSdoData val) {
+    settings::apply();
     return SdoAbortCode::no_error;
 }
 
 
 SdoAbortCode restore_all_default_parameters(ExpeditedSdoData val) {
+    settings::restore();
     return SdoAbortCode::no_error;
 }
 
