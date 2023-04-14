@@ -51,7 +51,7 @@ public:
     void handle_received() {
         assert(_server->_ipc_mode == mcu::ipc::Mode::singlecore || _server->_ipc_role == mcu::ipc::Role::secondary);
 
-        for (size_t i = 0; i < _rpdo_list->size(); ++i) {
+        for (int i = 0; i < _rpdo_list->size(); ++i) {
             if (!_handlers[i]) { continue; }
             if (_received_flags[i].is_set()) {
                 _handlers[i]((*_rpdo_list)[i].payload);
@@ -63,7 +63,7 @@ public:
     void check_connection() {
         assert(_server->_ipc_role == mcu::ipc::Role::primary);
 
-        for (size_t i = 0; i < _rpdo_list->size(); ++i) {
+        for (int i = 0; i < _rpdo_list->size(); ++i) {
             if ((*_rpdo_list)[i].timeout.count() <= 0) { continue; }
 
             if (mcu::chrono::system_clock::now() > (*_rpdo_list)[i].timepoint + (*_rpdo_list)[i].timeout) {

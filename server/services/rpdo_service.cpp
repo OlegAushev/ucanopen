@@ -27,12 +27,12 @@ RpdoService::RpdoService(impl::Server* server, const IpcFlags& ipc_flags)
         break;
     }
 
-    for (size_t i = 0; i < _rpdo_list->size(); ++i) {
+    for (int i = 0; i < _rpdo_list->size(); ++i) {
         (*_rpdo_list)[i].timeout = emb::chrono::milliseconds(-1);
         (*_rpdo_list)[i].timepoint = mcu::chrono::system_clock::now();
     }
 
-    for (size_t i = 0; i < _handlers.size(); ++i) {
+    for (int i = 0; i < _handlers.size(); ++i) {
         _handlers[i] = reinterpret_cast<void(*)(const can_payload& data)>(NULL);
     }
 

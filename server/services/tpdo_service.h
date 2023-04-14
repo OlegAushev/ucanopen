@@ -25,7 +25,7 @@ public:
     void send() {
         assert(_server->_ipc_role == mcu::ipc::Role::primary);
 
-        for (size_t i = 0; i < _tpdo_list.size(); ++i) {
+        for (int i = 0; i < _tpdo_list.size(); ++i) {
             if (!_tpdo_list[i].creator || _tpdo_list[i].period.count() <= 0) { continue; }
             if (mcu::chrono::system_clock::now() < _tpdo_list[i].timepoint + _tpdo_list[i].period) { continue; }
 

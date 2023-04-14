@@ -110,7 +110,7 @@ extern unsigned char object_alloc[sizeof(Object)];
 
 
 extern ODEntry object_dictionary[];
-extern const size_t object_dictionary_size;
+extern const int object_dictionary_size;
 
 
 class Server : public ucanopen::Server {

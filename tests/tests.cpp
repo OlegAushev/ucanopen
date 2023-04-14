@@ -15,9 +15,9 @@ unsigned char object_alloc[sizeof(Object)] __attribute__((section("shared_ucanop
 namespace od {
 
 SdoAbortCode get_device_name(ExpeditedSdoData& retval) {
-    const size_t len = strlen(sysinfo::device_name) + 1;
-    const size_t word_count = (len + 3) / 4;
-    static size_t counter = 0;
+    const int len = strlen(sysinfo::device_name) + 1;
+    const int word_count = (len + 3) / 4;
+    static int counter = 0;
 
     char word[4] = {0};
     strncpy(word, sysinfo::device_name + 4*counter, 4);
@@ -30,9 +30,9 @@ SdoAbortCode get_device_name(ExpeditedSdoData& retval) {
 
 
 SdoAbortCode get_hardware_version(ExpeditedSdoData& retval) {
-    const size_t len = strlen(sysinfo::hardware_version) + 1;
-    const size_t word_count = (len + 3) / 4;
-    static size_t counter = 0;
+    const int len = strlen(sysinfo::hardware_version) + 1;
+    const int word_count = (len + 3) / 4;
+    static int counter = 0;
 
     char word[4] = {0};
     strncpy(word, sysinfo::hardware_version + 4*counter, 4);
@@ -45,9 +45,9 @@ SdoAbortCode get_hardware_version(ExpeditedSdoData& retval) {
 
 
 SdoAbortCode get_firmware_version(ExpeditedSdoData& retval) {
-    const size_t len = strlen(sysinfo::firmware_version) + 1;
-    const size_t word_count = (len + 3) / 4;
-    static size_t counter = 0;
+    const int len = strlen(sysinfo::firmware_version) + 1;
+    const int word_count = (len + 3) / 4;
+    static int counter = 0;
 
     char word[4] = {0};
     strncpy(word, sysinfo::firmware_version + 4*counter, 4);
@@ -144,7 +144,7 @@ ODEntry object_dictionary[] = {
 };
 
 
-const size_t object_dictionary_size = sizeof(object_dictionary) / sizeof(object_dictionary[0]);
+const int object_dictionary_size = sizeof(object_dictionary) / sizeof(object_dictionary[0]);
 
 } // namespace tests
 

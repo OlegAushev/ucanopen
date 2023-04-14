@@ -5,7 +5,7 @@ namespace ucanopen {
 
 impl::Server::Server(mcu::ipc::traits::singlecore, mcu::ipc::traits::primary,
                      mcu::can::Module* can_module, NodeId node_id,
-                     ODEntry* object_dictionary, size_t object_dictionary_size)
+                     ODEntry* object_dictionary, int object_dictionary_size)
         : _ipc_mode(mcu::ipc::Mode::singlecore)
         , _ipc_role(mcu::ipc::Role::primary)
         , _node_id(node_id)
@@ -34,7 +34,7 @@ impl::Server::Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::primary,
 
 
 impl::Server::Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::secondary,
-                     mcu::can::Peripheral can_peripheral, ODEntry* object_dictionary, size_t object_dictionary_size)
+                     mcu::can::Peripheral can_peripheral, ODEntry* object_dictionary, int object_dictionary_size)
         : _ipc_mode(mcu::ipc::Mode::dualcore)
         , _ipc_role(mcu::ipc::Role::secondary)
         , _node_id(NodeId(0))
@@ -48,7 +48,7 @@ impl::Server::Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::secondary,
 
 
 void impl::Server::_init_message_objects() {
-    for (size_t i = 0; i < cob_type_count; ++i) {
+    for (int i = 0; i < cob_type_count; ++i) {
         _message_objects[i].obj_id = i;
         _message_objects[i].frame_id = calculate_cob_id(CobType(i), this->_node_id);
         _message_objects[i].frame_type = CAN_MSG_FRAME_STD;
@@ -94,7 +94,7 @@ void impl::Server::_init_message_objects() {
             = _message_objects[CobType::rsdo].flags
             = CAN_MSG_OBJ_RX_INT_ENABLE;
 
-    for (size_t i = 1; i < cob_type_count; ++i) {
+    for (int i = 1; i < cob_type_count; ++i) {
         // count from 1 - skip dummy COB
         this->_can_module->setup_message_object(_message_objects[i]);
     }
@@ -107,13 +107,13 @@ void impl::Server::_init_object_dictionary() {
     std::sort(_dictionary, _dictionary + _dictionary_size);
 
     // Check OBJECT DICTIONARY correctness
-    for (size_t i = 0; i < _dictionary_size; ++i) {
+    for (int i = 0; i < _dictionary_size; ++i) {
         // OD is sorted
         if (i < (_dictionary_size - 1)) {
             assert(_dictionary[i] < _dictionary[i+1]);
         }
 
-        for (size_t j = i+1; j < _dictionary_size; ++j) {
+        for (int j = i+1; j < _dictionary_size; ++j) {
             // no od-entries with equal {index, subinex}
             assert((_dictionary[i].key.index != _dictionary[j].key.index)
                 || (_dictionary[i].key.subindex != _dictionary[j].key.subindex));

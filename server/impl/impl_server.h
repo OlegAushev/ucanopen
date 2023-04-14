@@ -41,7 +41,7 @@ protected:
     mcu::can::Module* _can_module;
 
     ODEntry* _dictionary;
-    size_t _dictionary_size;
+    int _dictionary_size;
 
     NmtState _nmt_state;
 private:
@@ -49,13 +49,13 @@ private:
 public:
     Server(mcu::ipc::traits::singlecore, mcu::ipc::traits::primary,
            mcu::can::Module* can_module, NodeId node_id,
-           ODEntry* object_dictionary, size_t object_dictionary_size);
+           ODEntry* object_dictionary, int object_dictionary_size);
 
     Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::primary,
            mcu::can::Module* can_module, NodeId node_id);
 
     Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::secondary,
-           mcu::can::Peripheral can_peripheral, ODEntry* object_dictionary, size_t object_dictionary_size);
+           mcu::can::Peripheral can_peripheral, ODEntry* object_dictionary, int object_dictionary_size);
 
     NodeId node_id() const { return _node_id; }
     NmtState nmt_state() const { return _nmt_state; }

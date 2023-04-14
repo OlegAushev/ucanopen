@@ -5,7 +5,7 @@ namespace ucanopen {
 
 Server::Server(mcu::ipc::traits::singlecore, mcu::ipc::traits::primary, const IpcFlags& ipc_flags,
                mcu::can::Module* can_module, const ServerConfig& config,
-               ODEntry* object_dictionary, size_t object_dictionary_size)
+               ODEntry* object_dictionary, int object_dictionary_size)
         : impl::Server(mcu::ipc::traits::singlecore(), mcu::ipc::traits::primary(),
                        can_module, NodeId(config.node_id), object_dictionary, object_dictionary_size)
         , emb::c28x::interrupt_invoker_array<Server, mcu::can::peripheral_count>(this, can_module->peripheral().underlying_value()) {
@@ -64,7 +64,7 @@ Server::Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::primary, const IpcF
 
 
 Server::Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::secondary, const IpcFlags& ipc_flags,
-               mcu::can::Peripheral can_peripheral, ODEntry* object_dictionary, size_t object_dictionary_size)
+               mcu::can::Peripheral can_peripheral, ODEntry* object_dictionary, int object_dictionary_size)
         : impl::Server(mcu::ipc::traits::dualcore(), mcu::ipc::traits::secondary(), can_peripheral, object_dictionary, object_dictionary_size)
         , emb::c28x::interrupt_invoker_array<Server, mcu::can::peripheral_count>(this, can_peripheral.underlying_value()) {
     assert(ipc_flags.rpdo1_received.mode() == mcu::ipc::Mode::dualcore);

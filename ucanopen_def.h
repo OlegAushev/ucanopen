@@ -40,11 +40,11 @@ inline T from_payload(const can_payload& payload) {
 
 class NodeId {
 private:
-    unsigned int _value;
+    unsigned int _id;
 public:
-    explicit NodeId(unsigned int value) : _value(value) {}
-    unsigned int get() const { return _value; }
-    bool is_valid() const { return (_value >= 1) && (_value <= 127); }
+    explicit NodeId(unsigned int id) : _id(id) {}
+    unsigned int get() const { return _id; }
+    bool valid() const { return (_id >= 1) && (_id <= 127); }
 };
 
 
@@ -76,7 +76,7 @@ SCOPED_ENUM_DECLARE_BEGIN(CobType) {
 } SCOPED_ENUM_DECLARE_END(CobType)
 
 
-const size_t cob_type_count = 16;
+const int cob_type_count = 16;
 
 
 const emb::array<uint32_t, cob_type_count> cob_function_codes = {
@@ -107,7 +107,7 @@ inline uint32_t calculate_cob_id(CobType cob_type, NodeId node_id) {
 }
 
 
-const emb::array<unsigned int, cob_type_count> cob_sizes = {
+const emb::array<int, cob_type_count> cob_sizes = {
     0,  // DUMMY
     2,  // NMT
     0,  // SYNC
@@ -248,9 +248,9 @@ inline SdoAbortCode OD_NO_INDIRECT_READ_ACCESS(ExpeditedSdoData& retval) { retur
 inline SdoAbortCode OD_NO_INDIRECT_WRITE_ACCESS(ExpeditedSdoData val) { return SdoAbortCode::unsupported_access; }
 
 
-const size_t od_object_type_sizes[9] = {sizeof(bool), sizeof(int16_t), sizeof(int32_t),
-                                        sizeof(uint16_t), sizeof(uint32_t), sizeof(float),
-                                        sizeof(uint16_t), 0, 0};
+const int od_object_type_sizes[9] = {sizeof(bool), sizeof(int16_t), sizeof(int32_t),
+                                     sizeof(uint16_t), sizeof(uint32_t), sizeof(float),
+                                     sizeof(uint16_t), 0, 0};
 
 
 struct ODObjectKey {

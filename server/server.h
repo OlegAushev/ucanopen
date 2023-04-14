@@ -53,13 +53,13 @@ protected:
 public:
     Server(mcu::ipc::traits::singlecore, mcu::ipc::traits::primary, const IpcFlags& ipc_flags,
            mcu::can::Module* can_module, const ServerConfig& config,
-           ODEntry* object_dictionary, size_t object_dictionary_size);
+           ODEntry* object_dictionary, int object_dictionary_size);
 
     Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::primary, const IpcFlags& ipc_flags,
            mcu::can::Module* can_module, const ServerConfig& config);
 
     Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::secondary, const IpcFlags& ipc_flags,
-           mcu::can::Peripheral can_peripheral, ODEntry* object_dictionary, size_t object_dictionary_size);
+           mcu::can::Peripheral can_peripheral, ODEntry* object_dictionary, int object_dictionary_size);
 
     void enable() {
         if (this->_can_module) {
