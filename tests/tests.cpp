@@ -136,8 +136,8 @@ ODEntry object_dictionary[] = {
 {{0x3000, 0x0D}, {"config", "ucanopen", "rpdo3_id", "", OD_UINT32, OD_ACCESS_RW, OD_PTR(&settings::configs.ucanopen_server.rpdo3_id), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
 {{0x3000, 0x0E}, {"config", "ucanopen", "rpdo4_id", "", OD_UINT32, OD_ACCESS_RW, OD_PTR(&settings::configs.ucanopen_server.rpdo4_id), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
 
-{{0x3001, 0x01}, {"config", "syslog", "enabled_errors", "", OD_UINT32, OD_ACCESS_RW, OD_PTR(&settings::configs.syslog.enabled_errors_mask), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
-{{0x3001, 0x02}, {"config", "syslog", "fatal_errors", "", OD_UINT32, OD_ACCESS_RW, OD_PTR(&settings::configs.syslog.fatal_errors_mask), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
+{{0x3001, 0x01}, {"config", "syslog", "enabled_errors", "", OD_UINT32, OD_ACCESS_RW, OD_PTR(&settings::configs.syslog.enabled_errors), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
+{{0x3001, 0x02}, {"config", "syslog", "fatal_errors", "", OD_UINT32, OD_ACCESS_RW, OD_PTR(&settings::configs.syslog.fatal_errors), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
 
 
 
