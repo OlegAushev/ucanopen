@@ -5,7 +5,6 @@
 #include <mculib_c28x/f2837xd/chrono/chrono.h>
 
 
-
 namespace ucanopen {
 
 class TpdoService {
@@ -20,7 +19,7 @@ private:
     emb::array<Message, 4> _tpdo_list;
 public:
     TpdoService(impl::Server* server);
-    void registerTpdo(TpdoType tpdo_type, emb::chrono::milliseconds period, can_payload (*creator)());
+    void register_tpdo(TpdoType tpdo_type, emb::chrono::milliseconds period, can_payload (*creator)());
 
     void send() {
         assert(_server->_ipc_role == mcu::ipc::Role::primary);

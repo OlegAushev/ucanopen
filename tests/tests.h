@@ -123,10 +123,10 @@ public:
                     can_module, config, object_dictionary, object_dictionary_size) {
         _object = object;
 
-        this->tpdo_service->registerTpdo(TpdoType::tpdo1, emb::chrono::milliseconds(config.tpdo1_period_ms), _create_tpdo1);
-        this->tpdo_service->registerTpdo(TpdoType::tpdo2, emb::chrono::milliseconds(config.tpdo2_period_ms), _create_tpdo2);
-        this->tpdo_service->registerTpdo(TpdoType::tpdo3, emb::chrono::milliseconds(config.tpdo3_period_ms), _create_tpdo3);
-        this->tpdo_service->registerTpdo(TpdoType::tpdo4, emb::chrono::milliseconds(config.tpdo4_period_ms), _create_tpdo4);
+        this->tpdo_service->register_tpdo(TpdoType::tpdo1, emb::chrono::milliseconds(config.tpdo1_period_ms), _create_tpdo1);
+        this->tpdo_service->register_tpdo(TpdoType::tpdo2, emb::chrono::milliseconds(config.tpdo2_period_ms), _create_tpdo2);
+        this->tpdo_service->register_tpdo(TpdoType::tpdo3, emb::chrono::milliseconds(config.tpdo3_period_ms), _create_tpdo3);
+        this->tpdo_service->register_tpdo(TpdoType::tpdo4, emb::chrono::milliseconds(config.tpdo4_period_ms), _create_tpdo4);
 
         this->rpdo_service->register_rpdo(RpdoType::rpdo1, emb::chrono::milliseconds(config.rpdo1_timeout_ms), config.rpdo1_id);
         this->rpdo_service->register_rpdo_handler(RpdoType::rpdo1, _handle_rpdo1);
@@ -144,10 +144,10 @@ public:
                     can_module, config) {
         _object = object;
 
-        this->tpdo_service->registerTpdo(TpdoType::tpdo1, emb::chrono::milliseconds(config.tpdo1_period_ms), _create_tpdo1);
-        this->tpdo_service->registerTpdo(TpdoType::tpdo2, emb::chrono::milliseconds(config.tpdo2_period_ms), _create_tpdo2);
-        this->tpdo_service->registerTpdo(TpdoType::tpdo3, emb::chrono::milliseconds(config.tpdo3_period_ms), _create_tpdo3);
-        this->tpdo_service->registerTpdo(TpdoType::tpdo4, emb::chrono::milliseconds(config.tpdo4_period_ms), _create_tpdo4);
+        this->tpdo_service->register_tpdo(TpdoType::tpdo1, emb::chrono::milliseconds(config.tpdo1_period_ms), _create_tpdo1);
+        this->tpdo_service->register_tpdo(TpdoType::tpdo2, emb::chrono::milliseconds(config.tpdo2_period_ms), _create_tpdo2);
+        this->tpdo_service->register_tpdo(TpdoType::tpdo3, emb::chrono::milliseconds(config.tpdo3_period_ms), _create_tpdo3);
+        this->tpdo_service->register_tpdo(TpdoType::tpdo4, emb::chrono::milliseconds(config.tpdo4_period_ms), _create_tpdo4);
 
         this->rpdo_service->register_rpdo(RpdoType::rpdo1, emb::chrono::milliseconds(config.rpdo1_timeout_ms), config.rpdo1_id);
         this->rpdo_service->register_rpdo(RpdoType::rpdo2, emb::chrono::milliseconds(config.rpdo2_timeout_ms), config.rpdo2_id);

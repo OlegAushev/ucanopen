@@ -13,7 +13,7 @@ TpdoService::TpdoService(impl::Server* server)
 }
 
 
-void TpdoService::registerTpdo(TpdoType tpdo_type, emb::chrono::milliseconds period, can_payload (*creator)()) {
+void TpdoService::register_tpdo(TpdoType tpdo_type, emb::chrono::milliseconds period, can_payload (*creator)()) {
     assert(_server->_ipc_role == mcu::ipc::Role::primary);
 
     _tpdo_list[tpdo_type.underlying_value()].period = period;
