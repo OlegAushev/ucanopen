@@ -24,14 +24,15 @@ public:
     void send() {
         assert(_server->_ipc_role == mcu::ipc::Role::primary);
 
+        emb::chrono::milliseconds now = mcu::chrono::system_clock::now();
         for (int i = 0; i < _tpdo_list.size(); ++i) {
             if (!_tpdo_list[i].creator || _tpdo_list[i].period.count() <= 0) { continue; }
-            if (mcu::chrono::system_clock::now() < _tpdo_list[i].timepoint + _tpdo_list[i].period) { continue; }
+            if (now < _tpdo_list[i].timepoint + _tpdo_list[i].period) { continue; }
 
             can_payload payload = _tpdo_list[i].creator();
             CobType cob_type = to_cob_type(TpdoType(i));
             _server->_can_module->send(cob_type.underlying_value(), payload.data, cob_sizes[cob_type.underlying_value()]);
-            _tpdo_list[i].timepoint = mcu::chrono::system_clock::now();
+            _tpdo_list[i].timepoint = now;
         }
     }
 };

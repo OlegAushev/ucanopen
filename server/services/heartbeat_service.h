@@ -20,11 +20,12 @@ public:
 
         if (_period.count() <= 0)  { return; }
 
-        if (mcu::chrono::system_clock::now() >= _timepoint + _period) {
+        emb::chrono::milliseconds now = mcu::chrono::system_clock::now();
+        if (now >= _timepoint + _period) {
             can_payload payload;
             payload[0] = _server->nmt_state().underlying_value();
             _server->_can_module->send(CobType::heartbeat, payload.data, cob_sizes[CobType::heartbeat]);
-            _timepoint = mcu::chrono::system_clock::now();
+            _timepoint = now;
         }
     }
 };

@@ -63,10 +63,11 @@ public:
     void check_connection() {
         assert(_server->_ipc_role == mcu::ipc::Role::primary);
 
+        emb::chrono::milliseconds now = mcu::chrono::system_clock::now();
         for (int i = 0; i < _rpdo_list->size(); ++i) {
             if ((*_rpdo_list)[i].timeout.count() <= 0) { continue; }
 
-            if (mcu::chrono::system_clock::now() > (*_rpdo_list)[i].timepoint + (*_rpdo_list)[i].timeout) {
+            if (now > (*_rpdo_list)[i].timepoint + (*_rpdo_list)[i].timeout) {
                 syslog::set_warning(sys::Warning::can_bus_connection_lost);
                 return;
             }
