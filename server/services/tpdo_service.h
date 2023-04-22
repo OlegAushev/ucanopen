@@ -9,7 +9,7 @@ namespace ucanopen {
 
 class TpdoService {
 private:
-    impl::Server* const _server;
+    impl::Server& _server;
 
     struct Message {
         emb::chrono::milliseconds period;
@@ -18,11 +18,11 @@ private:
     };
     emb::array<Message, 4> _tpdo_list;
 public:
-    TpdoService(impl::Server* server);
+    TpdoService(impl::Server& server);
     void register_tpdo(TpdoType tpdo_type, emb::chrono::milliseconds period, can_payload (*creator)());
 
     void send() {
-        assert(_server->_ipc_role == mcu::ipc::Role::primary);
+        assert(_server._ipc_role == mcu::ipc::Role::primary);
 
         emb::chrono::milliseconds now = mcu::chrono::system_clock::now();
         for (int i = 0; i < _tpdo_list.size(); ++i) {
@@ -31,7 +31,7 @@ public:
 
             can_payload payload = _tpdo_list[i].creator();
             CobType cob_type = to_cob_type(TpdoType(i));
-            _server->_can_module->send(cob_type.underlying_value(), payload.data, cob_sizes[cob_type.underlying_value()]);
+            _server._can_module->send(cob_type.underlying_value(), payload.data, cob_sizes[cob_type.underlying_value()]);
             _tpdo_list[i].timepoint = now;
         }
     }

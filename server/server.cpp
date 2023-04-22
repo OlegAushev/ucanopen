@@ -16,10 +16,10 @@ Server::Server(mcu::ipc::traits::singlecore, mcu::ipc::traits::primary, const Ip
     assert(ipc_flags.rsdo_received.mode() == mcu::ipc::Mode::singlecore);
     assert(ipc_flags.tsdo_ready.mode() == mcu::ipc::Mode::singlecore);
 
-    heartbeat_service = new HeartbeatService(this, emb::chrono::milliseconds(config.heartbeat_period_ms));
-    tpdo_service = new TpdoService(this);
-    rpdo_service = new RpdoService(this, ipc_flags);
-    sdo_service = new SdoService(this, ipc_flags);
+    heartbeat_service = new HeartbeatService(*this, emb::chrono::milliseconds(config.heartbeat_period_ms));
+    tpdo_service = new TpdoService(*this);
+    rpdo_service = new RpdoService(*this, ipc_flags);
+    sdo_service = new SdoService(*this, ipc_flags);
 
     this->_can_module->register_interrupt_callback(on_frame_received);
 
@@ -38,10 +38,10 @@ Server::Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::primary, const IpcF
     assert(ipc_flags.rsdo_received.mode() == mcu::ipc::Mode::dualcore);
     assert(ipc_flags.tsdo_ready.mode() == mcu::ipc::Mode::dualcore);
 
-    heartbeat_service = new HeartbeatService(this, emb::chrono::milliseconds(config.heartbeat_period_ms));
-    tpdo_service = new TpdoService(this);
-    rpdo_service = new RpdoService(this, ipc_flags);
-    sdo_service = new SdoService(this, ipc_flags);
+    heartbeat_service = new HeartbeatService(*this, emb::chrono::milliseconds(config.heartbeat_period_ms));
+    tpdo_service = new TpdoService(*this);
+    rpdo_service = new RpdoService(*this, ipc_flags);
+    sdo_service = new SdoService(*this, ipc_flags);
 
     this->_can_module->register_interrupt_callback(on_frame_received);
 
@@ -60,8 +60,8 @@ Server::Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::secondary, const Ip
     assert(ipc_flags.rsdo_received.mode() == mcu::ipc::Mode::dualcore);
     assert(ipc_flags.tsdo_ready.mode() == mcu::ipc::Mode::dualcore);
 
-    rpdo_service = new RpdoService(this, ipc_flags);
-    sdo_service = new SdoService(this, ipc_flags);
+    rpdo_service = new RpdoService(*this, ipc_flags);
+    sdo_service = new SdoService(*this, ipc_flags);
 }
 
 

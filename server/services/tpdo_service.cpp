@@ -3,7 +3,7 @@
 
 namespace ucanopen {
 
-TpdoService::TpdoService(impl::Server* server)
+TpdoService::TpdoService(impl::Server& server)
         : _server(server) {
     for (int i = 0; i < _tpdo_list.size(); ++i) {
         _tpdo_list[i].period = emb::chrono::milliseconds(-1);
@@ -14,7 +14,7 @@ TpdoService::TpdoService(impl::Server* server)
 
 
 void TpdoService::register_tpdo(TpdoType tpdo_type, emb::chrono::milliseconds period, can_payload (*creator)()) {
-    assert(_server->_ipc_role == mcu::ipc::Role::primary);
+    assert(_server._ipc_role == mcu::ipc::Role::primary);
 
     _tpdo_list[tpdo_type.underlying_value()].period = period;
     _tpdo_list[tpdo_type.underlying_value()].creator = creator;

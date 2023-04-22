@@ -11,7 +11,7 @@ namespace ucanopen {
 
 class RpdoService {
 private:
-    impl::Server* const _server;
+    impl::Server& _server;
 
     struct Message {
         emb::chrono::milliseconds timeout;
@@ -24,12 +24,12 @@ private:
     emb::array<mcu::ipc::Flag, 4> _received_flags;
     emb::array<void(*)(const can_payload& payload), 4> _handlers;
 public:
-    RpdoService(impl::Server* server, const IpcFlags& ipc_flags);
+    RpdoService(impl::Server& server, const IpcFlags& ipc_flags);
     void register_rpdo(RpdoType rpdo_type, emb::chrono::milliseconds timeout, unsigned int id = 0);
     void register_rpdo_handler(RpdoType rpdo_type, void (*handler)(const can_payload& data));
 
     void recv(CobType cob_type) {
-        assert(_server->_ipc_role == mcu::ipc::Role::primary);
+        assert(_server._ipc_role == mcu::ipc::Role::primary);
 
         if (cob_type != CobType::rpdo1
          && cob_type != CobType::rpdo2
@@ -43,13 +43,13 @@ public:
             syslog::set_warning(sys::Warning::can_bus_overrun);
         } else {
             // there is no unprocessed RPDO of this type
-            _server->_can_module->recv(cob_type.underlying_value(), (*_rpdo_list)[rpdo_type.underlying_value()].payload.data);
+            _server._can_module->recv(cob_type.underlying_value(), (*_rpdo_list)[rpdo_type.underlying_value()].payload.data);
             _received_flags[rpdo_type.underlying_value()].local.set();
         }
     }
 
     void handle_received() {
-        assert(_server->_ipc_mode == mcu::ipc::Mode::singlecore || _server->_ipc_role == mcu::ipc::Role::secondary);
+        assert(_server._ipc_mode == mcu::ipc::Mode::singlecore || _server._ipc_role == mcu::ipc::Role::secondary);
 
         for (int i = 0; i < _rpdo_list->size(); ++i) {
             if (!_handlers[i]) { continue; }
@@ -61,7 +61,7 @@ public:
     }
 
     void check_connection() {
-        assert(_server->_ipc_role == mcu::ipc::Role::primary);
+        assert(_server._ipc_role == mcu::ipc::Role::primary);
 
         emb::chrono::milliseconds now = mcu::chrono::system_clock::now();
         for (int i = 0; i < _rpdo_list->size(); ++i) {

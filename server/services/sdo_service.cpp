@@ -14,18 +14,18 @@ unsigned char SdoService::canb_tsdo_dualcore_alloc[sizeof(can_payload)]
         __attribute__((section("shared_ucanopen_canb_tsdo_data"), retain));
 
 
-SdoService::SdoService(impl::Server* server, const IpcFlags& ipc_flags)
+SdoService::SdoService(impl::Server& server, const IpcFlags& ipc_flags)
         : _server(server) {
     _rsdo_flag = ipc_flags.rsdo_received;
     _tsdo_flag = ipc_flags.tsdo_ready;
 
-    switch (_server->_ipc_mode.underlying_value()) {
+    switch (_server._ipc_mode.underlying_value()) {
     case mcu::ipc::Mode::singlecore:
         _rsdo_data = new can_payload;
         _tsdo_data = new can_payload;
         break;
     case mcu::ipc::Mode::dualcore:
-        switch (_server->_can_peripheral.native_value()) {
+        switch (_server._can_peripheral.native_value()) {
         case mcu::can::Peripheral::cana:
             _rsdo_data = new(cana_rsdo_dualcore_alloc) can_payload;
             _tsdo_data = new(cana_tsdo_dualcore_alloc) can_payload;
@@ -41,7 +41,7 @@ SdoService::SdoService(impl::Server* server, const IpcFlags& ipc_flags)
 
 
 void SdoService::handle_received() {
-    assert(_server->_ipc_mode == mcu::ipc::Mode::singlecore || _server->_ipc_role == mcu::ipc::Role::secondary);
+    assert(_server._ipc_mode == mcu::ipc::Mode::singlecore || _server._ipc_role == mcu::ipc::Role::secondary);
 
     if (!_rsdo_flag.is_set()) { return; }   // no RSDO received
 
@@ -53,10 +53,10 @@ void SdoService::handle_received() {
 
     ExpeditedSdo tsdo;
     SdoAbortCode abort_code = SdoAbortCode::general_error;
-    ODEntry* dictionary_end = _server->_dictionary + _server->_dictionary_size;
+    ODEntry* dictionary_end = _server._dictionary + _server._dictionary_size;
     ODObjectKey key = {rsdo.index, rsdo.subindex};
 
-    const ODEntry* od_entry = emb::binary_find(_server->_dictionary, dictionary_end, key);
+    const ODEntry* od_entry = emb::binary_find(_server._dictionary, dictionary_end, key);
 
     if (od_entry == dictionary_end) {
         abort_code = SdoAbortCode::no_object;

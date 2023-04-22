@@ -9,14 +9,14 @@ unsigned char RpdoService::canb_rpdo_dualcore_alloc[sizeof(emb::array<RpdoServic
         __attribute__((section("shared_ucanopen_canb_rpdo_data"), retain));
 
 
-RpdoService::RpdoService(impl::Server* server, const IpcFlags& ipc_flags)
+RpdoService::RpdoService(impl::Server& server, const IpcFlags& ipc_flags)
         : _server(server) {
-    switch (_server->_ipc_mode.underlying_value()) {
+    switch (_server._ipc_mode.underlying_value()) {
     case mcu::ipc::Mode::singlecore:
         _rpdo_list = new emb::array<Message, 4>;
         break;
     case mcu::ipc::Mode::dualcore:
-        switch (_server->_can_peripheral.native_value()) {
+        switch (_server._can_peripheral.native_value()) {
         case mcu::can::Peripheral::cana:
             _rpdo_list = new(cana_rpdo_dualcore_alloc) emb::array<Message, 4>;
             break;
@@ -44,19 +44,19 @@ RpdoService::RpdoService(impl::Server* server, const IpcFlags& ipc_flags)
 
 
 void RpdoService::register_rpdo(RpdoType rpdo_type, emb::chrono::milliseconds timeout, unsigned int id) {
-    assert(_server->_ipc_role == mcu::ipc::Role::primary);
+    assert(_server._ipc_role == mcu::ipc::Role::primary);
 
     (*_rpdo_list)[rpdo_type.underlying_value()].timeout = timeout;
     if (id != 0) {
         CobType cob = to_cob_type(rpdo_type);
-        _server->_message_objects[cob.underlying_value()].frame_id = id;
-        _server->_can_module->setup_message_object(_server->_message_objects[cob.underlying_value()]);
+        _server._message_objects[cob.underlying_value()].frame_id = id;
+        _server._can_module->setup_message_object(_server._message_objects[cob.underlying_value()]);
     }
 }
 
 
 void RpdoService::register_rpdo_handler(RpdoType rpdo_type, void (*handler)(const can_payload& data)) {
-    assert(_server->_ipc_mode == mcu::ipc::Mode::singlecore || _server->_ipc_role == mcu::ipc::Role::secondary);
+    assert(_server._ipc_mode == mcu::ipc::Mode::singlecore || _server._ipc_role == mcu::ipc::Role::secondary);
 
     _handlers[rpdo_type.underlying_value()] = handler;
 }
