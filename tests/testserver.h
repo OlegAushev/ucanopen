@@ -190,10 +190,10 @@ private:
 
     static can_payload _create_tpdo3() {
         CobTpdo3 tpdo;
-        tpdo.value_from_rpdo1 = value_from_rpdo1;
-        tpdo.value_from_rpdo2 = value_from_rpdo2;
-        tpdo.value_from_rpdo3 = value_from_rpdo3;
-        tpdo.value_from_rpdo4 = value_from_rpdo4;
+        tpdo.value_from_rpdo1 = static_cast<uint16_t>(value_from_rpdo1);
+        tpdo.value_from_rpdo2 = static_cast<uint16_t>(value_from_rpdo2);
+        tpdo.value_from_rpdo3 = static_cast<uint16_t>(value_from_rpdo3);
+        tpdo.value_from_rpdo4 = static_cast<uint16_t>(value_from_rpdo4);
         return to_payload<CobTpdo3>(tpdo);
     }
 
