@@ -8,29 +8,28 @@ namespace ucanopen {
 
 SdoService::SdoService(impl::Server& server)
         : _server(server) {
-    FDCAN_FilterTypeDef rsdo_filter = {
-        .IdType = FDCAN_STANDARD_ID,
-        .FilterIndex = 0,
-        .FilterType = FDCAN_FILTER_MASK,
-        .FilterConfig = FDCAN_FILTER_TO_RXFIFO0,
-        .FilterID1 = calculate_cob_id(CobType::rsdo, _server.node_id()),
-        .FilterID2 = 0x7FF,
-        .RxBufferIndex = 0,
-        .IsCalibrationMsg = 0
+    CAN_FilterTypeDef rsdo_filter = {
+        .FilterIdHigh = 0,
+        .FilterIdLow = calculate_cob_id(CobType::rsdo, _server.node_id()),
+        .FilterMaskIdHigh = 0,
+        .FilterMaskIdLow = 0x7FF,
+        .FilterFIFOAssignment = CAN_RX_FIFO0,
+        .FilterBank = {},
+        .FilterMode = CAN_FILTERMODE_IDMASK,
+        .FilterScale = CAN_FILTERSCALE_32BIT,
+        .FilterActivation = {},
+        .SlaveStartFilterBank = {}
     };
     _rsdo.attr = _server._can_module.register_message(rsdo_filter);
     _rsdo.is_unhandled = false;
 
     _tsdo.header = {
-        .Identifier = calculate_cob_id(CobType::tsdo, _server.node_id()),
-        .IdType = FDCAN_STANDARD_ID,
-        .TxFrameType = FDCAN_DATA_FRAME,
-        .DataLength = FDCAN_DLC_BYTES_8,
-        .ErrorStateIndicator = FDCAN_ESI_ACTIVE,
-        .BitRateSwitch = FDCAN_BRS_OFF,
-        .FDFormat = FDCAN_CLASSIC_CAN,
-        .TxEventFifoControl = FDCAN_NO_TX_EVENTS,
-        .MessageMarker = 0
+        .StdId = calculate_cob_id(CobType::tsdo, _server.node_id()),
+        .ExtId = 0,
+        .IDE = CAN_ID_STD,
+        .RTR = CAN_RTR_DATA,
+        .DLC = 8,
+        .TransmitGlobalTime = DISABLE
     };    
     _tsdo.not_sent = false;
 }

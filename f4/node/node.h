@@ -32,15 +32,15 @@ private:
     struct TxMessage {
         std::chrono::milliseconds period;
         std::chrono::milliseconds timepoint;
-        FDCAN_TxHeaderTypeDef header;
+        CAN_TxHeaderTypeDef header;
         can_payload (*creator)();
     };
     std::vector<TxMessage> _tx_messages;
 public:
     Node(Server& server);
 
-    void register_rx_message(FDCAN_FilterTypeDef& filter, std::chrono::milliseconds timeout, void(*handler)(const can_payload&));
-    void register_tx_message(const FDCAN_TxHeaderTypeDef& header, std::chrono::milliseconds period, can_payload (*creator)());
+    void register_rx_message(CAN_FilterTypeDef& filter, std::chrono::milliseconds timeout, void(*handler)(const can_payload&));
+    void register_tx_message(const CAN_TxHeaderTypeDef& header, std::chrono::milliseconds period, can_payload (*creator)());
 
     virtual std::vector<mcu::can::MessageAttribute> get_rx_attr() const override;
     virtual FrameRecvStatus recv_frame(const mcu::can::MessageAttribute& attr, const can_frame& frame) override;

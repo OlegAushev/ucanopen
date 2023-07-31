@@ -12,15 +12,12 @@ TpdoService::TpdoService(impl::Server& server)
         _tpdo_list[i].period = std::chrono::milliseconds(0);
         _tpdo_list[i].timepoint = mcu::chrono::system_clock::now();
         _tpdo_list[i].header = {
-            .Identifier = calculate_cob_id(to_cob_type(TpdoType(i)), _server.node_id()),
-            .IdType = FDCAN_STANDARD_ID,
-            .TxFrameType = FDCAN_DATA_FRAME,
-            .DataLength = FDCAN_DLC_BYTES_8,
-            .ErrorStateIndicator = FDCAN_ESI_ACTIVE,
-            .BitRateSwitch = FDCAN_BRS_OFF,
-            .FDFormat = FDCAN_CLASSIC_CAN,
-            .TxEventFifoControl = FDCAN_NO_TX_EVENTS,
-            .MessageMarker = 0
+            .StdId = calculate_cob_id(to_cob_type(TpdoType(i)), _server.node_id()),
+            .ExtId = 0,
+            .IDE = CAN_ID_STD,
+            .RTR = CAN_RTR_DATA,
+            .DLC = 8,
+            .TransmitGlobalTime = DISABLE
         };
         _tpdo_list[i].creator = nullptr;
     }

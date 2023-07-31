@@ -11,15 +11,12 @@ SyncService::SyncService(impl::Server& server, std::chrono::milliseconds period)
         , _period(period) {
     _timepoint = mcu::chrono::system_clock::now();
     _header = {
-        .Identifier = calculate_cob_id(CobType::sync, _server.node_id()),
-        .IdType = FDCAN_STANDARD_ID,
-        .TxFrameType = FDCAN_DATA_FRAME,
-        .DataLength = FDCAN_DLC_BYTES_0,
-        .ErrorStateIndicator = FDCAN_ESI_ACTIVE,
-        .BitRateSwitch = FDCAN_BRS_OFF,
-        .FDFormat = FDCAN_CLASSIC_CAN,
-        .TxEventFifoControl = FDCAN_NO_TX_EVENTS,
-        .MessageMarker = 0
+        .StdId = calculate_cob_id(CobType::sync, _server.node_id()),
+        .ExtId = 0,
+        .IDE = CAN_ID_STD,
+        .RTR = CAN_RTR_DATA,
+        .DLC = 0,
+        .TransmitGlobalTime = DISABLE
     };
 }
 

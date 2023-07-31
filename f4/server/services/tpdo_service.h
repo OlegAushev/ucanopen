@@ -5,7 +5,7 @@
 
 
 #include "../impl/impl_server.h"
-#include <mculib_stm32/h7/chrono/chrono.h>
+#include <mculib_stm32/f4/chrono/chrono.h>
 
 
 namespace ucanopen {
@@ -17,7 +17,7 @@ private:
     struct Message {
         std::chrono::milliseconds period;
         std::chrono::milliseconds timepoint;
-        FDCAN_TxHeaderTypeDef header;
+        CAN_TxHeaderTypeDef header;
         can_payload (*creator)();
     };
     std::array<Message, 4> _tpdo_list;

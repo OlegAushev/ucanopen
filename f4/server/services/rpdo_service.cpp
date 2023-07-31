@@ -22,15 +22,17 @@ void RpdoService::register_rpdo(RpdoType rpdo_type, std::chrono::milliseconds ti
         id = calculate_cob_id(to_cob_type(rpdo_type), _server.node_id());
     }
 
-    FDCAN_FilterTypeDef filter = {
-        .IdType = FDCAN_STANDARD_ID,
-        .FilterIndex = 0,
-        .FilterType = FDCAN_FILTER_MASK,
-        .FilterConfig = FDCAN_FILTER_TO_RXFIFO0,
-        .FilterID1 = id,
-        .FilterID2 = 0x7FF,
-        .RxBufferIndex = 0,
-        .IsCalibrationMsg = 0
+    CAN_FilterTypeDef filter = {
+        .FilterIdHigh = 0,
+        .FilterIdLow = id,
+        .FilterMaskIdHigh = 0,
+        .FilterMaskIdLow = 0x7FF,
+        .FilterFIFOAssignment = CAN_RX_FIFO0,
+        .FilterBank = {},
+        .FilterMode = CAN_FILTERMODE_IDMASK,
+        .FilterScale = CAN_FILTERSCALE_32BIT,
+        .FilterActivation = {},
+        .SlaveStartFilterBank = {}
     };
 
     auto idx = std::to_underlying(rpdo_type);

@@ -22,7 +22,7 @@ private:
     } _rsdo;
 
     struct TxMessage {
-        FDCAN_TxHeaderTypeDef header;
+        CAN_TxHeaderTypeDef header;
         bool not_sent;
         can_payload payload;
     } _tsdo;
