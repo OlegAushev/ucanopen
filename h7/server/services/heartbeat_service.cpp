@@ -1,3 +1,6 @@
+#ifdef STM32H7xx
+
+
 #include "heartbeat_service.h"
 
 
@@ -35,3 +38,4 @@ void HeartbeatService::send() {
 
 } // namespace ucanopen
 
+#endif

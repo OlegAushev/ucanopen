@@ -1,6 +1,9 @@
 #pragma once
 
 
+#ifdef STM32H7xx
+
+
 #include "../node/node.h"
 
 
@@ -123,3 +126,4 @@ private:
 
 } // namespace tests
 
+#endif

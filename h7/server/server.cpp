@@ -1,3 +1,6 @@
+#ifdef STM32H7xx
+
+
 #include "server.h"
 
 
@@ -104,5 +107,6 @@ void Server::on_frame_received(mcu::can::Module& can_module, const mcu::can::Mes
     }
 }
 
-}
+} // namespace ucanopen
 
+#endif

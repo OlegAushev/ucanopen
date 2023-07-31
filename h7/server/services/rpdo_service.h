@@ -1,6 +1,9 @@
 #pragma once
 
 
+#ifdef STM32H7xx
+
+
 #include "../impl/impl_server.h"
 #include <mculib_stm32/h7/chrono/chrono.h>
 
@@ -32,7 +35,6 @@ public:
     bool connection_ok();
 };
 
-
-
 } // namespace ucanopen
 
+#endif

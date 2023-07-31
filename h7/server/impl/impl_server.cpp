@@ -1,3 +1,6 @@
+#ifdef STM32H7xx
+
+
 #include "impl_server.h"
 
 
@@ -52,3 +55,4 @@ void impl::Server::_init_object_dictionary() {
 
 } // namespace ucanopen
 
+#endif

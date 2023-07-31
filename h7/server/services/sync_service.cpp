@@ -1,3 +1,6 @@
+#ifdef STM32H7xx
+
+
 #include "sync_service.h"
 
 
@@ -32,6 +35,6 @@ void SyncService::send() {
     }
 }
     
+} // namespace ucanopen
 
-}
-
+#endif

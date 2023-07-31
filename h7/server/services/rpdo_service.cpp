@@ -1,3 +1,6 @@
+#ifdef STM32H7xx
+
+
 #include "rpdo_service.h"
 
 
@@ -84,3 +87,4 @@ bool RpdoService::connection_ok() {
 
 } // namespace ucanopen
 
+#endif

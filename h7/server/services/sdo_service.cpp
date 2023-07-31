@@ -1,3 +1,6 @@
+#ifdef STM32H7xx
+
+
 #include "sdo_service.h"
 
 
@@ -151,6 +154,6 @@ void SdoService::send() {
     _tsdo.not_sent = false;
 }
 
-
-
 } // namespace ucanopen
+
+#endif

@@ -1,6 +1,9 @@
 #pragma once
 
 
+#ifdef STM32H7xx
+
+
 #include "../ucanopen_def.h"
 #include "impl/impl_server.h"
 #include "services/heartbeat_service.h"
@@ -68,3 +71,4 @@ public:
 
 } // namespace ucanopen
 
+#endif

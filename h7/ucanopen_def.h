@@ -1,6 +1,9 @@
 #pragma once
 
 
+#ifdef STM32H7xx
+
+
 #include <cstdint>
 #include <cstddef>
 #include <cstring>
@@ -299,6 +302,6 @@ inline bool operator==(const ODObjectKey& lhs, const ODEntry& rhs) {
     return (lhs.index == rhs.key.index) && (lhs.subindex == rhs.key.subindex);
 }
 
-
 } // namespace ucanopen
 
+#endif

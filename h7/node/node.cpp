@@ -1,3 +1,6 @@
+#ifdef STM32H7xx
+
+
 #include "node.h"
 #include "../server/server.h"
 
@@ -87,3 +90,4 @@ bool Node::connection_ok() {
 
 } // namespace ucanopen
 
+#endif

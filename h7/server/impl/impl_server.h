@@ -1,6 +1,9 @@
 #pragma once
 
 
+#ifdef STM32H7xx
+
+
 #include "../../ucanopen_def.h"
 #include <mculib_stm32/h7/can/can.h>
 #include <algorithm>
@@ -68,3 +71,4 @@ public:
 
 } // namespace ucanopen
 
+#endif

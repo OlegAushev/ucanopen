@@ -1,6 +1,9 @@
 #pragma once
 
 
+#ifdef STM32H7xx
+
+
 #include "../server/server.h"
 
 
@@ -228,14 +231,8 @@ private:
     }
 };
 
-
-
-
-
-
-
-
 } // namespace tests
 
 } // namespae ucanopen
 
+#endif

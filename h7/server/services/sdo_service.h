@@ -1,6 +1,9 @@
 #pragma once
 
 
+#ifdef STM32H7xx
+
+
 #include "../impl/impl_server.h"
 #include <mculib_stm32/h7/chrono/chrono.h>
 #include <emblib_stm32/algorithm.h>
@@ -35,3 +38,5 @@ private:
 };
 
 } // namespace ucanopen
+
+#endif

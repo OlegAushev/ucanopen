@@ -1,3 +1,6 @@
+#ifdef STM32H7xx
+
+
 #include "testserver.h"
 #include <sys/sysinfo/sysinfo.h>
 #include <sys/syslog/syslog.h>
@@ -142,3 +145,4 @@ const int object_dictionary_size = sizeof(object_dictionary) / sizeof(object_dic
 
 } // namespae ucanopen
 
+#endif

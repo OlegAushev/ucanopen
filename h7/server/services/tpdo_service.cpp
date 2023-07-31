@@ -1,3 +1,6 @@
+#ifdef STM32H7xx
+
+
 #include "tpdo_service.h"
 
 
@@ -44,3 +47,4 @@ void TpdoService::send() {
 
 } // namespace ucanopen
 
+#endif
