@@ -1,4 +1,4 @@
-#ifdef STM32F4xx
+#ifdef xSTM32F4xx
 
 
 #include "testnode.h"

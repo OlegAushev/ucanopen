@@ -1,7 +1,7 @@
 #pragma once
 
 
-#ifdef STM32F4xx
+#ifdef xSTM32F4xx
 
 
 #include "../node/node.h"
