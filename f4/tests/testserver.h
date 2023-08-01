@@ -1,7 +1,7 @@
 #pragma once
 
 
-#ifdef xSTM32F4xx
+#ifdef STM32F4xx
 
 
 #include "../server/server.h"

@@ -1,4 +1,4 @@
-#ifdef xSTM32F4xx
+#ifdef STM32F4xx
 
 
 #include "testserver.h"
