@@ -7,6 +7,7 @@
 #include "../server/impl/impl_server.h"
 #include <mculib_stm32/h7/chrono/chrono.h>
 #include <chrono>
+#include <functional>
 #include <vector>
 
 
@@ -25,7 +26,8 @@ private:
         std::chrono::milliseconds timepoint;
         bool is_unhandled;
         can_frame frame;
-        void(*handler)(const can_payload&);
+        std::function<void(const can_payload&)> handler;
+        //void(*handler)(const can_payload&);
     };
     std::vector<RxMessage> _rx_messages;
 
@@ -33,14 +35,15 @@ private:
         std::chrono::milliseconds period;
         std::chrono::milliseconds timepoint;
         FDCAN_TxHeaderTypeDef header;
-        can_payload (*creator)();
+        std::function<can_payload(void)> creator;
+        //can_payload (*creator)();
     };
     std::vector<TxMessage> _tx_messages;
 public:
     Node(Server& server);
 
-    void register_rx_message(FDCAN_FilterTypeDef& filter, std::chrono::milliseconds timeout, void(*handler)(const can_payload&));
-    void register_tx_message(const FDCAN_TxHeaderTypeDef& header, std::chrono::milliseconds period, can_payload (*creator)());
+    void register_rx_message(FDCAN_FilterTypeDef& filter, std::chrono::milliseconds timeout, std::function<void(const can_payload&)> handler);
+    void register_tx_message(const FDCAN_TxHeaderTypeDef& header, std::chrono::milliseconds period, std::function<can_payload(void)> creator);
 
     virtual std::vector<mcu::can::MessageAttribute> get_rx_attr() const override;
     virtual FrameRecvStatus recv_frame(const mcu::can::MessageAttribute& attr, const can_frame& frame) override;

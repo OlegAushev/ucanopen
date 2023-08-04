@@ -13,7 +13,7 @@ Node::Node(Server& server)
 }
 
 
-void Node::register_rx_message(FDCAN_FilterTypeDef& filter, std::chrono::milliseconds timeout, void(*handler)(const can_payload&)) {
+void Node::register_rx_message(FDCAN_FilterTypeDef& filter, std::chrono::milliseconds timeout, std::function<void(const can_payload&)> handler) {
     auto attr = _can_module.register_message(filter);
     _rx_messages.push_back({.attr = attr,
                             .timeout = timeout,
@@ -24,7 +24,7 @@ void Node::register_rx_message(FDCAN_FilterTypeDef& filter, std::chrono::millise
 }
 
 
-void Node::register_tx_message(const FDCAN_TxHeaderTypeDef& header, std::chrono::milliseconds period, can_payload (*creator)()) {
+void Node::register_tx_message(const FDCAN_TxHeaderTypeDef& header, std::chrono::milliseconds period, std::function<can_payload(void)> creator) {
     _tx_messages.push_back({.period = period,
                             .timepoint = mcu::chrono::system_clock::now(),
                             .header = header,
