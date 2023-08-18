@@ -93,7 +93,11 @@ SdoAbortCode SdoService::_read_expedited(const ODEntry* od_entry, ExpeditedSdo& 
 
     SdoAbortCode abort_code;
     if (od_entry->object.has_direct_access()) {
-        memcpy(&tsdo.data.u32, od_entry->object.ptr, od_object_type_sizes[od_entry->object.type]);
+        if (od_entry->object.ptr.first) {
+            memcpy(&tsdo.data.u32, od_entry->object.ptr.first, od_object_type_sizes[od_entry->object.type]);
+        } else {
+            memcpy(&tsdo.data.u32, *od_entry->object.ptr.second, od_object_type_sizes[od_entry->object.type]);
+        }
         abort_code = SdoAbortCode::no_error;
     } else {
         abort_code = od_entry->object.read_func(tsdo.data);
@@ -118,7 +122,11 @@ SdoAbortCode SdoService::_write_expedited(const ODEntry* od_entry, ExpeditedSdo&
 
     SdoAbortCode abort_code;
     if (od_entry->object.has_direct_access()) {
-        memcpy(od_entry->object.ptr, &rsdo.data.u32, od_object_type_sizes[od_entry->object.type]);
+        if (od_entry->object.ptr.first) {
+            memcpy(od_entry->object.ptr.first, &rsdo.data.u32, od_object_type_sizes[od_entry->object.type]);
+        } else {
+            memcpy(*od_entry->object.ptr.second, &rsdo.data.u32, od_object_type_sizes[od_entry->object.type]);
+        }
         abort_code = SdoAbortCode::no_error;
     } else {
         abort_code = od_entry->object.write_func(rsdo.data);
