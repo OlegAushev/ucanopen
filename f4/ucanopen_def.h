@@ -229,11 +229,12 @@ enum ODObjectAccessPermission {
 
 
 // Used in OD-entries which doesn't have direct access to data through pointer.
-#define OD_NO_DIRECT_ACCESS static_cast<uint32_t*>(NULL)
+#define OD_NO_DIRECT_ACCESS std::pair<uint32_t*, uint32_t**>(nullptr, nullptr)
 
 
 // Used in OD-entries which have direct access to data through pointer.
 #define OD_PTR(ptr) reinterpret_cast<uint32_t*>(ptr)
+#define OD_DPTR(dptr) reinterpret_cast<uint32_t**>(dptr)
 
 
 // Used in OD-entries which don't have read access to data through function.
@@ -262,7 +263,7 @@ struct ODObject {
     const char* unit;
     ODObjectType type;
     ODObjectAccessPermission access_permission;
-    uint32_t* ptr;
+    std::pair<uint32_t*, uint32_t**> ptr;
     SdoAbortCode (*read_func)(ExpeditedSdoData& retval);
     SdoAbortCode (*write_func)(ExpeditedSdoData val);
 
