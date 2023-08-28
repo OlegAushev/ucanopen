@@ -198,17 +198,20 @@ struct AbortSdo {
 
 
 SCOPED_ENUM_UT_DECLARE_BEGIN(SdoAbortCode, uint32_t) {
-    no_error            = 0,
-    invalid_cs          = 0x05040001,
-    unsupported_access  = 0x06010000,
-    read_access_wo      = 0x06010001,
-    write_access_ro     = 0x06010002,
-    no_object           = 0x06020000,
-    hardware_error      = 0x06060000,
-    general_error       = 0x08000000,
-    data_store_error    = 0x08000020,
-    local_control_error = 0x08000021,
-    state_error         = 0x08000022
+    no_error                = 0,
+    invalid_cs              = 0x05040001,
+    unsupported_access      = 0x06010000,
+    read_access_wo          = 0x06010001,
+    write_access_ro         = 0x06010002,
+    no_object               = 0x06020000,
+    hardware_error          = 0x06060000,
+    value_range_exceeded    = 0x06090030,
+    value_too_high          = 0x06090031,
+    value_too_low           = 0x06090032,
+    general_error           = 0x08000000,
+    data_store_error        = 0x08000020,
+    local_control_error     = 0x08000021,
+    state_error             = 0x08000022
 } SCOPED_ENUM_DECLARE_END(SdoAbortCode)
 
 
