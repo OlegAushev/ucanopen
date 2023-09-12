@@ -39,6 +39,8 @@ private:
         //can_payload (*creator)();
     };
     std::vector<TxMessage> _tx_messages;
+
+    bool _enabled = true;
 public:
     Node(Server& server);
 
@@ -52,6 +54,9 @@ public:
     void send();
 
     bool connection_ok();
+
+    void enable() { _enabled = true; }
+    void disable() { _enabled = false; }
 };
 
 } // namespace ucanopen

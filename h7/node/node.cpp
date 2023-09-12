@@ -33,6 +33,10 @@ void Node::register_tx_message(const FDCAN_TxHeaderTypeDef& header, std::chrono:
 
 
 void Node::send() {
+    if (!_enabled) {
+        return;
+    }
+
     auto now = mcu::chrono::system_clock::now();
     for (auto& message : _tx_messages) {
         if (message.period.count() <= 0) { continue; }
@@ -55,6 +59,10 @@ std::vector<mcu::can::MessageAttribute> Node::get_rx_attr() const {
 
 
 FrameRecvStatus Node::recv_frame(const mcu::can::MessageAttribute& attr, const can_frame& frame) {
+    if (!_enabled) {
+        return FrameRecvStatus::attr_mismatch;
+    }
+
     auto received_msg = std::find_if(_rx_messages.begin(), _rx_messages.end(),
                                      [attr](const auto& msg){ return msg.attr == attr; });
     if (received_msg == _rx_messages.end()) {
