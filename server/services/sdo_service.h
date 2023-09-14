@@ -4,7 +4,6 @@
 #include "../impl/impl_server.h"
 #include <emblib_c28x/algorithm.h>
 #include <new>
-#include "sys/syslog/syslog.h"
 
 
 namespace ucanopen {
@@ -29,8 +28,7 @@ public:
         assert(_server._ipc_role == mcu::ipc::Role::primary);
 
         if (_rsdo_flag.local.is_set() || _tsdo_flag.is_set()) {
-            syslog::set_warning(sys::Warning::can_bus_overrun);
-            syslog::add_message(sys::Message::ucanopen_sdo_request_lost);
+            _server.on_sdo_overrun();
         } else {
             _server._can_module->recv(CobType::rsdo, _rsdo_data->data);
             _rsdo_flag.local.set();

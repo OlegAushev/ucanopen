@@ -4,7 +4,6 @@
 #include "../impl/impl_server.h"
 #include <mculib_c28x/f2837xd/chrono/chrono.h>
 #include <new>
-#include "sys/syslog/syslog.h"
 
 
 namespace ucanopen {
@@ -40,7 +39,7 @@ public:
 
         (*_rpdo_list)[rpdo_type.underlying_value()].timepoint = mcu::chrono::system_clock::now();
         if (_received_flags[rpdo_type.underlying_value()].local.is_set()) {
-            syslog::set_warning(sys::Warning::can_bus_overrun);
+            _server.on_rpdo_overrun();
         } else {
             // there is no unprocessed RPDO of this type
             _server._can_module->recv(cob_type.underlying_value(), (*_rpdo_list)[rpdo_type.underlying_value()].payload.data);
@@ -60,21 +59,31 @@ public:
         }
     }
 
-    void check_connection() {
-        assert(_server._ipc_role == mcu::ipc::Role::primary);
-
-        emb::chrono::milliseconds now = mcu::chrono::system_clock::now();
-        for (int i = 0; i < _rpdo_list->size(); ++i) {
-            if ((*_rpdo_list)[i].timeout.count() <= 0) { continue; }
-
-            if (now > (*_rpdo_list)[i].timepoint + (*_rpdo_list)[i].timeout) {
-                syslog::set_warning(sys::Warning::can_bus_connection_lost);
-                return;
-            }
+    bool is_ok(RpdoType rpdo_type) {
+        if ((*_rpdo_list)[rpdo_type.underlying_value()].timeout.count() <= 0) {
+            return true;
         }
-        syslog::reset_warning(sys::Warning::can_bus_connection_lost);
-        return;
+        if (mcu::chrono::system_clock::now() <=  (*_rpdo_list)[rpdo_type.underlying_value()].timepoint + (*_rpdo_list)[rpdo_type.underlying_value()].timeout) {
+            return true;
+        }
+        return false;
     }
+
+//    void check_connection() {
+//        assert(_server._ipc_role == mcu::ipc::Role::primary);
+//
+//        emb::chrono::milliseconds now = mcu::chrono::system_clock::now();
+//        for (int i = 0; i < _rpdo_list->size(); ++i) {
+//            if ((*_rpdo_list)[i].timeout.count() <= 0) { continue; }
+//
+//            if (now > (*_rpdo_list)[i].timepoint + (*_rpdo_list)[i].timeout) {
+//                syslog::set_warning(sys::Warning::can_bus_connection_lost);
+//                return;
+//            }
+//        }
+//        syslog::reset_warning(sys::Warning::can_bus_connection_lost);
+//        return;
+//    }
 };
 
 } // namespace ucanopen

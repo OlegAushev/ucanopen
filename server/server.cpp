@@ -77,7 +77,7 @@ void Server::on_frame_received(mcu::can::Module* can_module, uint32_t interrupt_
         case CAN_STATUS_LEC_BIT1:
         case CAN_STATUS_LEC_BIT0:
         case CAN_STATUS_LEC_CRC:
-            syslog::set_warning(sys::Warning::can_bus_error);
+            server->on_can_bus_error();
             break;
         default:
             break;
@@ -87,11 +87,9 @@ void Server::on_frame_received(mcu::can::Module* can_module, uint32_t interrupt_
     case CobType::rpdo2:
     case CobType::rpdo3:
     case CobType::rpdo4:
-        syslog::reset_warning(sys::Warning::can_bus_error);
         server->rpdo_service->recv(CobType(interrupt_cause));
         break;
     case CobType::rsdo:
-        syslog::reset_warning(sys::Warning::can_bus_error);
         server->sdo_service->recv();
         break;
     default:

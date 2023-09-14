@@ -2,6 +2,7 @@
 
 
 #include "../server/server.h"
+#include <sys/syslog/syslog.h>
 
 
 namespace ucanopen {
@@ -232,7 +233,7 @@ protected:
         static bool warning_detected = false;
         static emb::chrono::milliseconds warning_timepoint = emb::chrono::milliseconds(0);
 
-        if (syslog::has_warning(sys::Warning::can_bus_connection_lost)) {
+        if (syslog::warning(sys::Warning::can_bus_connection_lost)) {
             if (!warning_detected) {
                 warning_detected = true;
                 warning_timepoint = mcu::chrono::system_clock::now();

@@ -59,6 +59,9 @@ public:
 
     NodeId node_id() const { return _node_id; }
     NmtState nmt_state() const { return _nmt_state; }
+protected:
+    virtual void on_sdo_overrun() {}
+    virtual void on_rpdo_overrun() {}
 private:
     void _init_message_objects();
     void _init_object_dictionary();

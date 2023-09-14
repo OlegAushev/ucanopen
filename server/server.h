@@ -8,7 +8,6 @@
 #include "services/sdo_service.h"
 #include "services/tpdo_service.h"
 #include <mculib_c28x/f2837xd/chrono/chrono.h>
-#include "sys/syslog/syslog.h"
 
 
 namespace ucanopen {
@@ -50,6 +49,7 @@ protected:
     SdoService* sdo_service;
 
     virtual void on_run() {}
+    virtual void on_can_bus_error() {}
 public:
     Server(mcu::ipc::traits::singlecore, mcu::ipc::traits::primary, const IpcFlags& ipc_flags,
            mcu::can::Module* can_module, const ServerConfig& config,
@@ -83,7 +83,7 @@ public:
             rpdo_service->handle_received();
             sdo_service->handle_received();
             sdo_service->send();
-            rpdo_service->check_connection();
+            //rpdo_service->check_connection();
             on_run();
             break;
         case mcu::ipc::Mode::dualcore:
@@ -92,7 +92,7 @@ public:
                 heartbeat_service->send();
                 tpdo_service->send();
                 sdo_service->send();
-                rpdo_service->check_connection();
+                //rpdo_service->check_connection();
                 break;
             case mcu::ipc::Role::secondary:
                 rpdo_service->handle_received();
