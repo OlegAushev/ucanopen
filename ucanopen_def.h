@@ -1,9 +1,9 @@
 #pragma once
 
 
-#include <emblib_c28x/array.h>
-#include <emblib_c28x/core.h>
-#include <emblib_c28x/pair.h>
+#include <emblib/array.h>
+#include <emblib/core.h>
+#include <emblib/pair.h>
 #include <cstring>
 
 

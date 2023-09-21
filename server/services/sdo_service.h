@@ -2,7 +2,7 @@
 
 
 #include "../impl/impl_server.h"
-#include <emblib_c28x/algorithm.h>
+#include <emblib/algorithm.h>
 #include <new>
 
 
