@@ -83,13 +83,13 @@ void Server::on_frame_received(mcu::can::Module* can_module, uint32_t interrupt_
             break;
         }
         break;
-    case CobType::rpdo1:
-    case CobType::rpdo2:
-    case CobType::rpdo3:
-    case CobType::rpdo4:
-        server->rpdo_service->recv(CobType(interrupt_cause));
+    case Cob::rpdo1:
+    case Cob::rpdo2:
+    case Cob::rpdo3:
+    case Cob::rpdo4:
+        server->rpdo_service->recv(Cob(interrupt_cause));
         break;
-    case CobType::rsdo:
+    case Cob::rsdo:
         server->sdo_service->recv();
         break;
     default:

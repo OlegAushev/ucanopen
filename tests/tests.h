@@ -124,19 +124,19 @@ public:
                     can_module, config, object_dictionary, object_dictionary_size) {
         _object = object;
 
-        this->tpdo_service->register_tpdo(TpdoType::tpdo1, emb::chrono::milliseconds(config.tpdo1_period_ms), _create_tpdo1);
-        this->tpdo_service->register_tpdo(TpdoType::tpdo2, emb::chrono::milliseconds(config.tpdo2_period_ms), _create_tpdo2);
-        this->tpdo_service->register_tpdo(TpdoType::tpdo3, emb::chrono::milliseconds(config.tpdo3_period_ms), _create_tpdo3);
-        this->tpdo_service->register_tpdo(TpdoType::tpdo4, emb::chrono::milliseconds(config.tpdo4_period_ms), _create_tpdo4);
+        this->tpdo_service->register_tpdo(CobTpdo::tpdo1, emb::chrono::milliseconds(config.tpdo1_period_ms), _create_tpdo1);
+        this->tpdo_service->register_tpdo(CobTpdo::tpdo2, emb::chrono::milliseconds(config.tpdo2_period_ms), _create_tpdo2);
+        this->tpdo_service->register_tpdo(CobTpdo::tpdo3, emb::chrono::milliseconds(config.tpdo3_period_ms), _create_tpdo3);
+        this->tpdo_service->register_tpdo(CobTpdo::tpdo4, emb::chrono::milliseconds(config.tpdo4_period_ms), _create_tpdo4);
 
-        this->rpdo_service->register_rpdo(RpdoType::rpdo1, emb::chrono::milliseconds(config.rpdo1_timeout_ms), config.rpdo1_id);
-        this->rpdo_service->register_rpdo_handler(RpdoType::rpdo1, _handle_rpdo1);
-        this->rpdo_service->register_rpdo(RpdoType::rpdo2, emb::chrono::milliseconds(config.rpdo2_timeout_ms), config.rpdo2_id);
-        this->rpdo_service->register_rpdo_handler(RpdoType::rpdo2, _handle_rpdo2);
-        this->rpdo_service->register_rpdo(RpdoType::rpdo3, emb::chrono::milliseconds(config.rpdo3_timeout_ms), config.rpdo3_id);
-        this->rpdo_service->register_rpdo_handler(RpdoType::rpdo3, _handle_rpdo3);
-        this->rpdo_service->register_rpdo(RpdoType::rpdo4, emb::chrono::milliseconds(config.rpdo4_timeout_ms), config.rpdo4_id);
-        this->rpdo_service->register_rpdo_handler(RpdoType::rpdo4, _handle_rpdo4);
+        this->rpdo_service->register_rpdo(CobRpdo::rpdo1, emb::chrono::milliseconds(config.rpdo1_timeout_ms), config.rpdo1_id);
+        this->rpdo_service->register_rpdo_handler(CobRpdo::rpdo1, _handle_rpdo1);
+        this->rpdo_service->register_rpdo(CobRpdo::rpdo2, emb::chrono::milliseconds(config.rpdo2_timeout_ms), config.rpdo2_id);
+        this->rpdo_service->register_rpdo_handler(CobRpdo::rpdo2, _handle_rpdo2);
+        this->rpdo_service->register_rpdo(CobRpdo::rpdo3, emb::chrono::milliseconds(config.rpdo3_timeout_ms), config.rpdo3_id);
+        this->rpdo_service->register_rpdo_handler(CobRpdo::rpdo3, _handle_rpdo3);
+        this->rpdo_service->register_rpdo(CobRpdo::rpdo4, emb::chrono::milliseconds(config.rpdo4_timeout_ms), config.rpdo4_id);
+        this->rpdo_service->register_rpdo_handler(CobRpdo::rpdo4, _handle_rpdo4);
     }
 
     Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::primary, const IpcFlags& ipc_flags,
@@ -145,15 +145,15 @@ public:
                     can_module, config) {
         _object = object;
 
-        this->tpdo_service->register_tpdo(TpdoType::tpdo1, emb::chrono::milliseconds(config.tpdo1_period_ms), _create_tpdo1);
-        this->tpdo_service->register_tpdo(TpdoType::tpdo2, emb::chrono::milliseconds(config.tpdo2_period_ms), _create_tpdo2);
-        this->tpdo_service->register_tpdo(TpdoType::tpdo3, emb::chrono::milliseconds(config.tpdo3_period_ms), _create_tpdo3);
-        this->tpdo_service->register_tpdo(TpdoType::tpdo4, emb::chrono::milliseconds(config.tpdo4_period_ms), _create_tpdo4);
+        this->tpdo_service->register_tpdo(CobTpdo::tpdo1, emb::chrono::milliseconds(config.tpdo1_period_ms), _create_tpdo1);
+        this->tpdo_service->register_tpdo(CobTpdo::tpdo2, emb::chrono::milliseconds(config.tpdo2_period_ms), _create_tpdo2);
+        this->tpdo_service->register_tpdo(CobTpdo::tpdo3, emb::chrono::milliseconds(config.tpdo3_period_ms), _create_tpdo3);
+        this->tpdo_service->register_tpdo(CobTpdo::tpdo4, emb::chrono::milliseconds(config.tpdo4_period_ms), _create_tpdo4);
 
-        this->rpdo_service->register_rpdo(RpdoType::rpdo1, emb::chrono::milliseconds(config.rpdo1_timeout_ms), config.rpdo1_id);
-        this->rpdo_service->register_rpdo(RpdoType::rpdo2, emb::chrono::milliseconds(config.rpdo2_timeout_ms), config.rpdo2_id);
-        this->rpdo_service->register_rpdo(RpdoType::rpdo3, emb::chrono::milliseconds(config.rpdo3_timeout_ms), config.rpdo3_id);
-        this->rpdo_service->register_rpdo(RpdoType::rpdo4, emb::chrono::milliseconds(config.rpdo4_timeout_ms), config.rpdo4_id);
+        this->rpdo_service->register_rpdo(CobRpdo::rpdo1, emb::chrono::milliseconds(config.rpdo1_timeout_ms), config.rpdo1_id);
+        this->rpdo_service->register_rpdo(CobRpdo::rpdo2, emb::chrono::milliseconds(config.rpdo2_timeout_ms), config.rpdo2_id);
+        this->rpdo_service->register_rpdo(CobRpdo::rpdo3, emb::chrono::milliseconds(config.rpdo3_timeout_ms), config.rpdo3_id);
+        this->rpdo_service->register_rpdo(CobRpdo::rpdo4, emb::chrono::milliseconds(config.rpdo4_timeout_ms), config.rpdo4_id);
     }
 
     Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::secondary, const IpcFlags& ipc_flags,
@@ -162,10 +162,10 @@ public:
                     object_dictionary, object_dictionary_size) {
         _object = object;
 
-        this->rpdo_service->register_rpdo_handler(RpdoType::rpdo1, _handle_rpdo1);
-        this->rpdo_service->register_rpdo_handler(RpdoType::rpdo2, _handle_rpdo2);
-        this->rpdo_service->register_rpdo_handler(RpdoType::rpdo3, _handle_rpdo3);
-        this->rpdo_service->register_rpdo_handler(RpdoType::rpdo4, _handle_rpdo4);
+        this->rpdo_service->register_rpdo_handler(CobRpdo::rpdo1, _handle_rpdo1);
+        this->rpdo_service->register_rpdo_handler(CobRpdo::rpdo2, _handle_rpdo2);
+        this->rpdo_service->register_rpdo_handler(CobRpdo::rpdo3, _handle_rpdo3);
+        this->rpdo_service->register_rpdo_handler(CobRpdo::rpdo4, _handle_rpdo4);
     }
 
 protected:

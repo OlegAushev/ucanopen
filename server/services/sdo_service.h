@@ -30,7 +30,7 @@ public:
         if (_rsdo_flag.local.is_set() || _tsdo_flag.is_set()) {
             _server.on_sdo_overrun();
         } else {
-            _server._can_module->recv(CobType::rsdo, _rsdo_data->data);
+            _server._can_module->recv(Cob::rsdo, _rsdo_data->data);
             _rsdo_flag.local.set();
         }
     }
@@ -39,7 +39,7 @@ public:
         assert(_server._ipc_role == mcu::ipc::Role::primary);
 
         if (!_tsdo_flag.is_set()) { return; }
-        _server._can_module->send(CobType::tsdo, _tsdo_data->data, cob_sizes[CobType::tsdo]);
+        _server._can_module->send(Cob::tsdo, _tsdo_data->data, cob_data_len[Cob::tsdo]);
         _tsdo_flag.reset();
     }
 private:

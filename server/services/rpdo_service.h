@@ -17,73 +17,57 @@ private:
         emb::chrono::milliseconds timepoint;
         can_payload payload;
     };
-    emb::array<Message, 4>* _rpdo_list;
+    emb::array<Message, 4>* _rpdo_msgs;
     static unsigned char cana_rpdo_dualcore_alloc[sizeof(emb::array<Message, 4>)];
     static unsigned char canb_rpdo_dualcore_alloc[sizeof(emb::array<Message, 4>)];
     emb::array<mcu::ipc::Flag, 4> _received_flags;
     emb::array<void(*)(const can_payload& payload), 4> _handlers;
 public:
     RpdoService(impl::Server& server, const IpcFlags& ipc_flags);
-    void register_rpdo(RpdoType rpdo_type, emb::chrono::milliseconds timeout, unsigned int id = 0);
-    void register_rpdo_handler(RpdoType rpdo_type, void (*handler)(const can_payload& data));
+    void register_rpdo(CobRpdo rpdo, emb::chrono::milliseconds timeout, unsigned int id = 0);
+    void register_rpdo_handler(CobRpdo rpdo, void (*handler)(const can_payload& data));
 
-    void recv(CobType cob_type) {
+    void recv(Cob cob) {
         assert(_server._ipc_role == mcu::ipc::Role::primary);
 
-        if (cob_type != CobType::rpdo1
-         && cob_type != CobType::rpdo2
-         && cob_type != CobType::rpdo3
-         && cob_type != CobType::rpdo4) { return; }
+        if (cob != Cob::rpdo1
+         && cob != Cob::rpdo2
+         && cob != Cob::rpdo3
+         && cob != Cob::rpdo4) { return; }
 
-        RpdoType rpdo_type((cob_type.underlying_value() - static_cast<unsigned int>(CobType::rpdo1)) / 2);
+        CobRpdo rpdo((cob.underlying_value() - static_cast<unsigned int>(Cob::rpdo1)) / 2);
 
-        (*_rpdo_list)[rpdo_type.underlying_value()].timepoint = mcu::chrono::system_clock::now();
-        if (_received_flags[rpdo_type.underlying_value()].local.is_set()) {
+        (*_rpdo_msgs)[rpdo.underlying_value()].timepoint = mcu::chrono::system_clock::now();
+        if (_received_flags[rpdo.underlying_value()].local.is_set()) {
             _server.on_rpdo_overrun();
         } else {
             // there is no unprocessed RPDO of this type
-            _server._can_module->recv(cob_type.underlying_value(), (*_rpdo_list)[rpdo_type.underlying_value()].payload.data);
-            _received_flags[rpdo_type.underlying_value()].local.set();
+            _server._can_module->recv(cob.underlying_value(), (*_rpdo_msgs)[rpdo.underlying_value()].payload.data);
+            _received_flags[rpdo.underlying_value()].local.set();
         }
     }
 
     void handle_received() {
         assert(_server._ipc_mode == mcu::ipc::Mode::singlecore || _server._ipc_role == mcu::ipc::Role::secondary);
 
-        for (int i = 0; i < _rpdo_list->size(); ++i) {
+        for (int i = 0; i < _rpdo_msgs->size(); ++i) {
             if (!_handlers[i]) { continue; }
             if (_received_flags[i].is_set()) {
-                _handlers[i]((*_rpdo_list)[i].payload);
+                _handlers[i]((*_rpdo_msgs)[i].payload);
                 _received_flags[i].reset();
             }
         }
     }
 
-    bool is_ok(RpdoType rpdo_type) {
-        if ((*_rpdo_list)[rpdo_type.underlying_value()].timeout.count() <= 0) {
+    bool is_ok(CobRpdo rpdo) {
+        if ((*_rpdo_msgs)[rpdo.underlying_value()].timeout.count() <= 0) {
             return true;
         }
-        if (mcu::chrono::system_clock::now() <=  (*_rpdo_list)[rpdo_type.underlying_value()].timepoint + (*_rpdo_list)[rpdo_type.underlying_value()].timeout) {
+        if (mcu::chrono::system_clock::now() <=  (*_rpdo_msgs)[rpdo.underlying_value()].timepoint + (*_rpdo_msgs)[rpdo.underlying_value()].timeout) {
             return true;
         }
         return false;
     }
-
-//    void check_connection() {
-//        assert(_server._ipc_role == mcu::ipc::Role::primary);
-//
-//        emb::chrono::milliseconds now = mcu::chrono::system_clock::now();
-//        for (int i = 0; i < _rpdo_list->size(); ++i) {
-//            if ((*_rpdo_list)[i].timeout.count() <= 0) { continue; }
-//
-//            if (now > (*_rpdo_list)[i].timepoint + (*_rpdo_list)[i].timeout) {
-//                syslog::set_warning(sys::Warning::can_bus_connection_lost);
-//                return;
-//            }
-//        }
-//        syslog::reset_warning(sys::Warning::can_bus_connection_lost);
-//        return;
-//    }
 };
 
 } // namespace ucanopen

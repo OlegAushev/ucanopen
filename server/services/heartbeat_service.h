@@ -24,7 +24,7 @@ public:
         if (now >= _timepoint + _period) {
             can_payload payload;
             payload[0] = _server.nmt_state().underlying_value();
-            _server._can_module->send(CobType::heartbeat, payload.data, cob_sizes[CobType::heartbeat]);
+            _server._can_module->send(Cob::heartbeat, payload.data, cob_data_len[Cob::heartbeat]);
             _timepoint = now;
         }
     }

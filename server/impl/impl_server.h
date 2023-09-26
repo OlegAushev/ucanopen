@@ -45,7 +45,7 @@ protected:
 
     NmtState _nmt_state;
 private:
-    emb::array<mcu::can::MessageObject, cob_type_count> _message_objects;
+    emb::array<mcu::can::MessageObject, cob_count> _message_objects;
 public:
     Server(mcu::ipc::traits::singlecore, mcu::ipc::traits::primary,
            mcu::can::Module* can_module, NodeId node_id,

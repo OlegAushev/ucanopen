@@ -57,7 +57,7 @@ SCOPED_ENUM_DECLARE_BEGIN(NmtState) {
 } SCOPED_ENUM_DECLARE_END(NmtState)
 
 
-SCOPED_ENUM_DECLARE_BEGIN(CobType) {
+SCOPED_ENUM_DECLARE_BEGIN(Cob) {
     dummy,
     nmt,
     sync,
@@ -74,13 +74,13 @@ SCOPED_ENUM_DECLARE_BEGIN(CobType) {
     tsdo,
     rsdo,
     heartbeat
-} SCOPED_ENUM_DECLARE_END(CobType)
+} SCOPED_ENUM_DECLARE_END(Cob)
 
 
-const int cob_type_count = 16;
+const int cob_count = 16;
 
 
-const emb::array<uint32_t, cob_type_count> cob_function_codes = {
+const emb::array<uint32_t, cob_count> cob_function_codes = {
     0x000,  // DUMMY
     0x000,  // NMT
     0x080,  // SYNC
@@ -100,15 +100,15 @@ const emb::array<uint32_t, cob_type_count> cob_function_codes = {
 };
 
 
-inline uint32_t calculate_cob_id(CobType cob_type, NodeId node_id) {
-    if ((cob_type == CobType::nmt) || (cob_type == CobType::sync) || (cob_type == CobType::time)) {
-        return cob_function_codes[cob_type.underlying_value()];
+inline uint32_t calculate_cob_id(Cob cob, NodeId node_id) {
+    if ((cob == Cob::nmt) || (cob == Cob::sync) || (cob == Cob::time)) {
+        return cob_function_codes[cob.underlying_value()];
     }
-    return cob_function_codes[cob_type.underlying_value()] + node_id.get();
+    return cob_function_codes[cob.underlying_value()] + node_id.get();
 }
 
 
-const emb::array<int, cob_type_count> cob_sizes = {
+const emb::array<int, cob_count> cob_data_len = {
     0,  // DUMMY
     2,  // NMT
     0,  // SYNC
@@ -128,29 +128,29 @@ const emb::array<int, cob_type_count> cob_sizes = {
 };
 
 
-SCOPED_ENUM_DECLARE_BEGIN(TpdoType) {
+SCOPED_ENUM_DECLARE_BEGIN(CobTpdo) {
     tpdo1,
     tpdo2,
     tpdo3,
     tpdo4,
-} SCOPED_ENUM_DECLARE_END(TpdoType)
+} SCOPED_ENUM_DECLARE_END(CobTpdo)
 
 
-inline CobType to_cob_type(TpdoType tpdo_type) {
-    return static_cast<CobType>(static_cast<unsigned int>(CobType::tpdo1) + 2 * tpdo_type.underlying_value());
+inline Cob to_cob(CobTpdo tpdo) {
+    return static_cast<Cob>(static_cast<unsigned int>(Cob::tpdo1) + 2 * tpdo.underlying_value());
 }
 
 
-SCOPED_ENUM_DECLARE_BEGIN(RpdoType) {
+SCOPED_ENUM_DECLARE_BEGIN(CobRpdo) {
     rpdo1,
     rpdo2,
     rpdo3,
     rpdo4,
-} SCOPED_ENUM_DECLARE_END(RpdoType)
+} SCOPED_ENUM_DECLARE_END(CobRpdo)
 
 
-inline CobType to_cob_type(RpdoType rpdo_type) {
-    return static_cast<CobType>(static_cast<unsigned int>(CobType::rpdo1) + 2 * rpdo_type.underlying_value());
+inline Cob to_cob(CobRpdo rpdo) {
+    return static_cast<Cob>(static_cast<unsigned int>(Cob::rpdo1) + 2 * rpdo.underlying_value());
 }
 
 

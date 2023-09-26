@@ -48,53 +48,53 @@ impl::Server::Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::secondary,
 
 
 void impl::Server::_init_message_objects() {
-    for (int i = 0; i < cob_type_count; ++i) {
+    for (int i = 0; i < cob_count; ++i) {
         _message_objects[i].obj_id = i;
-        _message_objects[i].frame_id = calculate_cob_id(CobType(i), this->_node_id);
+        _message_objects[i].frame_id = calculate_cob_id(Cob(i), this->_node_id);
         _message_objects[i].frame_type = CAN_MSG_FRAME_STD;
         _message_objects[i].frame_idmask = 0;
-        _message_objects[i].data_len = cob_sizes[i];
+        _message_objects[i].data_len = cob_data_len[i];
     }
 
-    _message_objects[CobType::emcy].obj_type
-            = _message_objects[CobType::tpdo1].obj_type
-            = _message_objects[CobType::tpdo2].obj_type
-            = _message_objects[CobType::tpdo3].obj_type
-            = _message_objects[CobType::tpdo4].obj_type
-            = _message_objects[CobType::tsdo].obj_type
-            = _message_objects[CobType::heartbeat].obj_type
+    _message_objects[Cob::emcy].obj_type
+            = _message_objects[Cob::tpdo1].obj_type
+            = _message_objects[Cob::tpdo2].obj_type
+            = _message_objects[Cob::tpdo3].obj_type
+            = _message_objects[Cob::tpdo4].obj_type
+            = _message_objects[Cob::tsdo].obj_type
+            = _message_objects[Cob::heartbeat].obj_type
             = CAN_MSG_OBJ_TYPE_TX;
 
-    _message_objects[CobType::nmt].obj_type
-            = _message_objects[CobType::sync].obj_type
-            = _message_objects[CobType::time].obj_type
-            = _message_objects[CobType::rpdo1].obj_type
-            = _message_objects[CobType::rpdo2].obj_type
-            = _message_objects[CobType::rpdo3].obj_type
-            = _message_objects[CobType::rpdo4].obj_type
-            = _message_objects[CobType::rsdo].obj_type
+    _message_objects[Cob::nmt].obj_type
+            = _message_objects[Cob::sync].obj_type
+            = _message_objects[Cob::time].obj_type
+            = _message_objects[Cob::rpdo1].obj_type
+            = _message_objects[Cob::rpdo2].obj_type
+            = _message_objects[Cob::rpdo3].obj_type
+            = _message_objects[Cob::rpdo4].obj_type
+            = _message_objects[Cob::rsdo].obj_type
             = CAN_MSG_OBJ_TYPE_RX;
 
-    _message_objects[CobType::emcy].flags
-            = _message_objects[CobType::tpdo1].flags
-            = _message_objects[CobType::tpdo2].flags
-            = _message_objects[CobType::tpdo3].flags
-            = _message_objects[CobType::tpdo4].flags
-            = _message_objects[CobType::tsdo].flags
-            = _message_objects[CobType::heartbeat].flags
+    _message_objects[Cob::emcy].flags
+            = _message_objects[Cob::tpdo1].flags
+            = _message_objects[Cob::tpdo2].flags
+            = _message_objects[Cob::tpdo3].flags
+            = _message_objects[Cob::tpdo4].flags
+            = _message_objects[Cob::tsdo].flags
+            = _message_objects[Cob::heartbeat].flags
             = CAN_MSG_OBJ_NO_FLAGS;
 
-    _message_objects[CobType::nmt].flags
-            = _message_objects[CobType::sync].flags
-            = _message_objects[CobType::time].flags
-            = _message_objects[CobType::rpdo1].flags
-            = _message_objects[CobType::rpdo2].flags
-            = _message_objects[CobType::rpdo3].flags
-            = _message_objects[CobType::rpdo4].flags
-            = _message_objects[CobType::rsdo].flags
+    _message_objects[Cob::nmt].flags
+            = _message_objects[Cob::sync].flags
+            = _message_objects[Cob::time].flags
+            = _message_objects[Cob::rpdo1].flags
+            = _message_objects[Cob::rpdo2].flags
+            = _message_objects[Cob::rpdo3].flags
+            = _message_objects[Cob::rpdo4].flags
+            = _message_objects[Cob::rsdo].flags
             = CAN_MSG_OBJ_RX_INT_ENABLE;
 
-    for (int i = 1; i < cob_type_count; ++i) {
+    for (int i = 1; i < cob_count; ++i) {
         // count from 1 - skip dummy COB
         this->_can_module->setup_message_object(_message_objects[i]);
     }
