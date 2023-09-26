@@ -203,7 +203,7 @@ private:
     static can_payload _create_tpdo4() {
         static unsigned int counter = 0;
         CobTpdo4 tpdo;
-        tpdo.counter = counter;
+        tpdo.counter = counter & 0x3;
         //tpdo.errors = syslog::errors();
         //tpdo.warnings = syslog::warnings();
         counter = (counter + 1) % 4;
