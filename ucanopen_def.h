@@ -259,7 +259,7 @@ inline SdoAbortCode OD_NO_INDIRECT_WRITE_ACCESS(ExpeditedSdoData val) { return S
 
 const int od_object_type_sizes[9] = {sizeof(bool), sizeof(int16_t), sizeof(int32_t),
                                      sizeof(uint16_t), sizeof(uint32_t), sizeof(float),
-                                     sizeof(uint16_t), 0, 0};
+                                     sizeof(uint16_t), 2, 2};
 
 
 struct ODObjectKey {
