@@ -10,7 +10,7 @@ SdoService::SdoService(impl::Server& server)
         : _server(server) {
     CAN_FilterTypeDef rsdo_filter = {
         .FilterIdHigh = 0,
-        .FilterIdLow = calculate_cob_id(CobType::rsdo, _server.node_id()),
+        .FilterIdLow = calculate_cob_id(Cob::rsdo, _server.node_id()),
         .FilterMaskIdHigh = 0,
         .FilterMaskIdLow = 0x7FF,
         .FilterFIFOAssignment = CAN_RX_FIFO0,
@@ -24,7 +24,7 @@ SdoService::SdoService(impl::Server& server)
     _rsdo.is_unhandled = false;
 
     _tsdo.header = {
-        .StdId = calculate_cob_id(CobType::tsdo, _server.node_id()),
+        .StdId = calculate_cob_id(Cob::tsdo, _server.node_id()),
         .ExtId = 0,
         .IDE = CAN_ID_STD,
         .RTR = CAN_RTR_DATA,

@@ -11,7 +11,7 @@ SyncService::SyncService(impl::Server& server, std::chrono::milliseconds period)
         , _period(period) {
     _timepoint = mcu::chrono::system_clock::now();
     _header = {
-        .StdId = calculate_cob_id(CobType::sync, _server.node_id()),
+        .StdId = calculate_cob_id(Cob::sync, _server.node_id()),
         .ExtId = 0,
         .IDE = CAN_ID_STD,
         .RTR = CAN_RTR_DATA,

@@ -50,7 +50,7 @@ enum class NmtState : uint8_t {
 };
 
 
-enum class CobType {
+enum class Cob {
     nmt,
     sync,
     emcy,
@@ -69,10 +69,10 @@ enum class CobType {
 };
 
 
-constexpr int cob_type_count = 15;
+constexpr int cob_count = 15;
 
 
-constexpr std::array<can_id, cob_type_count> cob_function_codes = {
+constexpr std::array<can_id, cob_count> cob_function_codes = {
     0x000,  // NMT
     0x080,  // SYNC
     0x080,  // EMCY
@@ -91,15 +91,15 @@ constexpr std::array<can_id, cob_type_count> cob_function_codes = {
 };
 
 
-inline can_id calculate_cob_id(CobType cob_type, NodeId node_id) {
-    if ((cob_type == CobType::nmt) || (cob_type == CobType::sync) || (cob_type == CobType::time)) {
-        return cob_function_codes[std::to_underlying(cob_type)];
+inline can_id calculate_cob_id(Cob cob, NodeId node_id) {
+    if ((cob == Cob::nmt) || (cob == Cob::sync) || (cob == Cob::time)) {
+        return cob_function_codes[std::to_underlying(cob)];
     }
-    return cob_function_codes[std::to_underlying(cob_type)] + node_id.get();
+    return cob_function_codes[std::to_underlying(cob)] + node_id.get();
 }
 
 
-constexpr std::array<int, cob_type_count> cob_sizes = {
+constexpr std::array<int, cob_count> cob_sizes = {
     2,  // NMT
     0,  // SYNC
     2,  // EMCY
@@ -118,7 +118,7 @@ constexpr std::array<int, cob_type_count> cob_sizes = {
 };
 
 
-enum class TpdoType {
+enum class CobTpdo {
     tpdo1,
     tpdo2,
     tpdo3,
@@ -126,12 +126,12 @@ enum class TpdoType {
 };
 
 
-inline CobType to_cob_type(TpdoType tpdo_type) {
-    return static_cast<CobType>(std::to_underlying(CobType::tpdo1) + 2 * std::to_underlying(tpdo_type));
+inline Cob to_cob(CobTpdo tpdo) {
+    return static_cast<Cob>(std::to_underlying(Cob::tpdo1) + 2 * std::to_underlying(tpdo));
 }
 
 
-enum class RpdoType {
+enum class CobRpdo {
     rpdo1,
     rpdo2,
     rpdo3,
@@ -139,8 +139,8 @@ enum class RpdoType {
 };
 
 
-inline CobType to_cob_type(RpdoType rpdo_type) {
-    return static_cast<CobType>(std::to_underlying(CobType::rpdo1) + 2 * std::to_underlying(rpdo_type));
+inline Cob to_cob(CobRpdo rpdo) {
+    return static_cast<Cob>(std::to_underlying(Cob::rpdo1) + 2 * std::to_underlying(rpdo));
 }
 
 
