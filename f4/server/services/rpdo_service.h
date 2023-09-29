@@ -32,7 +32,15 @@ public:
     virtual FrameRecvStatus recv_frame(const mcu::can::MessageAttribute& attr, const can_frame& frame) override;
     virtual void handle_recv_frames() override;
 
-    bool connection_ok();
+    bool is_ok(CobRpdo rpdo) {
+        if (_rpdo_msgs[std::to_underlying(rpdo)].timeout.count() <= 0) {
+            return true;
+        }
+        if (mcu::chrono::system_clock::now() <= _rpdo_msgs[std::to_underlying(rpdo)].timepoint + _rpdo_msgs[std::to_underlying(rpdo)].timeout) {
+            return true;
+        }
+        return false;
+    }
 };
 
 } // namespace ucanopen

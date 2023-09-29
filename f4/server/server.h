@@ -13,8 +13,6 @@
 #include "services/tpdo_service.h"
 #include "../node/node.h"
 
-#include <sys/syslog/syslog.h>
-
 #include <bitset>
 #include <vector>
 

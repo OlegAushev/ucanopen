@@ -76,17 +76,6 @@ void RpdoService::handle_recv_frames() {
     }
 }
 
-
-bool RpdoService::connection_ok() {
-    auto now = mcu::chrono::system_clock::now();
-    for (const auto& rpdo : _rpdo_msgs) {
-        if (now > rpdo.timepoint + rpdo.timeout) {
-            return false;
-        }
-    }
-    return true;
-}
-
 } // namespace ucanopen
 
 #endif

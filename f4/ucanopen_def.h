@@ -231,6 +231,10 @@ enum ODObjectAccessPermission {
 };
 
 
+//
+#define OD_POINTERS(ptr, dptr) std::pair<uint32_t*, uint32_t**>(ptr, dptr)
+
+
 // Used in OD-entries which doesn't have direct access to data through pointer.
 #define OD_NO_DIRECT_ACCESS std::pair<uint32_t*, uint32_t**>(nullptr, nullptr)
 

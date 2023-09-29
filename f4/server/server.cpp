@@ -81,20 +81,6 @@ void Server::run() {
 }
 
 
-void Server::check_connection() {
-    rpdo_service->connection_ok() ? _connection_status.set(0) : _connection_status.reset(0);
-    for (auto i = 0; i < nodes.size(); ++i) {
-        nodes[i]->connection_ok() ? _connection_status.set(i+1) : _connection_status.reset(i+1);
-    }
-
-    if (!_connection_status.all()) {
-        syslog::set_warning(sys::Warning::can_bus_connection_lost);
-    } else {
-        syslog::reset_warning(sys::Warning::can_bus_connection_lost);
-    }
-}
-
-
 void Server::on_frame_received(mcu::can::Module& can_module, const mcu::can::MessageAttribute& attr, const can_frame& frame) {
     auto server = Server::instance(std::to_underlying(can_module.peripheral()));
     auto receiver = std::find_if(server->_attr_map.begin(), server->_attr_map.end(),

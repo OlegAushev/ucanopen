@@ -5,6 +5,7 @@
 
 
 #include "../server/server.h"
+#include <sys/syslog/syslog.h>
 
 
 namespace ucanopen {
