@@ -83,7 +83,6 @@ public:
             rpdo_service->handle_received();
             sdo_service->handle_received();
             sdo_service->send();
-            //rpdo_service->check_connection();
             on_run();
             break;
         case mcu::ipc::Mode::dualcore:
@@ -92,7 +91,6 @@ public:
                 heartbeat_service->send();
                 tpdo_service->send();
                 sdo_service->send();
-                //rpdo_service->check_connection();
                 break;
             case mcu::ipc::Role::secondary:
                 rpdo_service->handle_received();
