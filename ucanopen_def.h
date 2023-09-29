@@ -1,15 +1,13 @@
 #pragma once
 
 
-#include <emblib/array.h>
+#include <emblib/interfaces/can.h>
 #include <emblib/core.h>
 #include <emblib/pair.h>
 #include <cstring>
 
 
 namespace ucanopen {
-
-typedef emb::array<uint8_t, 8> can_payload;
 
 
 template <typename T>
@@ -315,5 +313,5 @@ inline bool operator==(const ODObjectKey& lhs, const ODEntry& rhs) {
     return (lhs.index == rhs.key.index) && (lhs.subindex == rhs.key.subindex);
 }
 
-} // namespace ucanopen
 
+} // namespace ucanopen
