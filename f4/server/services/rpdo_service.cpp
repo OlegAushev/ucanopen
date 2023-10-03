@@ -23,10 +23,10 @@ void RpdoService::register_rpdo(CobRpdo rpdo, std::chrono::milliseconds timeout,
     }
 
     CAN_FilterTypeDef filter = {
-        .FilterIdHigh = 0,
-        .FilterIdLow = id,
-        .FilterMaskIdHigh = 0,
-        .FilterMaskIdLow = 0x7FF,
+        .FilterIdHigh = id << 5,
+        .FilterIdLow = 0,
+        .FilterMaskIdHigh = 0x7FF << 5,
+        .FilterMaskIdLow = 0,
         .FilterFIFOAssignment = CAN_RX_FIFO0,
         .FilterBank = {},
         .FilterMode = CAN_FILTERMODE_IDMASK,

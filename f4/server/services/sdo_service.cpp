@@ -9,10 +9,10 @@ namespace ucanopen {
 SdoService::SdoService(impl::Server& server)
         : _server(server) {
     CAN_FilterTypeDef rsdo_filter = {
-        .FilterIdHigh = 0,
-        .FilterIdLow = calculate_cob_id(Cob::rsdo, _server.node_id()),
-        .FilterMaskIdHigh = 0,
-        .FilterMaskIdLow = 0x7FF,
+        .FilterIdHigh = calculate_cob_id(Cob::rsdo, _server.node_id()) << 5,
+        .FilterIdLow = 0,
+        .FilterMaskIdHigh = 0x7FF << 5,
+        .FilterMaskIdLow = 0,
         .FilterFIFOAssignment = CAN_RX_FIFO0,
         .FilterBank = {},
         .FilterMode = CAN_FILTERMODE_IDMASK,
