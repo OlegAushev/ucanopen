@@ -19,7 +19,10 @@ SdoAbortCode get_device_name(ExpeditedSdoData& retval) {
     static unsigned int counter = 0;
 
     char word[4] = {0};
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstringop-truncation"
     strncpy(word, sysinfo::device_name + 4*counter, 4);
+#pragma GCC diagnostic pop
     memcpy(&retval.u32, word, 4);
 
     counter = (counter + 1) % word_count;
@@ -34,7 +37,10 @@ SdoAbortCode get_hardware_version(ExpeditedSdoData& retval) {
     static unsigned int counter = 0;
 
     char word[4] = {0};
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstringop-truncation"
     strncpy(word, sysinfo::hardware_version + 4*counter, 4);
+#pragma GCC diagnostic pop
     memcpy(&retval.u32, word, 4);
 
     counter = (counter + 1) % word_count;
@@ -49,7 +55,10 @@ SdoAbortCode get_firmware_version(ExpeditedSdoData& retval) {
     static int counter = 0;
 
     char word[4] = {0};
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstringop-truncation"
     strncpy(word, sysinfo::firmware_version + 4*counter, 4);
+#pragma GCC diagnostic pop
     memcpy(&retval.u32, word, 4);
 
     counter = (counter + 1) % word_count;
