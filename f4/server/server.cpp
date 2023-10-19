@@ -20,8 +20,7 @@ Server::Server(mcu::can::Module& can_module, const ServerConfig& config,
     nodes.reserve(16);
     _attr_map.reserve(64);
 
-    _can_module.register_on_fifo0_frame_received_callback(on_frame_received);
-    _can_module.register_on_fifo1_frame_received_callback(on_frame_received);
+    can_module.init_interrupts(CAN_IT_RX_FIFO0_MSG_PENDING | CAN_IT_RX_FIFO1_MSG_PENDING | CAN_IT_TX_MAILBOX_EMPTY);
 
     _nmt_state = NmtState::pre_operational;
 }
@@ -82,13 +81,12 @@ void Server::run() {
 
 
 void Server::on_frame_received(mcu::can::Module& can_module, const mcu::can::MessageAttribute& attr, const can_frame& frame) {
-    auto server = Server::instance(std::to_underlying(can_module.peripheral()));
-    auto receiver = std::find_if(server->_attr_map.begin(), server->_attr_map.end(),
+    auto receiver = std::find_if(_attr_map.begin(), _attr_map.end(),
                                  [attr](const auto& item){ return item.first == attr; });
-    if (receiver != server->_attr_map.end()) {
+    if (receiver != _attr_map.end()) {
         auto status = receiver->second->recv_frame(attr, frame);
         if (status != FrameRecvStatus::success) {
-            ++server->_errcount;
+            ++_errcount;
         }
     }
 }

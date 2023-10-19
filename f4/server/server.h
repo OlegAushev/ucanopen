@@ -56,13 +56,17 @@ public:
     Server(mcu::can::Module& can_module, const ServerConfig& config,
            ODEntry* object_dictionary, int object_dictionary_size);
 
+    static Server* instance(mcu::can::Peripheral peripheral) {
+        return emb::interrupt_invoker_array<Server, mcu::can::peripheral_count>::instance(std::to_underlying(peripheral));
+    }
+
     void add_node(Node* node_);
     void start();
     void stop();
     void run();
     void check_connection();
 
-    static void on_frame_received(mcu::can::Module& can_module, const mcu::can::MessageAttribute& attr, const can_frame& frame);
+    void on_frame_received(mcu::can::Module& can_module, const mcu::can::MessageAttribute& attr, const can_frame& frame);
 };
 
 
