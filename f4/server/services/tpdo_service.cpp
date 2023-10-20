@@ -9,16 +9,9 @@ namespace ucanopen {
 TpdoService::TpdoService(impl::Server& server)
         : _server(server) {
     for (auto i = 0; i < _tpdo_msgs.size(); ++i) {
+        _tpdo_msgs[i].id = calculate_cob_id(to_cob(CobTpdo(i)), _server.node_id());
         _tpdo_msgs[i].period = std::chrono::milliseconds(0);
         _tpdo_msgs[i].timepoint = mcu::chrono::system_clock::now();
-        _tpdo_msgs[i].header = {
-            .StdId = calculate_cob_id(to_cob(CobTpdo(i)), _server.node_id()),
-            .ExtId = 0,
-            .IDE = CAN_ID_STD,
-            .RTR = CAN_RTR_DATA,
-            .DLC = 8,
-            .TransmitGlobalTime = DISABLE
-        };
         _tpdo_msgs[i].creator = nullptr;
     }
 }
@@ -32,13 +25,13 @@ void TpdoService::register_tpdo(CobTpdo tpdo, std::chrono::milliseconds period, 
 
 void TpdoService::send() {
     auto now = mcu::chrono::system_clock::now();
-    for (auto i = 0; i < _tpdo_msgs.size(); ++i) {
-        if (!_tpdo_msgs[i].creator || _tpdo_msgs[i].period.count() <= 0) { continue; }
-        if (now < _tpdo_msgs[i].timepoint + _tpdo_msgs[i].period) { continue; }
+    for (auto& msg : _tpdo_msgs) {
+        if (!msg.creator || msg.period.count() <= 0) { continue; }
+        if (now < msg.timepoint + msg.period) { continue; }
 
-        can_payload payload = _tpdo_msgs[i].creator();
-        _server._can_module.send(_tpdo_msgs[i].header, payload);
-        _tpdo_msgs[i].timepoint = now;
+        can_payload payload = msg.creator();
+        _server._can_module.send({msg.id, msg.len, payload});
+        msg.timepoint = now;
     }
 }
 

@@ -23,14 +23,7 @@ SdoService::SdoService(impl::Server& server)
     _rsdo.attr = _server._can_module.register_message(rsdo_filter);
     _rsdo.is_unhandled = false;
 
-    _tsdo.header = {
-        .StdId = calculate_cob_id(Cob::tsdo, _server.node_id()),
-        .ExtId = 0,
-        .IDE = CAN_ID_STD,
-        .RTR = CAN_RTR_DATA,
-        .DLC = 8,
-        .TransmitGlobalTime = DISABLE
-    };    
+    _tsdo.id = calculate_cob_id(Cob::tsdo, _server.node_id());
     _tsdo.not_sent = false;
 }
 
@@ -157,7 +150,7 @@ SdoAbortCode SdoService::_write_expedited(const ODEntry* od_entry, ExpeditedSdo&
 
 void SdoService::send() {
     if (!_tsdo.not_sent) { return; }
-    _server._can_module.send(_tsdo.header, _tsdo.payload);
+    _server._can_module.send({_tsdo.id, _tsdo.len, _tsdo.payload});
     _tsdo.not_sent = false;
 }
 

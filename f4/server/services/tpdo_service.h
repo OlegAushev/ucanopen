@@ -15,9 +15,10 @@ private:
     impl::Server& _server;
 
     struct Message {
+        can_id id;
+        static constexpr uint8_t len = 8;
         std::chrono::milliseconds period;
         std::chrono::milliseconds timepoint;
-        CAN_TxHeaderTypeDef header;
         can_payload (*creator)();
     };
     std::array<Message, 4> _tpdo_msgs;

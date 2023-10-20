@@ -22,7 +22,8 @@ private:
     } _rsdo;
 
     struct TxMessage {
-        CAN_TxHeaderTypeDef header;
+        can_id id;
+        static constexpr uint8_t len = cob_sizes[std::to_underlying(Cob::tsdo)];
         bool not_sent;
         can_payload payload;
     } _tsdo;

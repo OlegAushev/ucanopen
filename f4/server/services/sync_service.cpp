@@ -9,15 +9,8 @@ namespace ucanopen {
 SyncService::SyncService(impl::Server& server, std::chrono::milliseconds period)
         : _server(server)
         , _period(period) {
+    _id = calculate_cob_id(Cob::sync, _server.node_id());
     _timepoint = mcu::chrono::system_clock::now();
-    _header = {
-        .StdId = calculate_cob_id(Cob::sync, _server.node_id()),
-        .ExtId = 0,
-        .IDE = CAN_ID_STD,
-        .RTR = CAN_RTR_DATA,
-        .DLC = 0,
-        .TransmitGlobalTime = DISABLE
-    };
 }
 
 
@@ -27,7 +20,7 @@ void SyncService::send() {
     auto now = mcu::chrono::system_clock::now();
     if (now >= _timepoint + _period) {
         can_payload payload = {};
-        _server._can_module.send(_header, payload);
+        _server._can_module.send({_id, _len, payload});
         _timepoint = now;
     }
 }
