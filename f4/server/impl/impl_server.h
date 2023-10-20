@@ -62,8 +62,8 @@ namespace impl {
 
 class FrameReceiverInterface {
 public:
-    virtual std::vector<mcu::can::MessageAttribute> get_rx_attr() const = 0;
-    virtual FrameRecvStatus recv_frame(const mcu::can::MessageAttribute&, const can_frame&) = 0;
+    virtual std::vector<mcu::can::RxMessageAttribute> get_rx_attr() const = 0;
+    virtual FrameRecvStatus recv_frame(const mcu::can::RxMessageAttribute&, const can_frame&) = 0;
     virtual void handle_recv_frames() = 0;
 };
 

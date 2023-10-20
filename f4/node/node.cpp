@@ -39,14 +39,14 @@ void Node::send() {
         if (now < message.timepoint + message.period) { continue; }
 
         can_payload payload = message.creator();
-        _can_module.send({message.header.StdId, message.header.DLC, payload});
+        _can_module.send({message.header.StdId, uint8_t(message.header.DLC), payload});
         message.timepoint = now;
     }
 }
 
 
-std::vector<mcu::can::MessageAttribute> Node::get_rx_attr() const {
-    std::vector<mcu::can::MessageAttribute> attributes;
+std::vector<mcu::can::RxMessageAttribute> Node::get_rx_attr() const {
+    std::vector<mcu::can::RxMessageAttribute> attributes;
     for (const auto& msg : _rx_messages) {
         attributes.push_back(msg.attr);
     }
@@ -54,7 +54,7 @@ std::vector<mcu::can::MessageAttribute> Node::get_rx_attr() const {
 }
 
 
-FrameRecvStatus Node::recv_frame(const mcu::can::MessageAttribute& attr, const can_frame& frame) {
+FrameRecvStatus Node::recv_frame(const mcu::can::RxMessageAttribute& attr, const can_frame& frame) {
     auto received_msg = std::find_if(_rx_messages.begin(), _rx_messages.end(),
                                      [attr](const auto& msg){ return msg.attr == attr; });
     if (received_msg == _rx_messages.end()) {

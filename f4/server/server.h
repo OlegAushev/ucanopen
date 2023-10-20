@@ -47,7 +47,7 @@ protected:
     SdoService* sdo_service;
 
     std::vector<Node*> nodes;
-    std::vector<std::pair<mcu::can::MessageAttribute, impl::FrameReceiverInterface*>> _attr_map;
+    std::vector<std::pair<mcu::can::RxMessageAttribute, impl::FrameReceiverInterface*>> _attr_map;
     virtual void on_run() {}
 
     uint64_t _errcount = 0;
@@ -66,7 +66,7 @@ public:
     void run();
     void check_connection();
 
-    void on_frame_received(mcu::can::Module& can_module, const mcu::can::MessageAttribute& attr, const can_frame& frame);
+    void on_frame_received(mcu::can::Module& can_module, const mcu::can::RxMessageAttribute& attr, const can_frame& frame);
 };
 
 

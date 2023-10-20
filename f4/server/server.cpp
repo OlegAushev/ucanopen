@@ -80,7 +80,7 @@ void Server::run() {
 }
 
 
-void Server::on_frame_received(mcu::can::Module& can_module, const mcu::can::MessageAttribute& attr, const can_frame& frame) {
+void Server::on_frame_received(mcu::can::Module& can_module, const mcu::can::RxMessageAttribute& attr, const can_frame& frame) {
     auto receiver = std::find_if(_attr_map.begin(), _attr_map.end(),
                                  [attr](const auto& item){ return item.first == attr; });
     if (receiver != _attr_map.end()) {
