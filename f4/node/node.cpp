@@ -14,7 +14,7 @@ Node::Node(Server& server)
 
 
 void Node::register_rx_message(CAN_FilterTypeDef& filter, std::chrono::milliseconds timeout, void(*handler)(const can_payload&)) {
-    auto attr = _can_module.register_message(filter);
+    auto attr = _can_module.register_rxmessage(filter);
     _rx_messages.push_back({.attr = attr,
                             .timeout = timeout,
                             .timepoint = mcu::chrono::system_clock::now(),

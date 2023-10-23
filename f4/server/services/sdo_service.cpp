@@ -20,7 +20,7 @@ SdoService::SdoService(impl::Server& server)
         .FilterActivation = {},
         .SlaveStartFilterBank = {}
     };
-    _rsdo.attr = _server._can_module.register_message(rsdo_filter);
+    _rsdo.attr = _server._can_module.register_rxmessage(rsdo_filter);
     _rsdo.is_unhandled = false;
 
     _tsdo.id = calculate_cob_id(Cob::tsdo, _server.node_id());

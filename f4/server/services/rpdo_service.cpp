@@ -36,7 +36,7 @@ void RpdoService::register_rpdo(CobRpdo rpdo, std::chrono::milliseconds timeout,
     };
 
     auto idx = std::to_underlying(rpdo);
-    _rpdo_msgs[idx].attr = _server._can_module.register_message(filter);
+    _rpdo_msgs[idx].attr = _server._can_module.register_rxmessage(filter);
     _rpdo_msgs[idx].timeout = timeout;
     _rpdo_msgs[idx].handler = handler;
 }
