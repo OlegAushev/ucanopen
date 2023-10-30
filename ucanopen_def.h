@@ -3,6 +3,7 @@
 
 #include <emblib/interfaces/can.h>
 #include <emblib/core.h>
+#include <emblib/optional.h>
 #include <emblib/pair.h>
 #include <cstring>
 
@@ -166,6 +167,10 @@ union ExpeditedSdoData {
     int32_t i32;
     uint32_t u32;
     float f32;
+    ExpeditedSdoData() : u32(0) {}
+    ExpeditedSdoData(int32_t value) : i32(value) {}
+    ExpeditedSdoData(uint32_t value) : u32(value) {}
+    ExpeditedSdoData(float value) : f32(value) {}
 };
 
 
@@ -213,7 +218,7 @@ SCOPED_ENUM_UT_DECLARE_BEGIN(SdoAbortCode, uint32_t) {
 } SCOPED_ENUM_DECLARE_END(SdoAbortCode)
 
 
-enum ODObjectType {
+enum ODObjectDataType {
     OD_BOOL,
     OD_INT16,
     OD_INT32,
@@ -235,6 +240,9 @@ enum ODObjectAccessPermission {
 
 
 //
+#define OD_NO_DEFAULT_VALUE emb::nullopt
+#define OD_DEFAULT_VALUE(value) ExpeditedSdoData(value)
+
 #define OD_POINTERS(ptr, dptr) emb::pair<uint32_t*, uint32_t**>(ptr, dptr)
 
 
@@ -261,8 +269,8 @@ const int od_object_type_sizes[9] = {sizeof(bool), sizeof(int16_t), sizeof(int32
 
 
 struct ODObjectKey {
-    uint32_t index;
-    uint32_t subindex;
+    uint16_t index : 16;
+    uint16_t subindex : 16;
 };
 
 
@@ -271,8 +279,9 @@ struct ODObject {
     const char* subcategory;
     const char* name;
     const char* unit;
-    ODObjectType type;
+    ODObjectDataType data_type;
     ODObjectAccessPermission access_permission;
+    emb::optional<ExpeditedSdoData> default_value;
     emb::pair<uint32_t*, uint32_t**> ptr;
     SdoAbortCode (*read_func)(ExpeditedSdoData& retval);
     SdoAbortCode (*write_func)(ExpeditedSdoData val);
@@ -311,6 +320,11 @@ inline bool operator<(const ODObjectKey& lhs, const ODEntry& rhs) {
 
 inline bool operator==(const ODObjectKey& lhs, const ODEntry& rhs) {
     return (lhs.index == rhs.key.index) && (lhs.subindex == rhs.key.subindex);
+}
+
+
+inline bool operator==(const ODObjectKey& lhs, const ODObjectKey& rhs) {
+    return (lhs.index == rhs.index) && (lhs.subindex == rhs.subindex);
 }
 
 
