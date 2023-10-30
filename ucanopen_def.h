@@ -164,11 +164,18 @@ const uint32_t abort = 4;
 
 
 union ExpeditedSdoData {
+    bool bl;
+    int16_t i16;
     int32_t i32;
+    uint16_t u16;
     uint32_t u32;
     float f32;
+
     ExpeditedSdoData() : u32(0) {}
+    ExpeditedSdoData(bool value) : u32(0) { bl = value; }
+    ExpeditedSdoData(int16_t value) : u32(0) { i16 = value; }
     ExpeditedSdoData(int32_t value) : i32(value) {}
+    ExpeditedSdoData(uint16_t value) : u32(0) { u16 = value; }
     ExpeditedSdoData(uint32_t value) : u32(value) {}
     ExpeditedSdoData(float value) : f32(value) {}
 };

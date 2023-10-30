@@ -134,6 +134,12 @@ void impl::Server::_init_object_dictionary() {
             assert(_dictionary[i].object.write_func != OD_NO_INDIRECT_WRITE_ACCESS
                || (_dictionary[i].object.ptr != OD_NO_DIRECT_ACCESS));
         }
+
+        if (_dictionary[i].object.default_value.has_value()) {
+            assert(_dictionary[i].object.has_write_permission());
+            ODObjectDataType data_type = _dictionary[i].object.data_type;
+            assert(data_type != OD_ENUM16 && data_type != OD_EXEC && data_type != OD_STRING);
+        }
     }
 }
 
