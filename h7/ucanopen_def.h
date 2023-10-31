@@ -8,11 +8,13 @@
 #include <cstddef>
 #include <cstring>
 #include <array>
+#include <optional>
 #include <utility>
 #include <emblib_stm32/interfaces/can.h>
 
 
 namespace ucanopen {
+
 
 template <typename T>
 inline can_payload to_payload(const T& message) {
@@ -50,7 +52,7 @@ enum class NmtState : uint8_t {
 };
 
 
-enum class CobType {
+enum class Cob {
     nmt,
     sync,
     emcy,
@@ -69,10 +71,10 @@ enum class CobType {
 };
 
 
-constexpr int cob_type_count = 15;
+constexpr int cob_count = 15;
 
 
-constexpr std::array<can_id, cob_type_count> cob_function_codes = {
+constexpr std::array<can_id, cob_count> cob_function_codes = {
     0x000,  // NMT
     0x080,  // SYNC
     0x080,  // EMCY
@@ -91,15 +93,15 @@ constexpr std::array<can_id, cob_type_count> cob_function_codes = {
 };
 
 
-inline can_id calculate_cob_id(CobType cob_type, NodeId node_id) {
-    if ((cob_type == CobType::nmt) || (cob_type == CobType::sync) || (cob_type == CobType::time)) {
-        return cob_function_codes[std::to_underlying(cob_type)];
+inline can_id calculate_cob_id(Cob cob, NodeId node_id) {
+    if ((cob == Cob::nmt) || (cob == Cob::sync) || (cob == Cob::time)) {
+        return cob_function_codes[std::to_underlying(cob)];
     }
-    return cob_function_codes[std::to_underlying(cob_type)] + node_id.get();
+    return cob_function_codes[std::to_underlying(cob)] + node_id.get();
 }
 
 
-constexpr std::array<int, cob_type_count> cob_sizes = {
+constexpr std::array<int, cob_count> cob_sizes = {
     2,  // NMT
     0,  // SYNC
     2,  // EMCY
@@ -118,7 +120,7 @@ constexpr std::array<int, cob_type_count> cob_sizes = {
 };
 
 
-enum class TpdoType {
+enum class CobTpdo {
     tpdo1,
     tpdo2,
     tpdo3,
@@ -126,12 +128,12 @@ enum class TpdoType {
 };
 
 
-inline CobType to_cob_type(TpdoType tpdo_type) {
-    return static_cast<CobType>(std::to_underlying(CobType::tpdo1) + 2 * std::to_underlying(tpdo_type));
+inline Cob to_cob_type(CobTpdo tpdo) {
+    return static_cast<Cob>(std::to_underlying(Cob::tpdo1) + 2 * std::to_underlying(tpdo));
 }
 
 
-enum class RpdoType {
+enum class CobRpdo {
     rpdo1,
     rpdo2,
     rpdo3,
@@ -139,8 +141,8 @@ enum class RpdoType {
 };
 
 
-inline CobType to_cob_type(RpdoType rpdo_type) {
-    return static_cast<CobType>(std::to_underlying(CobType::rpdo1) + 2 * std::to_underlying(rpdo_type));
+inline Cob to_cob_type(CobRpdo rpdo) {
+    return static_cast<Cob>(std::to_underlying(Cob::rpdo1) + 2 * std::to_underlying(rpdo));
 }
 
 
@@ -160,9 +162,20 @@ inline uint32_t get_cs_code(const can_frame& frame) {
 
 
 union ExpeditedSdoData {
+    bool bl;
+    int16_t i16;
     int32_t i32;
+    uint16_t u16;
     uint32_t u32;
     float f32;
+
+    ExpeditedSdoData() : u32(0) {}
+    ExpeditedSdoData(bool value) : u32(0) { bl = value; }
+    ExpeditedSdoData(int16_t value) : u32(0) { i16 = value; }
+    ExpeditedSdoData(int32_t value) : i32(value) {}
+    ExpeditedSdoData(uint16_t value) : u32(0) { u16 = value; }
+    ExpeditedSdoData(uint32_t value) : u32(value) {}
+    ExpeditedSdoData(float value) : f32(value) {}
 };
 
 
@@ -210,7 +223,7 @@ enum class SdoAbortCode : uint32_t {
 };
 
 
-enum ODObjectType {
+enum ODObjectDataType {
     OD_BOOL,
     OD_INT16,
     OD_INT32,
@@ -229,6 +242,13 @@ enum ODObjectAccessPermission {
     OD_ACCESS_WO,
     OD_ACCESS_CONST
 };
+
+
+//
+#define OD_NO_DEFAULT_VALUE std::nullopt
+#define OD_DEFAULT_VALUE(value) ExpeditedSdoData(value)
+
+#define OD_POINTERS(ptr, dptr) std::pair<uint32_t*, uint32_t**>(ptr, dptr)
 
 
 // Used in OD-entries which doesn't have direct access to data through pointer.
@@ -253,8 +273,8 @@ const int od_object_type_sizes[9] = {sizeof(bool), sizeof(int16_t), sizeof(int32
 
 
 struct ODObjectKey {
-    uint32_t index;
-    uint32_t subindex;
+    uint16_t index;
+    uint16_t subindex;
 };
 
 
@@ -263,7 +283,7 @@ struct ODObject {
     const char* subcategory;
     const char* name;
     const char* unit;
-    ODObjectType type;
+    ODObjectDataType data_type;
     ODObjectAccessPermission access_permission;
     std::pair<uint32_t*, uint32_t**> ptr;
     SdoAbortCode (*read_func)(ExpeditedSdoData& retval);
@@ -305,6 +325,13 @@ inline bool operator==(const ODObjectKey& lhs, const ODEntry& rhs) {
     return (lhs.index == rhs.key.index) && (lhs.subindex == rhs.key.subindex);
 }
 
+
+inline bool operator==(const ODObjectKey& lhs, const ODObjectKey& rhs) {
+    return (lhs.index == rhs.index) && (lhs.subindex == rhs.subindex);
+}
+
+
 } // namespace ucanopen
+
 
 #endif

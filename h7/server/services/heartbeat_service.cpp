@@ -11,7 +11,7 @@ HeartbeatService::HeartbeatService(impl::Server& server, std::chrono::millisecon
         , _period(period) {
     _timepoint = mcu::chrono::system_clock::now();
     _header = {
-        .Identifier = calculate_cob_id(CobType::heartbeat, _server.node_id()),
+        .Identifier = calculate_cob_id(Cob::heartbeat, _server.node_id()),
         .IdType = FDCAN_STANDARD_ID,
         .TxFrameType = FDCAN_DATA_FRAME,
         .DataLength = FDCAN_DLC_BYTES_1,

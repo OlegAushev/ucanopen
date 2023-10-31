@@ -22,11 +22,11 @@ private:
         can_frame frame;
         void(*handler)(const can_payload&);
     };
-    std::array<Message, 4> _rpdo_list;
+    std::array<Message, 4> _rpdo_msgs;
 public:
     RpdoService(impl::Server& server);
     
-    void register_rpdo(RpdoType rpdo_type, std::chrono::milliseconds timeout, void(*handler)(const can_payload&), can_id id = 0);
+    void register_rpdo(CobRpdo rpdo, std::chrono::milliseconds timeout, void(*handler)(const can_payload&), can_id id = 0);
     
     virtual std::vector<mcu::can::MessageAttribute> get_rx_attr() const override;
     virtual FrameRecvStatus recv_frame(const mcu::can::MessageAttribute& attr, const can_frame& frame) override;

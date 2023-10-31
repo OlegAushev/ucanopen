@@ -8,18 +8,18 @@ namespace ucanopen {
 
 RpdoService::RpdoService(impl::Server& server)
         : _server(server) {
-    for (auto i = 0; i < _rpdo_list.size(); ++i) {
-        _rpdo_list[i].timeout = std::chrono::milliseconds(0);
-        _rpdo_list[i].timepoint = mcu::chrono::system_clock::now();
-        _rpdo_list[i].is_unhandled = false;
-        _rpdo_list[i].handler = nullptr;
+    for (auto i = 0; i < _rpdo_msgs.size(); ++i) {
+        _rpdo_msgs[i].timeout = std::chrono::milliseconds(0);
+        _rpdo_msgs[i].timepoint = mcu::chrono::system_clock::now();
+        _rpdo_msgs[i].is_unhandled = false;
+        _rpdo_msgs[i].handler = nullptr;
     }
 }
 
 
-void RpdoService::register_rpdo(RpdoType rpdo_type, std::chrono::milliseconds timeout, void(*handler)(const can_payload&), can_id id) {
+void RpdoService::register_rpdo(CobRpdo rpdo, std::chrono::milliseconds timeout, void(*handler)(const can_payload&), can_id id) {
     if (id == 0) {
-        id = calculate_cob_id(to_cob_type(rpdo_type), _server.node_id());
+        id = calculate_cob_id(to_cob_type(rpdo), _server.node_id());
     }
 
     FDCAN_FilterTypeDef filter = {
@@ -33,16 +33,16 @@ void RpdoService::register_rpdo(RpdoType rpdo_type, std::chrono::milliseconds ti
         .IsCalibrationMsg = 0
     };
 
-    auto idx = std::to_underlying(rpdo_type);
-    _rpdo_list[idx].attr = _server._can_module.register_message(filter);
-    _rpdo_list[idx].timeout = timeout;
-    _rpdo_list[idx].handler = handler;
+    auto idx = std::to_underlying(rpdo);
+    _rpdo_msgs[idx].attr = _server._can_module.register_message(filter);
+    _rpdo_msgs[idx].timeout = timeout;
+    _rpdo_msgs[idx].handler = handler;
 }
 
 
 std::vector<mcu::can::MessageAttribute> RpdoService::get_rx_attr() const {
     std::vector<mcu::can::MessageAttribute> attributes;
-    for (const auto& rpdo : _rpdo_list) {
+    for (const auto& rpdo : _rpdo_msgs) {
         if (rpdo.handler != nullptr) {
             attributes.push_back(rpdo.attr);
         }
@@ -52,9 +52,9 @@ std::vector<mcu::can::MessageAttribute> RpdoService::get_rx_attr() const {
 
 
 FrameRecvStatus RpdoService::recv_frame(const mcu::can::MessageAttribute& attr, const can_frame& frame) {
-    auto received_rpdo = std::find_if(_rpdo_list.begin(), _rpdo_list.end(),
+    auto received_rpdo = std::find_if(_rpdo_msgs.begin(), _rpdo_msgs.end(),
                                       [attr](const auto& rpdo) { return rpdo.attr == attr; });
-    if (received_rpdo == _rpdo_list.end()) {
+    if (received_rpdo == _rpdo_msgs.end()) {
         return FrameRecvStatus::attr_mismatch;
     }
 
@@ -66,7 +66,7 @@ FrameRecvStatus RpdoService::recv_frame(const mcu::can::MessageAttribute& attr, 
 
 
 void RpdoService::handle_recv_frames() {
-    for (auto& rpdo : _rpdo_list) {
+    for (auto& rpdo : _rpdo_msgs) {
         if (rpdo.is_unhandled && rpdo.handler != nullptr) {
             rpdo.handler(rpdo.frame.payload);
             rpdo.is_unhandled = false;
@@ -77,7 +77,7 @@ void RpdoService::handle_recv_frames() {
 
 bool RpdoService::connection_ok() {
     auto now = mcu::chrono::system_clock::now();
-    for (const auto& rpdo : _rpdo_list) {
+    for (const auto& rpdo : _rpdo_msgs) {
         if (now > rpdo.timepoint + rpdo.timeout) {
             return false;
         }

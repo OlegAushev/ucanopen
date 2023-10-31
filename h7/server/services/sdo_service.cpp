@@ -13,7 +13,7 @@ SdoService::SdoService(impl::Server& server)
         .FilterIndex = 0,
         .FilterType = FDCAN_FILTER_MASK,
         .FilterConfig = FDCAN_FILTER_TO_RXFIFO0,
-        .FilterID1 = calculate_cob_id(CobType::rsdo, _server.node_id()),
+        .FilterID1 = calculate_cob_id(Cob::rsdo, _server.node_id()),
         .FilterID2 = 0x7FF,
         .RxBufferIndex = 0,
         .IsCalibrationMsg = 0
@@ -22,7 +22,7 @@ SdoService::SdoService(impl::Server& server)
     _rsdo.is_unhandled = false;
 
     _tsdo.header = {
-        .Identifier = calculate_cob_id(CobType::tsdo, _server.node_id()),
+        .Identifier = calculate_cob_id(Cob::tsdo, _server.node_id()),
         .IdType = FDCAN_STANDARD_ID,
         .TxFrameType = FDCAN_DATA_FRAME,
         .DataLength = FDCAN_DLC_BYTES_8,
@@ -109,9 +109,9 @@ SdoAbortCode SdoService::_read_expedited(const ODEntry* od_entry, ExpeditedSdo& 
     SdoAbortCode abort_code;
     if (od_entry->object.has_direct_access()) {
         if (od_entry->object.ptr.first) {
-            memcpy(&tsdo.data.u32, od_entry->object.ptr.first, od_object_type_sizes[od_entry->object.type]);
+            memcpy(&tsdo.data.u32, od_entry->object.ptr.first, od_object_type_sizes[od_entry->object.data_type]);
         } else {
-            memcpy(&tsdo.data.u32, *od_entry->object.ptr.second, od_object_type_sizes[od_entry->object.type]);
+            memcpy(&tsdo.data.u32, *od_entry->object.ptr.second, od_object_type_sizes[od_entry->object.data_type]);
         }
         abort_code = SdoAbortCode::no_error;
     } else {
@@ -124,7 +124,7 @@ SdoAbortCode SdoService::_read_expedited(const ODEntry* od_entry, ExpeditedSdo& 
         tsdo.cs = sdo_cs_codes::server_init_read;
         tsdo.expedited_transfer = 1;
         tsdo.data_size_indicated = 1;
-        tsdo.data_empty_bytes = 4 - od_object_type_sizes[od_entry->object.type];
+        tsdo.data_empty_bytes = 4 - od_object_type_sizes[od_entry->object.data_type];
     }
     return abort_code;
 }
@@ -138,9 +138,9 @@ SdoAbortCode SdoService::_write_expedited(const ODEntry* od_entry, ExpeditedSdo&
     SdoAbortCode abort_code;
     if (od_entry->object.has_direct_access()) {
         if (od_entry->object.ptr.first) {
-            memcpy(od_entry->object.ptr.first, &rsdo.data.u32, od_object_type_sizes[od_entry->object.type]);
+            memcpy(od_entry->object.ptr.first, &rsdo.data.u32, od_object_type_sizes[od_entry->object.data_type]);
         } else {
-            memcpy(*od_entry->object.ptr.second, &rsdo.data.u32, od_object_type_sizes[od_entry->object.type]);
+            memcpy(*od_entry->object.ptr.second, &rsdo.data.u32, od_object_type_sizes[od_entry->object.data_type]);
         }
         abort_code = SdoAbortCode::no_error;
     } else {

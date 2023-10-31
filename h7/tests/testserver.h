@@ -143,15 +143,15 @@ class Server : public ucanopen::Server {
 public:
     Server(mcu::can::Module& can_module, const ServerConfig& config)
             : ucanopen::Server(can_module, config, object_dictionary, object_dictionary_size) {
-        tpdo_service->register_tpdo(TpdoType::tpdo1, std::chrono::milliseconds(config.tpdo1_period_ms), _create_tpdo1);
-        tpdo_service->register_tpdo(TpdoType::tpdo2, std::chrono::milliseconds(config.tpdo2_period_ms), _create_tpdo2);
-        tpdo_service->register_tpdo(TpdoType::tpdo3, std::chrono::milliseconds(config.tpdo3_period_ms), _create_tpdo3);
-        tpdo_service->register_tpdo(TpdoType::tpdo4, std::chrono::milliseconds(config.tpdo4_period_ms), _create_tpdo4);
+        tpdo_service->register_tpdo(CobTpdo::tpdo1, std::chrono::milliseconds(config.tpdo1_period_ms), _create_tpdo1);
+        tpdo_service->register_tpdo(CobTpdo::tpdo2, std::chrono::milliseconds(config.tpdo2_period_ms), _create_tpdo2);
+        tpdo_service->register_tpdo(CobTpdo::tpdo3, std::chrono::milliseconds(config.tpdo3_period_ms), _create_tpdo3);
+        tpdo_service->register_tpdo(CobTpdo::tpdo4, std::chrono::milliseconds(config.tpdo4_period_ms), _create_tpdo4);
 
-        rpdo_service->register_rpdo(RpdoType::rpdo1, std::chrono::milliseconds(config.rpdo1_timeout_ms), _handle_rpdo1, config.rpdo1_id);
-        rpdo_service->register_rpdo(RpdoType::rpdo2, std::chrono::milliseconds(config.rpdo2_timeout_ms), _handle_rpdo2, config.rpdo2_id);
-        rpdo_service->register_rpdo(RpdoType::rpdo3, std::chrono::milliseconds(config.rpdo3_timeout_ms), _handle_rpdo3, config.rpdo3_id);
-        rpdo_service->register_rpdo(RpdoType::rpdo4, std::chrono::milliseconds(config.rpdo4_timeout_ms), _handle_rpdo4, config.rpdo4_id);
+        rpdo_service->register_rpdo(CobRpdo::rpdo1, std::chrono::milliseconds(config.rpdo1_timeout_ms), _handle_rpdo1, config.rpdo1_id);
+        rpdo_service->register_rpdo(CobRpdo::rpdo2, std::chrono::milliseconds(config.rpdo2_timeout_ms), _handle_rpdo2, config.rpdo2_id);
+        rpdo_service->register_rpdo(CobRpdo::rpdo3, std::chrono::milliseconds(config.rpdo3_timeout_ms), _handle_rpdo3, config.rpdo3_id);
+        rpdo_service->register_rpdo(CobRpdo::rpdo4, std::chrono::milliseconds(config.rpdo4_timeout_ms), _handle_rpdo4, config.rpdo4_id);
     }
 
     virtual void on_run() override {
