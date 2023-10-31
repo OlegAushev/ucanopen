@@ -8,6 +8,7 @@
 #include <cstddef>
 #include <cstring>
 #include <array>
+#include <optional>
 #include <utility>
 #include <emblib/interfaces/can.h>
 
@@ -160,9 +161,20 @@ inline uint32_t get_cs_code(const can_frame& frame) {
 
 
 union ExpeditedSdoData {
+    bool bl;
+    int16_t i16;
     int32_t i32;
+    uint16_t u16;
     uint32_t u32;
     float f32;
+
+    ExpeditedSdoData() : u32(0) {}
+    ExpeditedSdoData(bool value) : u32(0) { bl = value; }
+    ExpeditedSdoData(int16_t value) : u32(0) { i16 = value; }
+    ExpeditedSdoData(int32_t value) : i32(value) {}
+    ExpeditedSdoData(uint16_t value) : u32(0) { u16 = value; }
+    ExpeditedSdoData(uint32_t value) : u32(value) {}
+    ExpeditedSdoData(float value) : f32(value) {}
 };
 
 
@@ -210,7 +222,7 @@ enum class SdoAbortCode : uint32_t {
 };
 
 
-enum ODObjectType {
+enum ODObjectDataType {
     OD_BOOL,
     OD_INT16,
     OD_INT32,
@@ -232,6 +244,9 @@ enum ODObjectAccessPermission {
 
 
 //
+#define OD_NO_DEFAULT_VALUE std::nullopt
+#define OD_DEFAULT_VALUE(value) ExpeditedSdoData(value)
+
 #define OD_POINTERS(ptr, dptr) std::pair<uint32_t*, uint32_t**>(ptr, dptr)
 
 
@@ -258,8 +273,8 @@ const int od_object_type_sizes[9] = {sizeof(bool), sizeof(int16_t), sizeof(int32
 
 
 struct ODObjectKey {
-    uint32_t index;
-    uint32_t subindex;
+    uint16_t index;
+    uint16_t subindex;
 };
 
 
@@ -268,8 +283,9 @@ struct ODObject {
     const char* subcategory;
     const char* name;
     const char* unit;
-    ODObjectType type;
+    ODObjectDataType data_type;
     ODObjectAccessPermission access_permission;
+    std::optional<ExpeditedSdoData> default_value;
     std::pair<uint32_t*, uint32_t**> ptr;
     SdoAbortCode (*read_func)(ExpeditedSdoData& retval);
     SdoAbortCode (*write_func)(ExpeditedSdoData val);
@@ -309,6 +325,12 @@ inline bool operator<(const ODObjectKey& lhs, const ODEntry& rhs) {
 inline bool operator==(const ODObjectKey& lhs, const ODEntry& rhs) {
     return (lhs.index == rhs.key.index) && (lhs.subindex == rhs.key.subindex);
 }
+
+
+inline bool operator==(const ODObjectKey& lhs, const ODObjectKey& rhs) {
+    return (lhs.index == rhs.index) && (lhs.subindex == rhs.subindex);
+}
+
 
 } // namespace ucanopen
 
