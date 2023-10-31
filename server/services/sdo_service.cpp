@@ -62,7 +62,7 @@ void SdoService::handle_received() {
     const ODEntry* od_entry = emb::binary_find(_server._dictionary, dictionary_end, key);
 
     if (od_entry == dictionary_end) {
-        abort_code = SdoAbortCode::no_object;
+        abort_code = SdoAbortCode::object_not_found;
     }
     else if (rsdo.cs == sdo_cs_codes::client_init_read) {
         abort_code = _read_expedited(od_entry, tsdo, rsdo);
@@ -159,7 +159,7 @@ SdoAbortCode SdoService::_restore_default_parameter(ODObjectKey key) {
     const ODEntry* od_entry = emb::binary_find(_server._dictionary, dictionary_end, key);
 
     if (od_entry == dictionary_end) {
-        return SdoAbortCode::no_object;
+        return SdoAbortCode::object_not_found;
     }
 
     if (!od_entry->object.default_value.has_value()) {

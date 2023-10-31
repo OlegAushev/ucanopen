@@ -213,7 +213,7 @@ SCOPED_ENUM_UT_DECLARE_BEGIN(SdoAbortCode, uint32_t) {
     unsupported_access      = 0x06010000,
     read_access_wo          = 0x06010001,
     write_access_ro         = 0x06010002,
-    no_object               = 0x06020000,
+    object_not_found        = 0x06020000,
     hardware_error          = 0x06060000,
     value_range_exceeded    = 0x06090030,
     value_too_high          = 0x06090031,
