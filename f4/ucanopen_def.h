@@ -70,7 +70,7 @@ enum class Cob {
 };
 
 
-constexpr int cob_count = 15;
+constexpr size_t cob_count = 15;
 
 
 constexpr std::array<can_id, cob_count> cob_function_codes = {
@@ -100,7 +100,7 @@ inline can_id calculate_cob_id(Cob cob, NodeId node_id) {
 }
 
 
-constexpr std::array<int, cob_count> cob_sizes = {
+constexpr std::array<size_t, cob_count> cob_sizes = {
     2,  // NMT
     0,  // SYNC
     2,  // EMCY
@@ -267,9 +267,9 @@ inline SdoAbortCode OD_NO_INDIRECT_READ_ACCESS(ExpeditedSdoData& retval) { retur
 inline SdoAbortCode OD_NO_INDIRECT_WRITE_ACCESS(ExpeditedSdoData val) { return SdoAbortCode::unsupported_access; }
 
 
-const int od_object_type_sizes[9] = {sizeof(bool), sizeof(int16_t), sizeof(int32_t),
-                                     sizeof(uint16_t), sizeof(uint32_t), sizeof(float),
-                                     sizeof(uint16_t), 4, 4};
+const size_t od_object_type_sizes[9] = {sizeof(bool), sizeof(int16_t), sizeof(int32_t),
+                                        sizeof(uint16_t), sizeof(uint32_t), sizeof(float),
+                                        sizeof(uint16_t), 4, 4};
 
 
 struct ODObjectKey {

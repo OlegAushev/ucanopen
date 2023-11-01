@@ -54,7 +54,7 @@ protected:
     std::bitset<32> _connection_status = 0;
 public:
     Server(mcu::can::Module& can_module, const ServerConfig& config,
-           ODEntry* object_dictionary, int object_dictionary_size);
+           ODEntry* object_dictionary, size_t object_dictionary_size);
 
     static Server* instance(mcu::can::Peripheral peripheral) {
         return emb::interrupt_invoker_array<Server, mcu::can::peripheral_count>::instance(std::to_underlying(peripheral));

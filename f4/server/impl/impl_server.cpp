@@ -7,7 +7,7 @@
 namespace ucanopen {
 
 impl::Server::Server(mcu::can::Module& can_module, NodeId node_id,
-                     ODEntry* object_dictionary, int object_dictionary_size)
+                     ODEntry* object_dictionary, size_t object_dictionary_size)
         : _node_id(node_id)
         , _can_module(can_module)
         , _dictionary(object_dictionary)

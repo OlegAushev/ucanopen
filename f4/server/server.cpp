@@ -7,7 +7,7 @@
 namespace ucanopen {
 
 Server::Server(mcu::can::Module& can_module, const ServerConfig& config,
-               ODEntry* object_dictionary, int object_dictionary_size)
+               ODEntry* object_dictionary, size_t object_dictionary_size)
         : impl::Server(can_module, NodeId(config.node_id), object_dictionary, object_dictionary_size)
         , emb::interrupt_invoker_array<Server, mcu::can::peripheral_count>(this, std::to_underlying(can_module.peripheral()))
 {

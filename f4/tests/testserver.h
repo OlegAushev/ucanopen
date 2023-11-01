@@ -99,7 +99,7 @@ struct CobRpdo4 {
 };
 //----------------------------------------------------------------------------------------------------------------------
 extern ODEntry object_dictionary[];
-extern const int object_dictionary_size;
+extern const size_t object_dictionary_size;
 
 
 const inline ucanopen::ServerConfig config1 = {

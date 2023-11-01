@@ -14,9 +14,9 @@ namespace tests {
 namespace od {
 
 SdoAbortCode get_device_name(ExpeditedSdoData& retval) {
-    const int len = strlen(sysinfo::device_name) + 1;
-    const int word_count = (len + 3) / 4;
-    static unsigned int counter = 0;
+    const size_t len = strlen(sysinfo::device_name) + 1;
+    const size_t word_count = (len + 3) / 4;
+    static size_t counter = 0;
 
     char word[4] = {0};
 #pragma GCC diagnostic push
@@ -32,9 +32,9 @@ SdoAbortCode get_device_name(ExpeditedSdoData& retval) {
 
 
 SdoAbortCode get_hardware_version(ExpeditedSdoData& retval) {
-    const int len = strlen(sysinfo::hardware_version) + 1;
-    const int word_count = (len + 3) / 4;
-    static unsigned int counter = 0;
+    const size_t len = strlen(sysinfo::hardware_version) + 1;
+    const size_t word_count = (len + 3) / 4;
+    static size_t counter = 0;
 
     char word[4] = {0};
 #pragma GCC diagnostic push
@@ -50,9 +50,9 @@ SdoAbortCode get_hardware_version(ExpeditedSdoData& retval) {
 
 
 SdoAbortCode get_firmware_version(ExpeditedSdoData& retval) {
-    const int len = strlen(sysinfo::firmware_version) + 1;
-    const int word_count = (len + 3) / 4;
-    static int counter = 0;
+    const size_t len = strlen(sysinfo::firmware_version) + 1;
+    const size_t word_count = (len + 3) / 4;
+    static size_t counter = 0;
 
     char word[4] = {0};
 #pragma GCC diagnostic push
@@ -148,7 +148,7 @@ ODEntry object_dictionary[] = {
 // {{0x3001, 0x02}, {"config", "syslog", "fatal_errors", "", OD_UINT32, OD_ACCESS_RW, OD_PTR(&settings::configs.syslog.fatal_errors), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
 };
 
-const int object_dictionary_size = sizeof(object_dictionary) / sizeof(object_dictionary[0]);
+const size_t object_dictionary_size = sizeof(object_dictionary) / sizeof(object_dictionary[0]);
 
 } // namespace tests
 
