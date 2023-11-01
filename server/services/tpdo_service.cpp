@@ -5,7 +5,7 @@ namespace ucanopen {
 
 TpdoService::TpdoService(impl::Server& server)
         : _server(server) {
-    for (int i = 0; i < _tpdo_msgs.size(); ++i) {
+    for (size_t i = 0; i < _tpdo_msgs.size(); ++i) {
         _tpdo_msgs[i].period = emb::chrono::milliseconds(-1);
         _tpdo_msgs[i].timepoint = mcu::chrono::system_clock::now();
         _tpdo_msgs[i].creator = reinterpret_cast<can_payload(*)()>(NULL);

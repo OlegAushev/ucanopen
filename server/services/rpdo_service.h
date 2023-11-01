@@ -50,7 +50,7 @@ public:
     void handle_received() {
         assert(_server._ipc_mode == mcu::ipc::Mode::singlecore || _server._ipc_role == mcu::ipc::Role::secondary);
 
-        for (int i = 0; i < _rpdo_msgs->size(); ++i) {
+        for (size_t i = 0; i < _rpdo_msgs->size(); ++i) {
             if (!_handlers[i]) { continue; }
             if (_received_flags[i].is_set()) {
                 _handlers[i]((*_rpdo_msgs)[i].payload);

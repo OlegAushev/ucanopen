@@ -76,7 +76,7 @@ SCOPED_ENUM_DECLARE_BEGIN(Cob) {
 } SCOPED_ENUM_DECLARE_END(Cob)
 
 
-const int cob_count = 16;
+const size_t cob_count = 16;
 
 
 const emb::array<uint32_t, cob_count> cob_function_codes = {
@@ -270,7 +270,7 @@ inline SdoAbortCode OD_NO_INDIRECT_READ_ACCESS(ExpeditedSdoData& retval) { retur
 inline SdoAbortCode OD_NO_INDIRECT_WRITE_ACCESS(ExpeditedSdoData val) { return SdoAbortCode::unsupported_access; }
 
 
-const int od_object_type_sizes[9] = {sizeof(bool), sizeof(int16_t), sizeof(int32_t),
+const size_t od_object_type_sizes[9] = {sizeof(bool), sizeof(int16_t), sizeof(int32_t),
                                      sizeof(uint16_t), sizeof(uint32_t), sizeof(float),
                                      sizeof(uint16_t), 2, 2};
 

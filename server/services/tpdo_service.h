@@ -25,7 +25,7 @@ public:
         assert(_server._ipc_role == mcu::ipc::Role::primary);
 
         emb::chrono::milliseconds now = mcu::chrono::system_clock::now();
-        for (int i = 0; i < _tpdo_msgs.size(); ++i) {
+        for (size_t i = 0; i < _tpdo_msgs.size(); ++i) {
             if (!_tpdo_msgs[i].creator || _tpdo_msgs[i].period.count() <= 0) { continue; }
             if (now < _tpdo_msgs[i].timepoint + _tpdo_msgs[i].period) { continue; }
 

@@ -41,7 +41,7 @@ protected:
     mcu::can::Module* _can_module;
 
     ODEntry* _dictionary;
-    int _dictionary_size;
+    size_t _dictionary_size;
 
     NmtState _nmt_state;
 private:

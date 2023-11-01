@@ -48,7 +48,7 @@ impl::Server::Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::secondary,
 
 
 void impl::Server::_init_message_objects() {
-    for (int i = 0; i < cob_count; ++i) {
+    for (size_t i = 0; i < cob_count; ++i) {
         _message_objects[i].obj_id = i;
         _message_objects[i].frame_id = calculate_cob_id(Cob(i), this->_node_id);
         _message_objects[i].frame_type = CAN_MSG_FRAME_STD;
@@ -107,7 +107,7 @@ void impl::Server::_init_object_dictionary() {
     std::sort(_dictionary, _dictionary + _dictionary_size);
 
     // Check OBJECT DICTIONARY correctness
-    for (int i = 0; i < _dictionary_size; ++i) {
+    for (size_t i = 0; i < _dictionary_size; ++i) {
         // OD is sorted
         if (i < (_dictionary_size - 1)) {
             assert(_dictionary[i] < _dictionary[i+1]);
