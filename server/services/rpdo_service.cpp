@@ -61,5 +61,39 @@ void RpdoService::register_rpdo_handler(CobRpdo rpdo, void (*handler)(const can_
     _handlers[rpdo.underlying_value()] = handler;
 }
 
+
+void RpdoService::recv(Cob cob) {
+    assert(_server._ipc_role == mcu::ipc::Role::primary);
+
+    if (cob != Cob::rpdo1
+     && cob != Cob::rpdo2
+     && cob != Cob::rpdo3
+     && cob != Cob::rpdo4) { return; }
+
+    CobRpdo rpdo((cob.underlying_value() - static_cast<unsigned int>(Cob::rpdo1)) / 2);
+
+    (*_rpdo_msgs)[rpdo.underlying_value()].timepoint = mcu::chrono::system_clock::now();
+    if (_received_flags[rpdo.underlying_value()].local.is_set()) {
+        _server.on_rpdo_overrun();
+    } else {
+        // there is no unprocessed RPDO of this type
+        _server._can_module->recv(cob.underlying_value(), (*_rpdo_msgs)[rpdo.underlying_value()].payload.data);
+        _received_flags[rpdo.underlying_value()].local.set();
+    }
+}
+
+
+void RpdoService::handle_received() {
+    assert(_server._ipc_mode == mcu::ipc::Mode::singlecore || _server._ipc_role == mcu::ipc::Role::secondary);
+
+    for (size_t i = 0; i < _rpdo_msgs->size(); ++i) {
+        if (!_handlers[i]) { continue; }
+        if (_received_flags[i].is_set()) {
+            _handlers[i]((*_rpdo_msgs)[i].payload);
+            _received_flags[i].reset();
+        }
+    }
+}
+
 } // namespace ucanopen
 

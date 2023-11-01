@@ -65,6 +65,34 @@ Server::Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::secondary, const Ip
 }
 
 
+void Server::run() {
+    switch (this->_ipc_mode.underlying_value()) {
+    case mcu::ipc::Mode::singlecore:
+        heartbeat_service->send();
+        tpdo_service->send();
+        rpdo_service->handle_received();
+        sdo_service->handle_received();
+        sdo_service->send();
+        on_run();
+        break;
+    case mcu::ipc::Mode::dualcore:
+        switch (this->_ipc_role.underlying_value()) {
+        case mcu::ipc::Role::primary:
+            heartbeat_service->send();
+            tpdo_service->send();
+            sdo_service->send();
+            break;
+        case mcu::ipc::Role::secondary:
+            rpdo_service->handle_received();
+            sdo_service->handle_received();
+            on_run();
+            break;
+        }
+        break;
+    }
+}
+
+
 void Server::on_frame_received(mcu::can::Module* can_module, uint32_t interrupt_cause, uint16_t status) {
     Server* server = Server::instance(can_module->peripheral().underlying_value());
 

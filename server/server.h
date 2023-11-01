@@ -75,32 +75,7 @@ public:
         }
     }
 
-    void run() {
-        switch (this->_ipc_mode.underlying_value()) {
-        case mcu::ipc::Mode::singlecore:
-            heartbeat_service->send();
-            tpdo_service->send();
-            rpdo_service->handle_received();
-            sdo_service->handle_received();
-            sdo_service->send();
-            on_run();
-            break;
-        case mcu::ipc::Mode::dualcore:
-            switch (this->_ipc_role.underlying_value()) {
-            case mcu::ipc::Role::primary:
-                heartbeat_service->send();
-                tpdo_service->send();
-                sdo_service->send();
-                break;
-            case mcu::ipc::Role::secondary:
-                rpdo_service->handle_received();
-                sdo_service->handle_received();
-                on_run();
-                break;
-            }
-            break;
-        }
-    }
+    void run();
 private:
     static void on_frame_received(mcu::can::Module* can_module, uint32_t interrupt_cause, uint16_t status);
 };

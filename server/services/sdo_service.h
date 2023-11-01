@@ -22,27 +22,9 @@ private:
     static unsigned char canb_tsdo_dualcore_alloc[sizeof(can_payload)];
 public:
     SdoService(impl::Server& server, const IpcFlags& ipc_flags);
+    void recv();
+    void send();
     void handle_received();
-
-    void recv() {
-        assert(_server._ipc_role == mcu::ipc::Role::primary);
-
-        if (_rsdo_flag.local.is_set() || _tsdo_flag.is_set()) {
-            _server.on_sdo_overrun();
-        } else {
-            _server._can_module->recv(Cob::rsdo, _rsdo_data->data);
-            _rsdo_flag.local.set();
-        }
-    }
-
-    void send() {
-        assert(_server._ipc_role == mcu::ipc::Role::primary);
-
-        if (!_tsdo_flag.is_set()) { return; }
-        _server._can_module->send(Cob::tsdo, _tsdo_data->data, cob_data_len[Cob::tsdo]);
-        _tsdo_flag.reset();
-    }
-
 private:
     SdoAbortCode _read_expedited(const ODEntry* od_entry, ExpeditedSdo& tsdo, const ExpeditedSdo& rsdo);
     SdoAbortCode _write_expedited(const ODEntry* od_entry, ExpeditedSdo& tsdo, const ExpeditedSdo& rsdo);
