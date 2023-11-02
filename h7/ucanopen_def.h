@@ -10,7 +10,7 @@
 #include <array>
 #include <optional>
 #include <utility>
-#include <emblib_stm32/interfaces/can.h>
+#include <emblib/interfaces/can.h>
 
 
 namespace ucanopen {
