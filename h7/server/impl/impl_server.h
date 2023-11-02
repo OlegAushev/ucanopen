@@ -34,12 +34,12 @@ protected:
     mcu::can::Module& _can_module;
 
     ODEntry* _dictionary;
-    int _dictionary_size;
+    size_t _dictionary_size;
 
     NmtState _nmt_state;
 public:
     Server(mcu::can::Module& can_module, NodeId node_id,
-           ODEntry* object_dictionary, int object_dictionary_size);
+           ODEntry* object_dictionary, size_t object_dictionary_size);
     
     NodeId node_id() const { return _node_id; }
     NmtState nmt_state() const { return _nmt_state; }

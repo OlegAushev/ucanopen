@@ -56,7 +56,7 @@ protected:
     std::bitset<32> _connection_status = 0;
 public:
     Server(mcu::can::Module& can_module, const ServerConfig& config,
-           ODEntry* object_dictionary, int object_dictionary_size);
+           ODEntry* object_dictionary, size_t object_dictionary_size);
 
     void add_node(Node* node_);
     void start();
