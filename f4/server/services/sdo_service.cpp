@@ -161,8 +161,6 @@ SdoAbortCode SdoService::_write_expedited(const ODEntry* od_entry, ExpeditedSdo&
 
 
 SdoAbortCode SdoService::_restore_default_parameter(ODObjectKey key) {
-    assert(_server._ipc_mode == mcu::ipc::Mode::singlecore || _server._ipc_role == mcu::ipc::Role::secondary);
-
     ODEntry* dictionary_end = _server._dictionary + _server._dictionary_size;
     const ODEntry* od_entry = emb::binary_find(_server._dictionary, dictionary_end, key);
 
