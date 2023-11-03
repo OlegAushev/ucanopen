@@ -244,11 +244,9 @@ enum ODObjectAccessPermission {
 };
 
 
-//
+// Used in OD-entries for default values definition
 #define OD_NO_DEFAULT_VALUE std::nullopt
 #define OD_DEFAULT_VALUE(value) ExpeditedSdoData(value)
-
-#define OD_POINTERS(ptr, dptr) std::pair<uint32_t*, uint32_t**>(ptr, dptr)
 
 
 // Used in OD-entries which doesn't have direct access to data through pointer.
@@ -256,8 +254,9 @@ enum ODObjectAccessPermission {
 
 
 // Used in OD-entries which have direct access to data through pointer.
-#define OD_PTR(ptr) reinterpret_cast<uint32_t*>(ptr)
-#define OD_DPTR(dptr) reinterpret_cast<uint32_t**>(dptr)
+#define OD_PTR(ptr) std::pair<uint32_t*, uint32_t**>(reinterpret_cast<uint32_t*>(ptr), nullptr)
+#define OD_DPTR(dptr) std::pair<uint32_t*, uint32_t**>(ptr, dptr)(nullptr, reinterpret_cast<uint32_t**>(dptr))
+
 
 // Used in OD-entries which don't have read access to data through function.
 inline SdoAbortCode OD_NO_INDIRECT_READ_ACCESS(ExpeditedSdoData& retval) { return SdoAbortCode::unsupported_access; }

@@ -15,6 +15,7 @@
 
 namespace ucanopen {
 
+
 template <typename T>
 inline can_payload to_payload(const T& message) {
     static_assert(sizeof(T) <= 8);
@@ -331,5 +332,6 @@ inline bool operator==(const ODObjectKey& lhs, const ODObjectKey& rhs) {
 
 
 } // namespace ucanopen
+
 
 #endif
