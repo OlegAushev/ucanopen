@@ -246,11 +246,11 @@ enum ODObjectAccessPermission {
 };
 
 
-//
+// Used in OD-entries for default values definition
 #define OD_NO_DEFAULT_VALUE emb::nullopt
 #define OD_DEFAULT_VALUE(value) ExpeditedSdoData(value)
 
-#define OD_POINTERS(ptr, dptr) emb::pair<uint32_t*, uint32_t**>(ptr, dptr)
+//#define OD_POINTERS(ptr, dptr) emb::pair<uint32_t*, uint32_t**>(ptr, dptr)
 
 
 // Used in OD-entries which doesn't have direct access to data through pointer.
@@ -258,8 +258,8 @@ enum ODObjectAccessPermission {
 
 
 // Used in OD-entries which have direct access to data through pointer.
-#define OD_PTR(ptr) reinterpret_cast<uint32_t*>(ptr)
-#define OD_DPTR(dptr) reinterpret_cast<uint32_t**>(dptr)
+#define OD_PTR(ptr) emb::pair<uint32_t*, uint32_t**>(reinterpret_cast<uint32_t*>(ptr), NULL)
+#define OD_DPTR(dptr) emb::pair<uint32_t*, uint32_t**>(NULL, reinterpret_cast<uint32_t**>(dptr))
 
 
 // Used in OD-entries which don't have read access to data through function.
