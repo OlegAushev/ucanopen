@@ -255,7 +255,7 @@ enum ODObjectAccessPermission {
 
 // Used in OD-entries which have direct access to data through pointer.
 #define OD_PTR(ptr) std::pair<uint32_t*, uint32_t**>(reinterpret_cast<uint32_t*>(ptr), nullptr)
-#define OD_DPTR(dptr) std::pair<uint32_t*, uint32_t**>(ptr, dptr)(nullptr, reinterpret_cast<uint32_t**>(dptr))
+#define OD_DPTR(dptr) std::pair<uint32_t*, uint32_t**>(nullptr, reinterpret_cast<uint32_t**>(dptr))
 
 
 // Used in OD-entries which don't have read access to data through function.
