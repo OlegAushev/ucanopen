@@ -225,12 +225,13 @@ enum class SdoAbortCode : uint32_t {
 
 enum ODObjectDataType {
     OD_BOOL,
+    OD_INT8,
     OD_INT16,
     OD_INT32,
+    OD_UINT8,
     OD_UINT16,
     OD_UINT32,
     OD_FLOAT32,
-    OD_ENUM16,
     OD_EXEC,
     OD_STRING
 };
@@ -266,9 +267,9 @@ inline SdoAbortCode OD_NO_INDIRECT_READ_ACCESS(ExpeditedSdoData& retval) { retur
 inline SdoAbortCode OD_NO_INDIRECT_WRITE_ACCESS(ExpeditedSdoData val) { return SdoAbortCode::unsupported_access; }
 
 
-const size_t od_object_type_sizes[9] = {sizeof(bool), sizeof(int16_t), sizeof(int32_t),
-                                        sizeof(uint16_t), sizeof(uint32_t), sizeof(float),
-                                        sizeof(uint16_t), 4, 4};
+const size_t od_object_type_sizes[10] = {sizeof(bool), sizeof(int8_t), sizeof(int16_t), sizeof(int32_t),
+                                        sizeof(uint8_t), sizeof(uint16_t), sizeof(uint32_t), sizeof(float),
+                                        4, 4};
 
 
 struct ODObjectKey {
@@ -282,8 +283,8 @@ struct ODObject {
     const char* subcategory;
     const char* name;
     const char* unit;
-    ODObjectDataType data_type;
     ODObjectAccessPermission access_permission;
+    ODObjectDataType data_type;
     std::pair<uint32_t*, uint32_t**> ptr;
     SdoAbortCode (*read_func)(ExpeditedSdoData& retval);
     SdoAbortCode (*write_func)(ExpeditedSdoData val);
