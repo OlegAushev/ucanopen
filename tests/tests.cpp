@@ -106,41 +106,38 @@ inline SdoAbortCode get_uptime(ExpeditedSdoData& retval) {
 
 
 ODEntry object_dictionary[] = {
-{{0x1008, 0x00}, {"sys", "info", "device_name", "", OD_STRING, OD_ACCESS_CONST, emb::nullopt, OD_NO_DIRECT_ACCESS, od::get_device_name, OD_NO_INDIRECT_WRITE_ACCESS}},
-{{0x1009, 0x00}, {"sys", "info", "hardware_version", "", OD_STRING, OD_ACCESS_CONST, emb::nullopt, OD_NO_DIRECT_ACCESS, od::get_hardware_version, OD_NO_INDIRECT_WRITE_ACCESS}},
-{{0x100A, 0x00}, {"sys", "info", "firmware_version", "", OD_STRING, OD_ACCESS_CONST, emb::nullopt, OD_NO_DIRECT_ACCESS, od::get_firmware_version, OD_NO_INDIRECT_WRITE_ACCESS}},
-
-{{0x1010, 0x01}, {"sys", "ctl", "save_all_parameters", "", OD_EXEC, OD_ACCESS_WO, emb::nullopt, OD_NO_DIRECT_ACCESS, OD_NO_INDIRECT_READ_ACCESS, od::save_all_parameters}},
-{{0x1011, 0x01}, {"sys", "ctl", "restore_all_default_parameters", "", OD_EXEC, OD_ACCESS_WO, emb::nullopt, OD_NO_DIRECT_ACCESS, OD_NO_INDIRECT_READ_ACCESS, od::restore_all_default_parameters}},
-
-{{0x1018, 0x04}, {"sys", "info", "serial_number", "", OD_UINT32, OD_ACCESS_CONST, emb::nullopt, OD_NO_DIRECT_ACCESS, od::get_serial_number, OD_NO_INDIRECT_WRITE_ACCESS}},
-
-{{0x2000, 0x01}, {"sys", "ctl", "reset_device", "", OD_EXEC, OD_ACCESS_WO, emb::nullopt, OD_NO_DIRECT_ACCESS, OD_NO_INDIRECT_READ_ACCESS, od::reset_device}},
-{{0x2000, 0x02}, {"sys", "ctl", "clear_errors", "", OD_EXEC, OD_ACCESS_WO, emb::nullopt, OD_NO_DIRECT_ACCESS, OD_NO_INDIRECT_READ_ACCESS, od::clear_errors}},
-
-{{0x5000, 0x01}, {"watch", "watch", "uptime", "s", OD_FLOAT32, OD_ACCESS_RO, emb::nullopt, OD_NO_DIRECT_ACCESS, od::get_uptime, OD_NO_INDIRECT_WRITE_ACCESS}},
-{{0x5000, 0x02}, {"watch", "watch", "syslog_message", "", OD_UINT32, OD_ACCESS_RO, emb::nullopt, OD_NO_DIRECT_ACCESS, od::get_syslog_message, OD_NO_INDIRECT_WRITE_ACCESS}},
-
-{{0x3000, 0x01}, {"config", "ucanopen", "node_id", "", OD_UINT32, OD_ACCESS_RW, emb::nullopt, OD_PTR(&settings::configs.ucanopen_server.node_id), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
-{{0x3000, 0x02}, {"config", "ucanopen", "heartbeat_period", "ms", OD_UINT32, OD_ACCESS_RW, emb::nullopt, OD_PTR(&settings::configs.ucanopen_server.heartbeat_period_ms), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
-{{0x3000, 0x03}, {"config", "ucanopen", "tpdo1_period", "ms", OD_UINT32, OD_ACCESS_RW, emb::nullopt, OD_PTR(&settings::configs.ucanopen_server.tpdo1_period_ms), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
-{{0x3000, 0x04}, {"config", "ucanopen", "tpdo2_period", "ms", OD_UINT32, OD_ACCESS_RW, emb::nullopt, OD_PTR(&settings::configs.ucanopen_server.tpdo2_period_ms), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
-{{0x3000, 0x05}, {"config", "ucanopen", "tpdo3_period", "ms", OD_UINT32, OD_ACCESS_RW, emb::nullopt, OD_PTR(&settings::configs.ucanopen_server.tpdo3_period_ms), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
-{{0x3000, 0x06}, {"config", "ucanopen", "tpdo4_period", "ms", OD_UINT32, OD_ACCESS_RW, emb::nullopt, OD_PTR(&settings::configs.ucanopen_server.tpdo4_period_ms), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
-{{0x3000, 0x07}, {"config", "ucanopen", "rpdo1_timeout", "ms", OD_UINT32, OD_ACCESS_RW, emb::nullopt, OD_PTR(&settings::configs.ucanopen_server.rpdo1_timeout_ms), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
-{{0x3000, 0x08}, {"config", "ucanopen", "rpdo2_timeout", "ms", OD_UINT32, OD_ACCESS_RW, emb::nullopt, OD_PTR(&settings::configs.ucanopen_server.rpdo2_timeout_ms), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
-{{0x3000, 0x09}, {"config", "ucanopen", "rpdo3_timeout", "ms", OD_UINT32, OD_ACCESS_RW, emb::nullopt, OD_PTR(&settings::configs.ucanopen_server.rpdo3_timeout_ms), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
-{{0x3000, 0x0A}, {"config", "ucanopen", "rpdo4_timeout", "ms", OD_UINT32, OD_ACCESS_RW, emb::nullopt, OD_PTR(&settings::configs.ucanopen_server.rpdo4_timeout_ms), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
-{{0x3000, 0x0B}, {"config", "ucanopen", "rpdo1_id", "", OD_UINT32, OD_ACCESS_RW, emb::nullopt, OD_PTR(&settings::configs.ucanopen_server.rpdo1_id), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
-{{0x3000, 0x0C}, {"config", "ucanopen", "rpdo2_id", "", OD_UINT32, OD_ACCESS_RW, emb::nullopt, OD_PTR(&settings::configs.ucanopen_server.rpdo2_id), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
-{{0x3000, 0x0D}, {"config", "ucanopen", "rpdo3_id", "", OD_UINT32, OD_ACCESS_RW, emb::nullopt, OD_PTR(&settings::configs.ucanopen_server.rpdo3_id), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
-{{0x3000, 0x0E}, {"config", "ucanopen", "rpdo4_id", "", OD_UINT32, OD_ACCESS_RW, emb::nullopt, OD_PTR(&settings::configs.ucanopen_server.rpdo4_id), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
-
-{{0x3001, 0x01}, {"config", "syslog", "enabled_errors", "", OD_UINT32, OD_ACCESS_RW, emb::nullopt, OD_PTR(&settings::configs.syslog.enabled_errors), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
-{{0x3001, 0x02}, {"config", "syslog", "fatal_errors", "", OD_UINT32, OD_ACCESS_RW, emb::nullopt, OD_PTR(&settings::configs.syslog.fatal_errors), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
-
-
-
+{{0x1008, 0x00}, {"sys", "info", "device_name", "", OD_ACCESS_CONST, OD_STRING, emb::nullopt, OD_NO_DIRECT_ACCESS, od::get_device_name, OD_NO_INDIRECT_WRITE_ACCESS}},
+{{0x1009, 0x00}, {"sys", "info", "hardware_version", "", OD_ACCESS_CONST, OD_STRING, emb::nullopt, OD_NO_DIRECT_ACCESS, od::get_hardware_version, OD_NO_INDIRECT_WRITE_ACCESS}},
+{{0x100A, 0x00}, {"sys", "info", "firmware_version", "", OD_ACCESS_CONST, OD_STRING, emb::nullopt, OD_NO_DIRECT_ACCESS, od::get_firmware_version, OD_NO_INDIRECT_WRITE_ACCESS}},
+//
+//{{0x1010, 0x01}, {"sys", "ctl", "save_all_parameters", "", OD_EXEC, OD_ACCESS_WO, emb::nullopt, OD_NO_DIRECT_ACCESS, OD_NO_INDIRECT_READ_ACCESS, od::save_all_parameters}},
+//{{0x1011, 0x01}, {"sys", "ctl", "restore_all_default_parameters", "", OD_EXEC, OD_ACCESS_WO, emb::nullopt, OD_NO_DIRECT_ACCESS, OD_NO_INDIRECT_READ_ACCESS, od::restore_all_default_parameters}},
+//
+//{{0x1018, 0x04}, {"sys", "info", "serial_number", "", OD_UINT32, OD_ACCESS_CONST, emb::nullopt, OD_NO_DIRECT_ACCESS, od::get_serial_number, OD_NO_INDIRECT_WRITE_ACCESS}},
+//
+//{{0x2000, 0x01}, {"sys", "ctl", "reset_device", "", OD_EXEC, OD_ACCESS_WO, emb::nullopt, OD_NO_DIRECT_ACCESS, OD_NO_INDIRECT_READ_ACCESS, od::reset_device}},
+//{{0x2000, 0x02}, {"sys", "ctl", "clear_errors", "", OD_EXEC, OD_ACCESS_WO, emb::nullopt, OD_NO_DIRECT_ACCESS, OD_NO_INDIRECT_READ_ACCESS, od::clear_errors}},
+//
+//{{0x5000, 0x01}, {"watch", "watch", "uptime", "s", OD_FLOAT32, OD_ACCESS_RO, emb::nullopt, OD_NO_DIRECT_ACCESS, od::get_uptime, OD_NO_INDIRECT_WRITE_ACCESS}},
+//{{0x5000, 0x02}, {"watch", "watch", "syslog_message", "", OD_UINT32, OD_ACCESS_RO, emb::nullopt, OD_NO_DIRECT_ACCESS, od::get_syslog_message, OD_NO_INDIRECT_WRITE_ACCESS}},
+//
+//{{0x3000, 0x01}, {"config", "ucanopen", "node_id", "", OD_UINT32, OD_ACCESS_RW, emb::nullopt, OD_PTR(&settings::configs.ucanopen_server.node_id), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
+//{{0x3000, 0x02}, {"config", "ucanopen", "heartbeat_period", "ms", OD_UINT32, OD_ACCESS_RW, emb::nullopt, OD_PTR(&settings::configs.ucanopen_server.heartbeat_period_ms), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
+//{{0x3000, 0x03}, {"config", "ucanopen", "tpdo1_period", "ms", OD_UINT32, OD_ACCESS_RW, emb::nullopt, OD_PTR(&settings::configs.ucanopen_server.tpdo1_period_ms), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
+//{{0x3000, 0x04}, {"config", "ucanopen", "tpdo2_period", "ms", OD_UINT32, OD_ACCESS_RW, emb::nullopt, OD_PTR(&settings::configs.ucanopen_server.tpdo2_period_ms), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
+//{{0x3000, 0x05}, {"config", "ucanopen", "tpdo3_period", "ms", OD_UINT32, OD_ACCESS_RW, emb::nullopt, OD_PTR(&settings::configs.ucanopen_server.tpdo3_period_ms), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
+//{{0x3000, 0x06}, {"config", "ucanopen", "tpdo4_period", "ms", OD_UINT32, OD_ACCESS_RW, emb::nullopt, OD_PTR(&settings::configs.ucanopen_server.tpdo4_period_ms), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
+//{{0x3000, 0x07}, {"config", "ucanopen", "rpdo1_timeout", "ms", OD_UINT32, OD_ACCESS_RW, emb::nullopt, OD_PTR(&settings::configs.ucanopen_server.rpdo1_timeout_ms), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
+//{{0x3000, 0x08}, {"config", "ucanopen", "rpdo2_timeout", "ms", OD_UINT32, OD_ACCESS_RW, emb::nullopt, OD_PTR(&settings::configs.ucanopen_server.rpdo2_timeout_ms), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
+//{{0x3000, 0x09}, {"config", "ucanopen", "rpdo3_timeout", "ms", OD_UINT32, OD_ACCESS_RW, emb::nullopt, OD_PTR(&settings::configs.ucanopen_server.rpdo3_timeout_ms), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
+//{{0x3000, 0x0A}, {"config", "ucanopen", "rpdo4_timeout", "ms", OD_UINT32, OD_ACCESS_RW, emb::nullopt, OD_PTR(&settings::configs.ucanopen_server.rpdo4_timeout_ms), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
+//{{0x3000, 0x0B}, {"config", "ucanopen", "rpdo1_id", "", OD_UINT32, OD_ACCESS_RW, emb::nullopt, OD_PTR(&settings::configs.ucanopen_server.rpdo1_id), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
+//{{0x3000, 0x0C}, {"config", "ucanopen", "rpdo2_id", "", OD_UINT32, OD_ACCESS_RW, emb::nullopt, OD_PTR(&settings::configs.ucanopen_server.rpdo2_id), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
+//{{0x3000, 0x0D}, {"config", "ucanopen", "rpdo3_id", "", OD_UINT32, OD_ACCESS_RW, emb::nullopt, OD_PTR(&settings::configs.ucanopen_server.rpdo3_id), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
+//{{0x3000, 0x0E}, {"config", "ucanopen", "rpdo4_id", "", OD_UINT32, OD_ACCESS_RW, emb::nullopt, OD_PTR(&settings::configs.ucanopen_server.rpdo4_id), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
+//
+//{{0x3001, 0x01}, {"config", "syslog", "enabled_errors", "", OD_UINT32, OD_ACCESS_RW, emb::nullopt, OD_PTR(&settings::configs.syslog.enabled_errors), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
+//{{0x3001, 0x02}, {"config", "syslog", "fatal_errors", "", OD_UINT32, OD_ACCESS_RW, emb::nullopt, OD_PTR(&settings::configs.syslog.fatal_errors), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
 };
 
 
