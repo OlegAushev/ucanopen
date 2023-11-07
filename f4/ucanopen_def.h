@@ -1,6 +1,7 @@
 #pragma once
 
 
+#include <sys/_types.h>
 #ifdef STM32F4xx
 
 
@@ -52,7 +53,7 @@ enum class NmtState : uint8_t {
 };
 
 
-enum class Cob {
+enum class Cob : unsigned int {
     nmt,
     sync,
     emcy,
@@ -120,7 +121,7 @@ constexpr std::array<size_t, cob_count> cob_sizes = {
 };
 
 
-enum class CobTpdo {
+enum class CobTpdo : unsigned int {
     tpdo1,
     tpdo2,
     tpdo3,
@@ -133,7 +134,7 @@ inline Cob to_cob(CobTpdo tpdo) {
 }
 
 
-enum class CobRpdo {
+enum class CobRpdo : unsigned int {
     rpdo1,
     rpdo2,
     rpdo3,
@@ -188,7 +189,8 @@ struct ExpeditedSdo {
     uint32_t index : 16;
     uint32_t subindex : 8;
     ExpeditedSdoData data;
-    ExpeditedSdo() { memset(this, 0, sizeof(ExpeditedSdo)); }
+    ExpeditedSdo() : data_size_indicated(0), expedited_transfer(0), data_empty_bytes(0), _reserved(0)
+                   , cs(0), index(0), subindex(0), data() {}
 };
 
 
