@@ -13,8 +13,6 @@
 #include "services/tpdo_service.h"
 #include "../node/node.h"
 
-#include <sys/syslog/syslog.h>
-
 #include <bitset>
 #include <vector>
 
@@ -62,7 +60,6 @@ public:
     void start();
     void stop();
     void run();
-    void check_connection();
 
     static void on_frame_received(mcu::can::Module& can_module, const mcu::can::MessageAttribute& attr, const can_frame& frame);
 };
