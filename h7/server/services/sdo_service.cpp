@@ -6,6 +6,9 @@
 
 namespace ucanopen {
 
+const ODObjectKey SdoService::restore_default_parameter_key = {0x1011, 0x04};
+
+
 SdoService::SdoService(impl::Server& server)
         : _server(server) {
     FDCAN_FilterTypeDef rsdo_filter = {
@@ -69,7 +72,7 @@ void SdoService::handle_recv_frames() {
     ExpeditedSdo tsdo;
     SdoAbortCode abort_code = SdoAbortCode::general_error;
     ODEntry* dictionary_end = _server._dictionary + _server._dictionary_size;
-    ODObjectKey key = {rsdo.index, rsdo.subindex};
+    ODObjectKey key = {static_cast<uint16_t>(rsdo.index), static_cast<uint16_t>(rsdo.subindex)};
 
     const ODEntry* od_entry = emb::binary_find(_server._dictionary, dictionary_end, key);
 
@@ -147,6 +150,14 @@ SdoAbortCode SdoService::_write_expedited(const ODEntry* od_entry, ExpeditedSdo&
         abort_code = od_entry->object.write_func(rsdo.data);
     }
 
+    if (abort_code == SdoAbortCode::data_store_error) {
+        if (od_entry->key == restore_default_parameter_key) {
+            ODObjectKey arg_key = {};
+            memcpy(&arg_key, &rsdo.data.u32, sizeof(arg_key));
+            abort_code = _restore_default_parameter(arg_key);
+        }
+    }
+
     if (abort_code == SdoAbortCode::no_error) {
         tsdo.index = rsdo.index;
         tsdo.subindex = rsdo.subindex;
@@ -160,6 +171,35 @@ void SdoService::send() {
     if (!_tsdo.not_sent) { return; }
     _server._can_module.send(_tsdo.header, _tsdo.payload);
     _tsdo.not_sent = false;
+}
+
+
+SdoAbortCode SdoService::_restore_default_parameter(ODObjectKey key) {
+    ODEntry* dictionary_end = _server._dictionary + _server._dictionary_size;
+    const ODEntry* od_entry = emb::binary_find(_server._dictionary, dictionary_end, key);
+
+    if (od_entry == dictionary_end) {
+        return SdoAbortCode::object_not_found;
+    }
+
+    if (!od_entry->object.default_value.has_value()) {
+        return SdoAbortCode::data_store_error;
+    }
+
+    if (!od_entry->object.has_write_permission()) {
+        return SdoAbortCode::write_access_ro;
+    }
+
+    if (od_entry->object.has_direct_access()) {
+        if (od_entry->object.ptr.first) {
+            memcpy(od_entry->object.ptr.first, &od_entry->object.default_value.value().u32, od_object_type_sizes[od_entry->object.data_type]);
+        } else {
+            memcpy(*od_entry->object.ptr.second, &od_entry->object.default_value.value().u32, od_object_type_sizes[od_entry->object.data_type]);
+        }
+        return SdoAbortCode::no_error;
+    } else {
+        return od_entry->object.write_func(od_entry->object.default_value.value());
+    }
 }
 
 } // namespace ucanopen

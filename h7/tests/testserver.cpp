@@ -105,9 +105,9 @@ inline SdoAbortCode get_uptime(ExpeditedSdoData& retval) {
 
 
 ODEntry object_dictionary[] = {
-// {{0x1008, 0x00}, {"sys", "info", "device_name", "", OD_STRING, OD_ACCESS_CONST, OD_NO_DIRECT_ACCESS, od::get_device_name, OD_NO_INDIRECT_WRITE_ACCESS}},
-// {{0x1009, 0x00}, {"sys", "info", "hardware_version", "", OD_STRING, OD_ACCESS_CONST, OD_NO_DIRECT_ACCESS, od::get_hardware_version, OD_NO_INDIRECT_WRITE_ACCESS}},
-// {{0x100A, 0x00}, {"sys", "info", "firmware_version", "", OD_STRING, OD_ACCESS_CONST, OD_NO_DIRECT_ACCESS, od::get_firmware_version, OD_NO_INDIRECT_WRITE_ACCESS}},
+{{0x1008, 0x00}, {"sys", "info", "device_name", "", OD_ACCESS_CONST, OD_STRING, OD_NO_DEFAULT_VALUE, OD_NO_DIRECT_ACCESS, od::get_device_name, OD_NO_INDIRECT_WRITE_ACCESS}},
+{{0x1009, 0x00}, {"sys", "info", "hardware_version", "", OD_ACCESS_CONST, OD_STRING, OD_NO_DEFAULT_VALUE, OD_NO_DIRECT_ACCESS, od::get_hardware_version, OD_NO_INDIRECT_WRITE_ACCESS}},
+{{0x100A, 0x00}, {"sys", "info", "firmware_version", "", OD_ACCESS_CONST, OD_STRING, OD_NO_DEFAULT_VALUE, OD_NO_DIRECT_ACCESS, od::get_firmware_version, OD_NO_INDIRECT_WRITE_ACCESS}},
 
 // {{0x1010, 0x01}, {"sys", "ctl", "save_all_parameters", "", OD_EXEC, OD_ACCESS_WO, OD_NO_DIRECT_ACCESS, OD_NO_INDIRECT_READ_ACCESS, od::save_all_parameters}},
 // {{0x1011, 0x01}, {"sys", "ctl", "restore_all_default_parameters", "", OD_EXEC, OD_ACCESS_WO, OD_NO_DIRECT_ACCESS, OD_NO_INDIRECT_READ_ACCESS, od::restore_all_default_parameters}},

@@ -35,6 +35,9 @@ public:
 private:
     SdoAbortCode _read_expedited(const ODEntry* od_entry, ExpeditedSdo& tsdo, const ExpeditedSdo& rsdo);
     SdoAbortCode _write_expedited(const ODEntry* od_entry, ExpeditedSdo& tsdo, const ExpeditedSdo& rsdo);
+    SdoAbortCode _restore_default_parameter(ODObjectKey key);
+
+    static const ODObjectKey restore_default_parameter_key;
 };
 
 } // namespace ucanopen
