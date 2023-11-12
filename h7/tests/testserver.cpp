@@ -14,12 +14,15 @@ namespace tests {
 namespace od {
 
 SdoAbortCode get_device_name(ExpeditedSdoData& retval) {
-    const int len = strlen(sysinfo::device_name) + 1;
-    const int word_count = (len + 3) / 4;
-    static unsigned int counter = 0;
+    const size_t len = strlen(sysinfo::device_name) + 1;
+    const size_t word_count = (len + 3) / 4;
+    static size_t counter = 0;
 
     char word[4] = {0};
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstringop-truncation"
     strncpy(word, sysinfo::device_name + 4*counter, 4);
+#pragma GCC diagnostic pop
     memcpy(&retval.u32, word, 4);
 
     counter = (counter + 1) % word_count;
@@ -29,12 +32,15 @@ SdoAbortCode get_device_name(ExpeditedSdoData& retval) {
 
 
 SdoAbortCode get_hardware_version(ExpeditedSdoData& retval) {
-    const int len = strlen(sysinfo::hardware_version) + 1;
-    const int word_count = (len + 3) / 4;
-    static unsigned int counter = 0;
+    const size_t len = strlen(sysinfo::hardware_version) + 1;
+    const size_t word_count = (len + 3) / 4;
+    static size_t counter = 0;
 
     char word[4] = {0};
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstringop-truncation"
     strncpy(word, sysinfo::hardware_version + 4*counter, 4);
+#pragma GCC diagnostic pop
     memcpy(&retval.u32, word, 4);
 
     counter = (counter + 1) % word_count;
@@ -44,12 +50,15 @@ SdoAbortCode get_hardware_version(ExpeditedSdoData& retval) {
 
 
 SdoAbortCode get_firmware_version(ExpeditedSdoData& retval) {
-    const int len = strlen(sysinfo::firmware_version) + 1;
-    const int word_count = (len + 3) / 4;
-    static int counter = 0;
+    const size_t len = strlen(sysinfo::firmware_version) + 1;
+    const size_t word_count = (len + 3) / 4;
+    static size_t counter = 0;
 
     char word[4] = {0};
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstringop-truncation"
     strncpy(word, sysinfo::firmware_version + 4*counter, 4);
+#pragma GCC diagnostic pop
     memcpy(&retval.u32, word, 4);
 
     counter = (counter + 1) % word_count;

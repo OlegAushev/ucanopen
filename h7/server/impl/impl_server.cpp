@@ -35,9 +35,9 @@ void impl::Server::_init_object_dictionary() {
                 || (_dictionary[i].key.subindex != _dictionary[j].key.subindex));
 
             // no od-entries with equal {category, subcategory, name}
-            bool categoryEqual = ((strcmp(_dictionary[i].object.category, _dictionary[j].object.category) == 0) ? true : false);
-            bool subcategoryEqual = ((strcmp(_dictionary[i].object.subcategory, _dictionary[j].object.subcategory) == 0) ? true : false);
-            bool nameEqual = ((strcmp(_dictionary[i].object.name, _dictionary[j].object.name) == 0) ? true : false);
+            [[maybe_unused]] bool categoryEqual = ((strcmp(_dictionary[i].object.category, _dictionary[j].object.category) == 0) ? true : false);
+            [[maybe_unused]] bool subcategoryEqual = ((strcmp(_dictionary[i].object.subcategory, _dictionary[j].object.subcategory) == 0) ? true : false);
+            [[maybe_unused]] bool nameEqual = ((strcmp(_dictionary[i].object.name, _dictionary[j].object.name) == 0) ? true : false);
             assert(!categoryEqual || !subcategoryEqual || !nameEqual);
         }
 
