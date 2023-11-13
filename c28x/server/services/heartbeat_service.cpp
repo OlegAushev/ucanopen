@@ -1,7 +1,11 @@
+#ifdef MCUDRV_C28X
+
+
 #include "heartbeat_service.h"
 
 
 namespace ucanopen {
+    
 
 HeartbeatService::HeartbeatService(impl::Server& server, emb::chrono::milliseconds period)
         : _server(server)
@@ -24,5 +28,8 @@ void HeartbeatService::send() {
     }
 }
 
+
 } // namespace ucanopen
 
+
+#endif

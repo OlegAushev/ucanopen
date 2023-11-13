@@ -1,3 +1,4 @@
+#ifdef MCUDRV_STM32
 #ifdef STM32F4xx
 
 
@@ -5,6 +6,7 @@
 
 
 namespace ucanopen {
+
 
 RpdoService::RpdoService(impl::Server& server)
         : _server(server) {
@@ -76,6 +78,9 @@ void RpdoService::handle_recv_frames() {
     }
 }
 
+
 } // namespace ucanopen
 
+
+#endif
 #endif

@@ -1,13 +1,18 @@
 #pragma once
 
 
+#ifdef MCUDRV_C28X
+
+
 #include "../server/server.h"
 #include <sys/syslog/syslog.h>
 
 
 namespace ucanopen {
 
+
 namespace tests {
+
 
 struct CobTpdo1 {
     int64_t clock;
@@ -248,8 +253,11 @@ protected:
     }
 };
 
+
 } // namespace tests
+
 
 } // namespace ucanopen
 
 
+#endif

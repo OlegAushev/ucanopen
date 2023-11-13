@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include <sys/_types.h>
+#ifdef MCUDRV_STM32
 #ifdef STM32F4xx
 
 
@@ -337,4 +337,5 @@ inline bool operator==(const ODObjectKey& lhs, const ODObjectKey& rhs) {
 } // namespace ucanopen
 
 
+#endif
 #endif

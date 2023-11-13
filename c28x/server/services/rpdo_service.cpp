@@ -1,7 +1,11 @@
+#ifdef MCUDRV_C28X
+
+
 #include "rpdo_service.h"
 
 
 namespace ucanopen {
+
 
 unsigned char RpdoService::cana_rpdo_dualcore_alloc[sizeof(emb::array<RpdoService::Message, 4>)]
         __attribute__((section("shared_ucanopen_cana_rpdo_data"), retain));
@@ -95,5 +99,8 @@ void RpdoService::handle_received() {
     }
 }
 
+
 } // namespace ucanopen
 
+
+#endif

@@ -1,6 +1,7 @@
 #pragma once
 
 
+#ifdef MCUDRV_STM32
 #ifdef STM32F4xx
 
 
@@ -9,6 +10,7 @@
 
 
 namespace ucanopen {
+
 
 class HeartbeatService {
 private:
@@ -22,6 +24,9 @@ public:
     void send();
 };
 
+
 } // namespace ucanopen
 
+
+#endif
 #endif

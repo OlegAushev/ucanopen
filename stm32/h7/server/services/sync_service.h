@@ -10,6 +10,7 @@
 
 namespace ucanopen {
 
+
 class SyncService {
 private:
     impl::Server& _server;
@@ -21,6 +22,9 @@ public:
     void send();
 };
 
+
 } // namespace ucanopen
 
+
+#endif
 #endif

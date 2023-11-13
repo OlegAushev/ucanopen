@@ -1,3 +1,4 @@
+#ifdef MCUDRV_STM32
 #ifdef STM32H7xx
 
 
@@ -7,6 +8,7 @@
 
 
 namespace ucanopen {
+
 
 namespace tests {
 
@@ -110,7 +112,7 @@ inline SdoAbortCode get_uptime(ExpeditedSdoData& retval) {
     return SdoAbortCode::no_error;
 }
 
-}
+} // namespace od
 
 
 ODEntry object_dictionary[] = {
@@ -148,10 +150,15 @@ ODEntry object_dictionary[] = {
 // {{0x3001, 0x02}, {"config", "syslog", "fatal_errors", "", OD_UINT32, OD_ACCESS_RW, OD_PTR(&settings::configs.syslog.fatal_errors), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},
 };
 
+
 const int object_dictionary_size = sizeof(object_dictionary) / sizeof(object_dictionary[0]);
+
 
 } // namespace tests
 
+
 } // namespae ucanopen
 
+
+#endif
 #endif

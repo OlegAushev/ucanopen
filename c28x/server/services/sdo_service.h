@@ -1,12 +1,16 @@
 #pragma once
 
 
+#ifdef MCUDRV_C28X
+
+
 #include "../impl/impl_server.h"
 #include <emblib/algorithm.h>
 #include <new>
 
 
 namespace ucanopen {
+
 
 class SdoService {
 private:
@@ -33,5 +37,8 @@ private:
     static const ODObjectKey restore_default_parameter_key;
 };
 
+
 } // namespace ucanopen
 
+
+#endif

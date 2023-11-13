@@ -1,6 +1,7 @@
 #pragma once
 
 
+#ifdef MCUDRV_STM32
 #ifdef STM32H7xx
 
 
@@ -9,7 +10,9 @@
 
 namespace ucanopen {
 
+
 namespace tests {
+
 
 class Node : public ucanopen::Node {
 public:
@@ -122,8 +125,12 @@ private:
     }
 };
 
-} // namespace ucanopen
 
 } // namespace tests
 
+
+} // namespace ucanopen
+
+
+#endif
 #endif

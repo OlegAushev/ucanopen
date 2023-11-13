@@ -1,11 +1,15 @@
 #pragma once
 
 
+#ifdef MCUDRV_C28X
+
+
 #include "../impl/impl_server.h"
 #include <mcudrv/c28x/f2837xd/chrono/chrono.h>
 
 
 namespace ucanopen {
+
 
 class TpdoService {
 private:
@@ -23,5 +27,8 @@ public:
     void send();
 };
 
+
 } // namespace ucanopen
 
+
+#endif

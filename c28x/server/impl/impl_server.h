@@ -1,6 +1,9 @@
 #pragma once
 
 
+#ifdef MCUDRV_C28X
+
+
 #include <mcudrv/c28x/f2837xd/can/can.h>
 #include <mcudrv/c28x/f2837xd/ipc/ipc.h>
 #include <ucanopen_c28x/ucanopen_def.h>
@@ -8,6 +11,7 @@
 
 
 namespace ucanopen {
+
 
 struct IpcFlags {
     mcu::ipc::Flag rpdo1_received;
@@ -26,6 +30,7 @@ class SdoService;
 
 
 namespace impl {
+
 
 class Server {
     friend class ucanopen::HeartbeatService;
@@ -67,8 +72,11 @@ private:
     void _init_object_dictionary();
 };
 
+
 } // namesppace impl
+
 
 } // namespace ucanopen
 
 
+#endif

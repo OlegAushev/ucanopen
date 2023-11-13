@@ -1,7 +1,11 @@
+#ifdef MCUDRV_C28X
+
+
 #include "server.h"
 
 
 namespace ucanopen {
+
 
 Server::Server(mcu::ipc::traits::singlecore, mcu::ipc::traits::primary, const IpcFlags& ipc_flags,
                mcu::can::Module* can_module, const ServerConfig& config,
@@ -125,5 +129,8 @@ void Server::on_frame_received(mcu::can::Module* can_module, uint32_t interrupt_
     }
 }
 
+
 } // namespace ucanopen
 
+
+#endif

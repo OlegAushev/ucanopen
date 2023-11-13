@@ -1,6 +1,7 @@
 #pragma once
 
 
+#ifdef MCUDRV_STM32
 #ifdef STM32F4xx
 
 
@@ -10,6 +11,7 @@
 
 
 namespace ucanopen {
+
 
 class Server;
 
@@ -50,6 +52,9 @@ public:
     bool connection_ok();
 };
 
+
 } // namespace ucanopen
 
+
+#endif
 #endif

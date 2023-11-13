@@ -1,3 +1,4 @@
+#ifdef MCUDRV_STM32
 #ifdef STM32F4xx
 
 
@@ -7,6 +8,7 @@
 
 
 namespace ucanopen {
+
 
 namespace tests {
 
@@ -110,7 +112,8 @@ inline SdoAbortCode get_uptime(ExpeditedSdoData& retval) {
     return SdoAbortCode::no_error;
 }
 
-}
+
+} // namespace od
 
 
 ODEntry object_dictionary[] = {
@@ -150,8 +153,12 @@ ODEntry object_dictionary[] = {
 
 const size_t object_dictionary_size = sizeof(object_dictionary) / sizeof(object_dictionary[0]);
 
+
 } // namespace tests
+
 
 } // namespae ucanopen
 
+
+#endif
 #endif

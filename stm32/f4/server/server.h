@@ -1,6 +1,7 @@
 #pragma once
 
 
+#ifdef MCUDRV_STM32
 #ifdef STM32F4xx
 
 
@@ -18,6 +19,7 @@
 
 
 namespace ucanopen {
+
 
 struct ServerConfig {
     uint32_t node_id;
@@ -70,7 +72,8 @@ public:
 };
 
 
-
 } // namespace ucanopen
 
+
+#endif
 #endif

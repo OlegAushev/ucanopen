@@ -1,6 +1,7 @@
 #pragma once
 
 
+#ifdef MCUDRV_STM32
 #ifdef STM32H7xx
 
 
@@ -10,7 +11,9 @@
 
 namespace ucanopen {
 
+
 namespace tests {
+
 
 struct CobTpdo1 {
     int64_t clock;
@@ -232,8 +235,12 @@ private:
     }
 };
 
+
 } // namespace tests
+
 
 } // namespae ucanopen
 
+
+#endif
 #endif

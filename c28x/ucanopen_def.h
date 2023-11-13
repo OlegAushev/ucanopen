@@ -1,6 +1,9 @@
 #pragma once
 
 
+#ifdef MCUDRV_C28X
+
+
 #include <emblib/interfaces/can.h>
 #include <emblib/core.h>
 #include <emblib/optional.h>
@@ -335,3 +338,6 @@ inline bool operator==(const ODObjectKey& lhs, const ODObjectKey& rhs) {
 
 
 } // namespace ucanopen
+
+
+#endif

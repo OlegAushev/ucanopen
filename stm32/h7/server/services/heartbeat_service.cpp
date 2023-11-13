@@ -1,3 +1,4 @@
+#ifdef MCUDRV_STM32
 #ifdef STM32H7xx
 
 
@@ -5,6 +6,7 @@
 
 
 namespace ucanopen {
+
 
 HeartbeatService::HeartbeatService(impl::Server& server, std::chrono::milliseconds period)
         : _server(server)
@@ -36,6 +38,9 @@ void HeartbeatService::send() {
     }
 }
 
+
 } // namespace ucanopen
 
+
+#endif
 #endif

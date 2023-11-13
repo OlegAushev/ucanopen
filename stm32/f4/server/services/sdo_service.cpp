@@ -1,3 +1,4 @@
+#ifdef MCUDRV_STM32
 #ifdef STM32F4xx
 
 
@@ -195,6 +196,9 @@ void SdoService::send() {
     _tsdo.not_sent = false;
 }
 
+
 } // namespace ucanopen
 
+
+#endif
 #endif

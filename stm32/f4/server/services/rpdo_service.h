@@ -1,6 +1,7 @@
 #pragma once
 
 
+#ifdef MCUDRV_STM32
 #ifdef STM32F4xx
 
 
@@ -9,6 +10,7 @@
 
 
 namespace ucanopen {
+
 
 class RpdoService : public impl::FrameReceiverInterface {
 private:
@@ -43,6 +45,9 @@ public:
     }
 };
 
+
 } // namespace ucanopen
 
+
+#endif
 #endif

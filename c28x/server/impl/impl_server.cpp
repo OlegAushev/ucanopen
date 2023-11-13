@@ -1,7 +1,11 @@
+#ifdef MCUDRV_C28X
+
+
 #include "impl_server.h"
 
 
 namespace ucanopen {
+
 
 impl::Server::Server(mcu::ipc::traits::singlecore, mcu::ipc::traits::primary,
                      mcu::can::Module* can_module, NodeId node_id,
@@ -142,5 +146,8 @@ void impl::Server::_init_object_dictionary() {
     }
 }
 
+
 } // namespace ucanopen
 
+
+#endif

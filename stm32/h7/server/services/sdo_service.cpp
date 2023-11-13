@@ -1,3 +1,4 @@
+#ifdef MCUDRV_STM32
 #ifdef STM32H7xx
 
 
@@ -5,6 +6,7 @@
 
 
 namespace ucanopen {
+
 
 const ODObjectKey SdoService::restore_default_parameter_key = {0x1011, 0x04};
 
@@ -202,6 +204,9 @@ SdoAbortCode SdoService::_restore_default_parameter(ODObjectKey key) {
     }
 }
 
+
 } // namespace ucanopen
 
+
+#endif
 #endif

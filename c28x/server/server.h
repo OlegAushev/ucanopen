@@ -1,6 +1,9 @@
 #pragma once
 
 
+#ifdef MCUDRV_C28X
+
+
 #include "../ucanopen_def.h"
 #include "impl/impl_server.h"
 #include "services/heartbeat_service.h"
@@ -12,13 +15,16 @@
 
 namespace ucanopen {
 
+
 namespace impl {
+
 
 extern unsigned char cana_rsdo_dualcore_alloc[sizeof(can_payload)];
 extern unsigned char canb_rsdo_dualcore_alloc[sizeof(can_payload)];
 
 extern unsigned char cana_tsdo_dualcore_alloc[sizeof(can_payload)];
 extern unsigned char canb_tsdo_dualcore_alloc[sizeof(can_payload)];
+
 
 } // namespace impl
 
@@ -80,5 +86,8 @@ private:
     static void on_frame_received(mcu::can::Module* can_module, uint32_t interrupt_cause, uint16_t status);
 };
 
+
 } // namespace ucanopen
 
+
+#endif

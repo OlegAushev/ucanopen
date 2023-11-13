@@ -1,11 +1,15 @@
 #pragma once
 
 
+#ifdef MCUDRV_C28X
+
+
 #include <mcudrv/c28x/f2837xd/chrono/chrono.h>
 #include "../impl/impl_server.h"
 
 
 namespace ucanopen {
+
 
 class HeartbeatService {
 private:
@@ -17,5 +21,8 @@ public:
     void send();
 };
 
+
 } // namespace ucanopen
 
+
+#endif

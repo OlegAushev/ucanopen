@@ -1,3 +1,4 @@
+#ifdef MCUDRV_STM32
 #ifdef STM32H7xx
 
 
@@ -5,6 +6,7 @@
 
 
 namespace ucanopen {
+
 
 impl::Server::Server(mcu::can::Module& can_module, NodeId node_id,
                      ODEntry* object_dictionary, size_t object_dictionary_size)
@@ -53,6 +55,9 @@ void impl::Server::_init_object_dictionary() {
     }
 }
 
+
 } // namespace ucanopen
 
+
+#endif
 #endif

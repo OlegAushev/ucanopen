@@ -1,3 +1,4 @@
+#ifdef MCUDRV_STM32
 #ifdef STM32F4xx
 
 
@@ -5,6 +6,7 @@
 
 
 namespace ucanopen {
+
 
 SyncService::SyncService(impl::Server& server, std::chrono::milliseconds period)
         : _server(server)
@@ -25,6 +27,9 @@ void SyncService::send() {
     }
 }
     
+
 } // namespace ucanopen
 
+
+#endif
 #endif

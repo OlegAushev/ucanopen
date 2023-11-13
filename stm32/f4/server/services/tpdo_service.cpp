@@ -1,3 +1,4 @@
+#ifdef MCUDRV_STM32
 #ifdef STM32F4xx
 
 
@@ -5,6 +6,7 @@
 
 
 namespace ucanopen {
+
 
 TpdoService::TpdoService(impl::Server& server)
         : _server(server) {
@@ -35,6 +37,9 @@ void TpdoService::send() {
     }
 }
 
+
 } // namespace ucanopen
 
+
+#endif
 #endif

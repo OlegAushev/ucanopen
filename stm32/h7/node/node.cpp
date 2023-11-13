@@ -1,3 +1,4 @@
+#ifdef MCUDRV_STM32
 #ifdef STM32H7xx
 
 
@@ -6,6 +7,7 @@
 
 
 namespace ucanopen {
+
 
 Node::Node(Server& server)
         : _can_module(server._can_module) {
@@ -96,6 +98,9 @@ bool Node::connection_ok() {
     return true;
 }
 
+
 } // namespace ucanopen
 
+
+#endif
 #endif

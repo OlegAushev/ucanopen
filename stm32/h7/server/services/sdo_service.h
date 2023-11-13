@@ -1,6 +1,7 @@
 #pragma once
 
 
+#ifdef MCUDRV_STM32
 #ifdef STM32H7xx
 
 
@@ -10,6 +11,7 @@
 
 
 namespace ucanopen {
+
 
 class SdoService : public impl::FrameReceiverInterface {
 private:
@@ -40,6 +42,9 @@ private:
     static const ODObjectKey restore_default_parameter_key;
 };
 
+
 } // namespace ucanopen
 
+
+#endif
 #endif

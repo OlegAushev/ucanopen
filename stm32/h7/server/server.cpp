@@ -1,3 +1,4 @@
+#ifdef MCUDRV_STM32
 #ifdef STM32H7xx
 
 
@@ -5,6 +6,7 @@
 
 
 namespace ucanopen {
+
 
 Server::Server(mcu::can::Module& can_module, const ServerConfig& config,
                ODEntry* object_dictionary, size_t object_dictionary_size)
@@ -93,6 +95,9 @@ void Server::on_frame_received(mcu::can::Module& can_module, const mcu::can::Mes
     }
 }
 
+
 } // namespace ucanopen
 
+
+#endif
 #endif

@@ -1,6 +1,7 @@
 #pragma once
 
 
+#ifdef MCUDRV_STM32
 #ifdef STM32F4xx
 
 
@@ -12,6 +13,7 @@
 
 namespace ucanopen {
 
+
 class HeartbeatService;
 class SyncService;
 class TpdoService;
@@ -21,6 +23,7 @@ class Node;
 
 
 namespace impl {
+
 
 class Server {
     friend class ucanopen::HeartbeatService;
@@ -47,6 +50,7 @@ private:
     void _init_object_dictionary();
 };
 
+
 } // namespace impl
 
 enum class FrameRecvStatus {
@@ -58,7 +62,9 @@ enum class FrameRecvStatus {
     //irrelevant_frame
 };
 
+
 namespace impl {
+
 
 class FrameReceiverInterface {
 public:
@@ -67,8 +73,12 @@ public:
     virtual void handle_recv_frames() = 0;
 };
 
+
 } // namespace impl
+
 
 } // namespace ucanopen
 
+
+#endif
 #endif

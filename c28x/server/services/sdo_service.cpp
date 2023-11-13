@@ -1,7 +1,11 @@
+#ifdef MCUDRV_C28X
+
+
 #include "sdo_service.h"
 
 
 namespace ucanopen {
+
 
 unsigned char SdoService::cana_rsdo_dualcore_alloc[sizeof(can_payload)]
         __attribute__((section("shared_ucanopen_cana_rsdo_data"), retain));
@@ -202,5 +206,8 @@ SdoAbortCode SdoService::_restore_default_parameter(ODObjectKey key) {
     }
 }
 
+
 } // namespace ucanopen
 
+
+#endif

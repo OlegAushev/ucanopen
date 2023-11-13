@@ -1,3 +1,4 @@
+#ifdef MCUDRV_STM32
 #ifdef STM32H7xx
 
 
@@ -79,4 +80,5 @@ void RpdoService::handle_recv_frames() {
 } // namespace ucanopen
 
 
+#endif
 #endif
