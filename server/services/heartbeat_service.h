@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include <mculib_c28x/f2837xd/chrono/chrono.h>
+#include <mcudrv/c28x/f2837xd/chrono/chrono.h>
 #include "../impl/impl_server.h"
 
 

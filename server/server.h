@@ -7,7 +7,7 @@
 #include "services/rpdo_service.h"
 #include "services/sdo_service.h"
 #include "services/tpdo_service.h"
-#include <mculib_c28x/f2837xd/chrono/chrono.h>
+#include <mcudrv/c28x/f2837xd/chrono/chrono.h>
 
 
 namespace ucanopen {

@@ -1,8 +1,8 @@
 #pragma once
 
 
-#include <mculib_c28x/f2837xd/can/can.h>
-#include <mculib_c28x/f2837xd/ipc/ipc.h>
+#include <mcudrv/c28x/f2837xd/can/can.h>
+#include <mcudrv/c28x/f2837xd/ipc/ipc.h>
 #include <ucanopen_c28x/ucanopen_def.h>
 #include <algorithm>
 
