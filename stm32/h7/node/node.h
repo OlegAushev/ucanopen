@@ -52,6 +52,7 @@ public:
     virtual std::vector<mcu::can::MessageAttribute> get_rx_attr() const override;
     virtual FrameRecvStatus recv_frame(const mcu::can::MessageAttribute& attr, const can_frame& frame) override;
     virtual void handle_recv_frames() override;
+    virtual void on_run() {}
 
     void send();
 

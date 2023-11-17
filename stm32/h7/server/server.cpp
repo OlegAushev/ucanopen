@@ -77,6 +77,7 @@ void Server::run() {
     sdo_service->handle_recv_frames();
     for (auto node : nodes) {
         node->handle_recv_frames();
+        node->on_run();
     }
 
     on_run();

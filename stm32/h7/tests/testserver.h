@@ -159,21 +159,21 @@ public:
     }
 
     virtual void on_run() override {
-        static bool warning_detected = false;
-        static auto warning_timepoint = std::chrono::milliseconds(0);
+        //static bool warning_detected = false;
+        //static auto warning_timepoint = std::chrono::milliseconds(0);
 
-        if (syslog::has_warning(sys::Warning::can_bus_connection_lost)) {
-            if (!warning_detected) {
-                warning_detected = true;
-                warning_timepoint = mcu::chrono::system_clock::now();
-            }
+        // if (syslog::has_warning(sys::Warning::can_bus_connection_lost)) {
+        //     if (!warning_detected) {
+        //         warning_detected = true;
+        //         warning_timepoint = mcu::chrono::system_clock::now();
+        //     }
 
-            if (mcu::chrono::system_clock::now() > warning_timepoint + std::chrono::milliseconds(5000)) {
-                syslog::set_error(sys::Error::can_bus_connection_lost);
-            }
-        } else {
-            warning_detected = false;
-        }
+        //     if (mcu::chrono::system_clock::now() > warning_timepoint + std::chrono::milliseconds(5000)) {
+        //         syslog::set_error(sys::Error::can_bus_connection_lost);
+        //     }
+        // } else {
+        //     warning_detected = false;
+        // }
     }
 
 private:

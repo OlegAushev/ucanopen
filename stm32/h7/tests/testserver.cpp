@@ -96,7 +96,7 @@ inline SdoAbortCode reset_device(ExpeditedSdoData val) {
 
 
 inline SdoAbortCode clear_errors(ExpeditedSdoData val) {
-    syslog::clear_errors();
+    // syslog::clear_errors();
     return SdoAbortCode::no_error;
 }
 
