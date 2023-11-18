@@ -67,7 +67,7 @@ enum class FrameRecvStatus {
 namespace impl {
 
 
-class FrameReceiverInterface {
+class FrameReceiver {
 public:
     virtual std::vector<mcu::can::MessageAttribute> get_rx_attr() const = 0;
     virtual FrameRecvStatus recv_frame(const mcu::can::MessageAttribute&, const can_frame&) = 0;
