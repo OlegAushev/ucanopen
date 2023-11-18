@@ -16,7 +16,7 @@ namespace ucanopen {
 class Server;
 
 
-class Node : public impl::FrameReceiverInterface {
+class Node : public impl::FrameReceiver {
 private:
     mcu::can::Module& _can_module;
 

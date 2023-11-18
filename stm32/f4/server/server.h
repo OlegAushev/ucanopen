@@ -49,7 +49,7 @@ protected:
     SdoService* sdo_service;
 
     std::vector<Node*> nodes;
-    std::vector<std::pair<mcu::can::RxMessageAttribute, impl::FrameReceiverInterface*>> _attr_map;
+    std::vector<std::pair<mcu::can::RxMessageAttribute, impl::FrameReceiver*>> _attr_map;
     virtual void on_run() {}
 
     uint64_t _errcount = 0;

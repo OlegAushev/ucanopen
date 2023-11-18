@@ -12,7 +12,7 @@
 namespace ucanopen {
 
 
-class RpdoService : public impl::FrameReceiverInterface {
+class RpdoService : public impl::FrameReceiver {
 private:
     impl::Server& _server;
 
