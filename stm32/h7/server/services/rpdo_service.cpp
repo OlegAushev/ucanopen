@@ -10,7 +10,7 @@ namespace ucanopen {
 
 RpdoService::RpdoService(impl::Server& server)
         : _server(server) {
-    for (auto i = 0; i < _rpdo_msgs.size(); ++i) {
+    for (size_t i = 0; i < _rpdo_msgs.size(); ++i) {
         _rpdo_msgs[i].timeout = std::chrono::milliseconds(0);
         _rpdo_msgs[i].timepoint = mcu::chrono::system_clock::now();
         _rpdo_msgs[i].is_unhandled = false;

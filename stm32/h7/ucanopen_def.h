@@ -334,7 +334,7 @@ inline bool operator==(const ODObjectKey& lhs, const ODObjectKey& rhs) {
 }
 
 
-enum class Error {
+enum class Error : uint32_t {
     none                            = uint32_t(0),
     can_bus_error                   = uint32_t(1) << 0,
     can_bus_overrun                 = uint32_t(1) << 1,
@@ -344,7 +344,7 @@ enum class Error {
 };
 
 
-enum class Warning {
+enum class Warning : uint32_t {
     none                            = uint32_t(0),
     can_bus_error                   = uint32_t(1) << 0,
     can_bus_overrun                 = uint32_t(1) << 1,
