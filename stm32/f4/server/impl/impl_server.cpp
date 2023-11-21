@@ -25,13 +25,13 @@ void impl::Server::_init_object_dictionary() {
     std::sort(_dictionary, _dictionary + _dictionary_size);
 
         // Check OBJECT DICTIONARY correctness
-    for (int i = 0; i < _dictionary_size; ++i) {
+    for (size_t i = 0; i < _dictionary_size; ++i) {
         // OD is sorted
         if (i < (_dictionary_size - 1)) {
             assert(_dictionary[i] < _dictionary[i+1]);
         }
 
-        for (int j = i+1; j < _dictionary_size; ++j) {
+        for (size_t j = i+1; j < _dictionary_size; ++j) {
             // no od-entries with equal {index, subinex}
             assert((_dictionary[i].key.index != _dictionary[j].key.index)
                 || (_dictionary[i].key.subindex != _dictionary[j].key.subindex));

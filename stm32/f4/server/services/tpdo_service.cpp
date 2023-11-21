@@ -10,7 +10,7 @@ namespace ucanopen {
 
 TpdoService::TpdoService(impl::Server& server)
         : _server(server) {
-    for (auto i = 0; i < _tpdo_msgs.size(); ++i) {
+    for (size_t i = 0; i < _tpdo_msgs.size(); ++i) {
         _tpdo_msgs[i].id = calculate_cob_id(to_cob(CobTpdo(i)), _server.node_id());
         _tpdo_msgs[i].period = std::chrono::milliseconds(0);
         _tpdo_msgs[i].timepoint = mcu::chrono::system_clock::now();
