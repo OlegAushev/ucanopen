@@ -129,7 +129,7 @@ SdoAbortCode SdoService::_read_expedited(const ODEntry* od_entry, ExpeditedSdo& 
         tsdo.cs = sdo_cs_codes::server_init_read;
         tsdo.expedited_transfer = 1;
         tsdo.data_size_indicated = 1;
-        tsdo.data_empty_bytes = 4 - od_object_type_sizes[od_entry->object.data_type];
+        tsdo.data_empty_bytes = (4 - od_object_type_sizes[od_entry->object.data_type]) & 0x03;
     }
     return abort_code;
 }

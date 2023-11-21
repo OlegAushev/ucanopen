@@ -151,7 +151,7 @@ ODEntry object_dictionary[] = {
 };
 
 
-const int object_dictionary_size = sizeof(object_dictionary) / sizeof(object_dictionary[0]);
+const size_t object_dictionary_size = sizeof(object_dictionary) / sizeof(object_dictionary[0]);
 
 
 } // namespace tests

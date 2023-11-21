@@ -102,7 +102,7 @@ struct CobRpdo4 {
 };
 //----------------------------------------------------------------------------------------------------------------------
 extern ODEntry object_dictionary[];
-extern const int object_dictionary_size;
+extern const size_t object_dictionary_size;
 
 
 const inline ucanopen::ServerConfig config1 = {
@@ -207,7 +207,7 @@ private:
     static can_payload _create_tpdo4() {
         static unsigned int counter = 0;
         CobTpdo4 tpdo;
-        tpdo.counter = counter;
+        tpdo.counter = counter & 0x3;
         //tpdo.errors = syslog::errors();
         //tpdo.warnings = syslog::warnings();
         counter = (counter + 1) % 4;
