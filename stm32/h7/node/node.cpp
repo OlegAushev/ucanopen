@@ -51,8 +51,8 @@ void Node::send() {
 }
 
 
-std::vector<mcu::can::MessageAttribute> Node::get_rx_attr() const {
-    std::vector<mcu::can::MessageAttribute> attributes;
+std::vector<mcu::can::RxMessageAttribute> Node::get_rx_attr() const {
+    std::vector<mcu::can::RxMessageAttribute> attributes;
     for (const auto& msg : _rx_messages) {
         attributes.push_back(msg.attr);
     }
@@ -60,7 +60,7 @@ std::vector<mcu::can::MessageAttribute> Node::get_rx_attr() const {
 }
 
 
-FrameRecvStatus Node::recv_frame(const mcu::can::MessageAttribute& attr, const can_frame& frame) {
+FrameRecvStatus Node::recv_frame(const mcu::can::RxMessageAttribute& attr, const can_frame& frame) {
     if (!_enabled) {
         return FrameRecvStatus::attr_mismatch;
     }

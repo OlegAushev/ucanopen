@@ -23,7 +23,7 @@ private:
     mcu::can::Module& _can_module;
 
     struct RxMessage {
-        mcu::can::MessageAttribute attr;
+        mcu::can::RxMessageAttribute attr;
         std::chrono::milliseconds timeout;
         std::chrono::milliseconds timepoint;
         bool is_unhandled;
@@ -49,8 +49,8 @@ public:
     void register_rx_message(FDCAN_FilterTypeDef& filter, std::chrono::milliseconds timeout, std::function<void(const can_payload&)> handler);
     void register_tx_message(const FDCAN_TxHeaderTypeDef& header, std::chrono::milliseconds period, std::function<can_payload(void)> creator);
 
-    virtual std::vector<mcu::can::MessageAttribute> get_rx_attr() const override;
-    virtual FrameRecvStatus recv_frame(const mcu::can::MessageAttribute& attr, const can_frame& frame) override;
+    virtual std::vector<mcu::can::RxMessageAttribute> get_rx_attr() const override;
+    virtual FrameRecvStatus recv_frame(const mcu::can::RxMessageAttribute& attr, const can_frame& frame) override;
     virtual void handle_recv_frames() override;
     virtual void on_run() {}
 

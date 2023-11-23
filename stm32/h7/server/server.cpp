@@ -84,8 +84,8 @@ void Server::run() {
 }
 
 
-void Server::on_frame_received(mcu::can::Module& can_module, const mcu::can::MessageAttribute& attr, const can_frame& frame) {
-    auto server = Server::instance(std::to_underlying(can_module.peripheral()));
+void Server::on_frame_received(mcu::can::Module& can_module, const mcu::can::RxMessageAttribute& attr, const can_frame& frame) {
+    auto server = Server::instance(can_module.peripheral());
     auto receiver = std::find_if(server->_attr_map.begin(), server->_attr_map.end(),
                                  [attr](const auto& item){ return item.first == attr; });
     if (receiver != server->_attr_map.end()) {

@@ -49,7 +49,7 @@ protected:
     SdoService* sdo_service;
 
     std::vector<Node*> nodes;
-    std::vector<std::pair<mcu::can::MessageAttribute, impl::FrameReceiver*>> _attr_map;
+    std::vector<std::pair<mcu::can::RxMessageAttribute, impl::FrameReceiver*>> _attr_map;
     virtual void on_run() {}
 
     uint64_t _errcount = 0;
@@ -58,12 +58,16 @@ public:
     Server(mcu::can::Module& can_module, const ServerConfig& config,
            ODEntry* object_dictionary, size_t object_dictionary_size);
 
+    static Server* instance(mcu::can::Peripheral peripheral) {
+        return emb::interrupt_invoker_array<Server, mcu::can::peripheral_count>::instance(std::to_underlying(peripheral));
+    }
+
     void add_node(Node* node_);
     void start();
     void stop();
     void run();
 
-    static void on_frame_received(mcu::can::Module& can_module, const mcu::can::MessageAttribute& attr, const can_frame& frame);
+    static void on_frame_received(mcu::can::Module& can_module, const mcu::can::RxMessageAttribute& attr, const can_frame& frame);
 };
 
 
