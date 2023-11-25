@@ -1,5 +1,5 @@
-#ifdef MCUDRV_STM32
-#ifdef STM32F4xx
+#if defined(MCUDRV_STM32) || defined(MCUDRV_APM32)
+#if defined(STM32F4xx) || defined(APM32F4xx)
 
 
 #include "node.h"
@@ -14,8 +14,11 @@ Node::Node(Server& server)
     server.add_node(this);
 }
 
-
+#if defined(MCUDRV_STM32)
 void Node::register_rx_message(CAN_FilterTypeDef& filter, std::chrono::milliseconds timeout, void(*handler)(const can_payload&)) {
+#elif defined(MCUDRV_APM32)
+void Node::register_rx_message(CAN_FilterConfig_T& filter, std::chrono::milliseconds timeout, void(*handler)(const can_payload&)) {
+#endif
     auto attr = _can_module.register_rxmessage(filter);
     _rx_messages.push_back({.attr = attr,
                             .timeout = timeout,
@@ -26,10 +29,11 @@ void Node::register_rx_message(CAN_FilterTypeDef& filter, std::chrono::milliseco
 }
 
 
-void Node::register_tx_message(const CAN_TxHeaderTypeDef& header, std::chrono::milliseconds period, can_payload (*creator)()) {
+void Node::register_tx_message(can_id id, uint8_t len, std::chrono::milliseconds period, can_payload (*creator)()) {
     _tx_messages.push_back({.period = period,
                             .timepoint = mcu::chrono::system_clock::now(),
-                            .header = header,
+                            .id = id,
+                            .len = len,
                             .creator = creator});
 }
 
@@ -41,7 +45,7 @@ void Node::send() {
         if (now < message.timepoint + message.period) { continue; }
 
         can_payload payload = message.creator();
-        _can_module.send({message.header.StdId, uint8_t(message.header.DLC), payload});
+        _can_module.send({message.id, message.len, payload});
         message.timepoint = now;
     }
 }

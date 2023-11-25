@@ -1,12 +1,16 @@
 #pragma once
 
 
-#ifdef MCUDRV_STM32
-#ifdef STM32F4xx
+#if defined(MCUDRV_STM32) || defined(MCUDRV_APM32)
+#if defined(STM32F4xx) || defined(APM32F4xx)
 
 
 #include "../../ucanopen_def.h"
+#if defined(MCUDRV_STM32)
 #include <mcudrv/stm32/f4/can/can.h>
+#elif defined(MCUDRV_APM32)
+#include <mcudrv/apm32/f4/can/can.h>
+#endif
 #include <algorithm>
 #include <vector>
 

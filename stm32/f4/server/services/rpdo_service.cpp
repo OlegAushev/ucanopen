@@ -1,5 +1,5 @@
-#ifdef MCUDRV_STM32
-#ifdef STM32F4xx
+#if defined(MCUDRV_STM32) || defined(MCUDRV_APM32)
+#if defined(STM32F4xx) || defined(APM32F4xx)
 
 
 #include "rpdo_service.h"
@@ -23,7 +23,7 @@ void RpdoService::register_rpdo(CobRpdo rpdo, std::chrono::milliseconds timeout,
     if (id == 0) {
         id = calculate_cob_id(to_cob(rpdo), _server.node_id());
     }
-
+#if defined(MCUDRV_STM32)
     CAN_FilterTypeDef filter = {
         .FilterIdHigh = id << 5,
         .FilterIdLow = 0,
@@ -36,6 +36,19 @@ void RpdoService::register_rpdo(CobRpdo rpdo, std::chrono::milliseconds timeout,
         .FilterActivation = {},
         .SlaveStartFilterBank = {}
     };
+#elif defined(MCUDRV_APM32)
+    CAN_FilterConfig_T filter = {
+        .filterNumber{},
+        .filterIdHigh = uint16_t(uint16_t(id) << 5),
+        .filterIdLow = 0,
+        .filterMaskIdHigh = 0x7FF << 5,
+        .filterMaskIdLow = 0,
+        .filterActivation{},
+        .filterFIFO = CAN_FILTER_FIFO_0,
+        .filterMode = CAN_FILTER_MODE_IDMASK,
+        .filterScale = CAN_FILTER_SCALE_32BIT
+    };
+#endif
 
     auto idx = std::to_underlying(rpdo);
     _rpdo_msgs[idx].attr = _server._can_module.register_rxmessage(filter);

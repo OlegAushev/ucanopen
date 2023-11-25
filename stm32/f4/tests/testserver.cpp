@@ -1,10 +1,9 @@
-#ifdef MCUDRV_STM32
-#ifdef STM32F4xx
+#if defined(MCUDRV_STM32) || defined(MCUDRV_APM32)
+#if defined(STM32F4xx) || defined(APM32F4xx)
 
 
 #include "testserver.h"
 #include <sys/sysinfo/sysinfo.h>
-#include <sys/syslog/syslog.h>
 
 
 namespace ucanopen {
@@ -89,21 +88,21 @@ SdoAbortCode get_serial_number(ExpeditedSdoData& retval) {
 
 
 inline SdoAbortCode reset_device(ExpeditedSdoData val) {
-    syslog::add_message(sys::Message::device_resetting);
-    mcu::chrono::system_clock::register_delayed_task(mcu::reset_device, std::chrono::milliseconds(2000));
+    // syslog::add_message(sys::Message::device_resetting);
+    // mcu::chrono::system_clock::register_delayed_task(mcu::reset_device, std::chrono::milliseconds(2000));
     return SdoAbortCode::no_error;
 }
 
 
 inline SdoAbortCode clear_errors(ExpeditedSdoData val) {
-    syslog::clear_errors();
+    //syslog::clear_errors();
     return SdoAbortCode::no_error;
 }
 
 
 inline SdoAbortCode get_syslog_message(ExpeditedSdoData& retval) {
-    retval.u32 = std::to_underlying(syslog::read_message());
-    syslog::pop_message();
+    // retval.u32 = std::to_underlying(syslog::read_message());
+    // syslog::pop_message();
     return SdoAbortCode::no_error;
 }
 
@@ -129,7 +128,7 @@ ODEntry object_dictionary[] = {
 // {{0x2000, 0x01}, {"sys", "ctl", "reset_device", "", OD_EXEC, OD_ACCESS_WO, OD_NO_DEFAULT_VALUE, OD_NO_DIRECT_ACCESS, OD_NO_INDIRECT_READ_ACCESS, od::reset_device}},
 // {{0x2000, 0x02}, {"sys", "ctl", "clear_errors", "", OD_EXEC, OD_ACCESS_WO, OD_NO_DEFAULT_VALUE, OD_NO_DIRECT_ACCESS, OD_NO_INDIRECT_READ_ACCESS, od::clear_errors}},
 
-// {{0x5000, 0x01}, {"watch", "watch", "uptime", "s", OD_FLOAT32, OD_ACCESS_RO, OD_NO_DEFAULT_VALUE, OD_NO_DIRECT_ACCESS, od::get_uptime, OD_NO_INDIRECT_WRITE_ACCESS}},
+{{0x5000, 0x01}, {"watch", "watch", "uptime", "s", OD_ACCESS_RO, OD_FLOAT32, OD_NO_DEFAULT_VALUE, OD_NO_DIRECT_ACCESS, od::get_uptime, OD_NO_INDIRECT_WRITE_ACCESS}},
 // {{0x5000, 0x02}, {"watch", "watch", "syslog_message", "", OD_UINT32, OD_ACCESS_RO, OD_NO_DEFAULT_VALUE, OD_NO_DIRECT_ACCESS, od::get_syslog_message, OD_NO_INDIRECT_WRITE_ACCESS}},
 
 // {{0x3000, 0x01}, {"config", "ucanopen", "node_id", "", OD_UINT32, OD_ACCESS_RW, OD_PTR(&settings::configs.ucanopen_server.node_id), OD_NO_INDIRECT_READ_ACCESS, OD_NO_INDIRECT_WRITE_ACCESS}},

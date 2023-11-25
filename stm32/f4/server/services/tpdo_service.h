@@ -1,12 +1,16 @@
 #pragma once
 
 
-#ifdef MCUDRV_STM32
-#ifdef STM32F4xx
+#if defined(MCUDRV_STM32) || defined(MCUDRV_APM32)
+#if defined(STM32F4xx) || defined(APM32F4xx)
 
 
 #include "../impl/impl_server.h"
+#if defined(MCUDRV_STM32)
 #include <mcudrv/stm32/f4/chrono/chrono.h>
+#elif defined(MCUDRV_APM32)
+#include <mcudrv/apm32/f4/chrono/chrono.h>
+#endif
 
 
 namespace ucanopen {

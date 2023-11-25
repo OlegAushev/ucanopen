@@ -1,12 +1,11 @@
 #pragma once
 
 
-#ifdef MCUDRV_STM32
-#ifdef STM32F4xx
+#if defined(MCUDRV_STM32) || defined(MCUDRV_APM32)
+#if defined(STM32F4xx) || defined(APM32F4xx)
 
 
 #include "../server/server.h"
-#include <sys/syslog/syslog.h>
 
 
 namespace ucanopen {
@@ -159,21 +158,7 @@ public:
     }
 
     virtual void on_run() override {
-        static bool warning_detected = false;
-        static auto warning_timepoint = std::chrono::milliseconds(0);
 
-        if (syslog::warning(sys::Warning::can_bus_connection_lost)) {
-            if (!warning_detected) {
-                warning_detected = true;
-                warning_timepoint = mcu::chrono::system_clock::now();
-            }
-
-            if (mcu::chrono::system_clock::now() > warning_timepoint + std::chrono::milliseconds(5000)) {
-                syslog::set_error(sys::Error::can_bus_connection_lost);
-            }
-        } else {
-            warning_detected = false;
-        }
     }
 
 private:
@@ -208,8 +193,6 @@ private:
         static unsigned int counter = 0;
         CobTpdo4 tpdo;
         tpdo.counter = counter & 0x3;
-        //tpdo.errors = syslog::errors();
-        //tpdo.warnings = syslog::warnings();
         counter = (counter + 1) % 4;
         return to_payload<CobTpdo4>(tpdo);
     }

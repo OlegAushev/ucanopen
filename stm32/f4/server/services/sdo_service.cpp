@@ -1,5 +1,5 @@
-#ifdef MCUDRV_STM32
-#ifdef STM32F4xx
+#if defined(MCUDRV_STM32) || defined(MCUDRV_APM32)
+#if defined(STM32F4xx) || defined(APM32F4xx)
 
 
 #include "sdo_service.h"
@@ -13,6 +13,7 @@ const ODObjectKey SdoService::restore_default_parameter_key = {0x1011, 0x04};
 
 SdoService::SdoService(impl::Server& server)
         : _server(server) {
+#if defined(MCUDRV_STM32)
     CAN_FilterTypeDef rsdo_filter = {
         .FilterIdHigh = calculate_cob_id(Cob::rsdo, _server.node_id()) << 5,
         .FilterIdLow = 0,
@@ -25,6 +26,19 @@ SdoService::SdoService(impl::Server& server)
         .FilterActivation = {},
         .SlaveStartFilterBank = {}
     };
+#elif defined(MCUDRV_APM32)
+    CAN_FilterConfig_T rsdo_filter = {
+        .filterNumber{},
+        .filterIdHigh = uint16_t(calculate_cob_id(Cob::rsdo, _server.node_id()) << 5),
+        .filterIdLow = 0,
+        .filterMaskIdHigh = 0x7FF << 5,
+        .filterMaskIdLow = 0,
+        .filterActivation{},
+        .filterFIFO = CAN_FILTER_FIFO_0,
+        .filterMode = CAN_FILTER_MODE_IDMASK,
+        .filterScale = CAN_FILTER_SCALE_32BIT
+    };
+#endif
     _rsdo.attr = _server._can_module.register_rxmessage(rsdo_filter);
     _rsdo.is_unhandled = false;
 

@@ -1,8 +1,8 @@
 #pragma once
 
 
-#ifdef MCUDRV_STM32
-#ifdef xSTM32F4xx
+#if defined(MCUDRV_STM32) || defined(MCUDRV_APM32)
+#if defined(STM32F4xx) || defined(APM32F4xx)
 
 
 #include "../node/node.h"

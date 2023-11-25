@@ -1,8 +1,8 @@
 #pragma once
 
 
-#ifdef MCUDRV_STM32
-#ifdef STM32F4xx
+#if defined(MCUDRV_STM32) || defined(MCUDRV_APM32)
+#if defined(STM32F4xx) || defined(APM32F4xx)
 
 
 #include "../server/impl/impl_server.h"
@@ -33,15 +33,19 @@ private:
     struct TxMessage {
         std::chrono::milliseconds period;
         std::chrono::milliseconds timepoint;
-        CAN_TxHeaderTypeDef header;
+        can_id id;
+        uint8_t len;
         can_payload (*creator)();
     };
     std::vector<TxMessage> _tx_messages;
 public:
     Node(Server& server);
-
+#if defined(MCUDRV_STM32)
     void register_rx_message(CAN_FilterTypeDef& filter, std::chrono::milliseconds timeout, void(*handler)(const can_payload&));
-    void register_tx_message(const CAN_TxHeaderTypeDef& header, std::chrono::milliseconds period, can_payload (*creator)());
+#elif defined(MCUDRV_APM32)
+    void register_rx_message(CAN_FilterConfig_T& filter, std::chrono::milliseconds timeout, void(*handler)(const can_payload&));
+#endif
+    void register_tx_message(can_id id, uint8_t len, std::chrono::milliseconds period, can_payload (*creator)());
 
     virtual std::vector<mcu::can::RxMessageAttribute> get_rx_attr() const override;
     virtual FrameRecvStatus recv_frame(const mcu::can::RxMessageAttribute& attr, const can_frame& frame) override;
