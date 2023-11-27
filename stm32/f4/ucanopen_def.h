@@ -20,7 +20,7 @@ namespace ucanopen {
 template <typename T>
 inline can_payload to_payload(const T& message) {
     static_assert(sizeof(T) <= 8);
-    can_payload payload = {};
+    can_payload payload{};
     memcpy(payload.data(), &message, sizeof(T));
     return payload;
 }
@@ -29,7 +29,7 @@ inline can_payload to_payload(const T& message) {
 template <typename T>
 inline T from_payload(const can_payload& payload) {
     static_assert(sizeof(T) <= 8);
-    T message = {};
+    T message{};
     memcpy(&message, payload.data(), sizeof(T));
     return message;
 }
