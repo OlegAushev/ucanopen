@@ -344,13 +344,13 @@ enum class Error : uint32_t {
 };
 
 
-enum class Warning : uint32_t {
-    none                            = uint32_t(0),
-    can_bus_error                   = uint32_t(1) << 0,
-    can_bus_overrun                 = uint32_t(1) << 1,
-    can_bus_connection_lost         = uint32_t(1) << 2,
-    can_bus_checksum_mismatch       = uint32_t(1) << 3,
-    can_bus_counter_freeze          = uint32_t(1) << 4,
+enum class Warning : uint16_t {
+    none                            = uint16_t(0),
+    can_bus_error                   = uint16_t(1) << 0,
+    can_bus_overrun                 = uint16_t(1) << 1,
+    can_bus_connection_lost         = uint16_t(1) << 2,
+    can_bus_checksum_mismatch       = uint16_t(1) << 3,
+    can_bus_counter_freeze          = uint16_t(1) << 4,
 };
 
 
