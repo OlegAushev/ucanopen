@@ -5,6 +5,7 @@
 #include "testserver.h"
 #include <sys/sysinfo/sysinfo.h>
 #include <sys/syslog/syslog.h>
+#include <emblib/scheduler.h>
 
 
 namespace ucanopen {
@@ -90,7 +91,7 @@ SdoAbortCode get_serial_number(ExpeditedSdoData& retval) {
 
 inline SdoAbortCode reset_device(ExpeditedSdoData val) {
     syslog::add_message(sys::Message::device_resetting);
-    mcu::chrono::system_clock::register_delayed_task(mcu::reset_device, std::chrono::milliseconds(2000));
+    emb::scheduler::basic_scheduler::add_delayed_task(mcu::reset_device, std::chrono::milliseconds(2000));
     return SdoAbortCode::no_error;
 }
 
