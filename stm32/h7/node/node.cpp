@@ -19,7 +19,7 @@ void Node::register_rx_message(FDCAN_FilterTypeDef& filter, std::chrono::millise
     auto attr = _can_module.register_message(filter);
     _rx_messages.push_back({.attr = attr,
                             .timeout = timeout,
-                            .timepoint = mcu::chrono::system_clock::now(),
+                            .timepoint = mcu::chrono::steady_clock::now(),
                             .is_unhandled = false,
                             .frame= {},
                             .handler = handler});
@@ -28,7 +28,7 @@ void Node::register_rx_message(FDCAN_FilterTypeDef& filter, std::chrono::millise
 
 void Node::register_tx_message(const FDCAN_TxHeaderTypeDef& header, std::chrono::milliseconds period, std::function<can_payload(void)> creator) {
     _tx_messages.push_back({.period = period,
-                            .timepoint = mcu::chrono::system_clock::now(),
+                            .timepoint = mcu::chrono::steady_clock::now(),
                             .header = header,
                             .creator = creator});
 }
@@ -39,7 +39,7 @@ void Node::send() {
         return;
     }
 
-    auto now = mcu::chrono::system_clock::now();
+    auto now = mcu::chrono::steady_clock::now();
     for (auto& message : _tx_messages) {
         if (message.period.count() <= 0) { continue; }
         if (now < message.timepoint + message.period) { continue; }
@@ -71,7 +71,7 @@ FrameRecvStatus Node::recv_frame(const mcu::can::RxMessageAttribute& attr, const
         return FrameRecvStatus::attr_mismatch;
     }
 
-    received_msg->timepoint = mcu::chrono::system_clock::now();
+    received_msg->timepoint = mcu::chrono::steady_clock::now();
     received_msg->frame = frame;
     received_msg->is_unhandled = true;
     return FrameRecvStatus::success;
@@ -89,7 +89,7 @@ void Node::handle_recv_frames() {
 
 
 bool Node::connection_ok() {
-    auto now = mcu::chrono::system_clock::now();
+    auto now = mcu::chrono::steady_clock::now();
     for (const auto& msg : _rx_messages) {
         if (now > msg.timepoint + msg.timeout) {
             return false;

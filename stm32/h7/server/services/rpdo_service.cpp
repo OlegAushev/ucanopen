@@ -12,7 +12,7 @@ RpdoService::RpdoService(impl::Server& server)
         : _server(server) {
     for (size_t i = 0; i < _rpdo_msgs.size(); ++i) {
         _rpdo_msgs[i].timeout = std::chrono::milliseconds(0);
-        _rpdo_msgs[i].timepoint = mcu::chrono::system_clock::now();
+        _rpdo_msgs[i].timepoint = mcu::chrono::steady_clock::now();
         _rpdo_msgs[i].is_unhandled = false;
         _rpdo_msgs[i].handler = nullptr;
     }
@@ -60,7 +60,7 @@ FrameRecvStatus RpdoService::recv_frame(const mcu::can::RxMessageAttribute& attr
         return FrameRecvStatus::attr_mismatch;
     }
 
-    received_rpdo->timepoint = mcu::chrono::system_clock::now();
+    received_rpdo->timepoint = mcu::chrono::steady_clock::now();
     received_rpdo->frame = frame;
     received_rpdo->is_unhandled = true;
     return FrameRecvStatus::success;

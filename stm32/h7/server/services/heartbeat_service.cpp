@@ -11,7 +11,7 @@ namespace ucanopen {
 HeartbeatService::HeartbeatService(impl::Server& server, std::chrono::milliseconds period)
         : _server(server)
         , _period(period) {
-    _timepoint = mcu::chrono::system_clock::now();
+    _timepoint = mcu::chrono::steady_clock::now();
     _header = {
         .Identifier = calculate_cob_id(Cob::heartbeat, _server.node_id()),
         .IdType = FDCAN_STANDARD_ID,
@@ -29,7 +29,7 @@ HeartbeatService::HeartbeatService(impl::Server& server, std::chrono::millisecon
 void HeartbeatService::send() {
     if (_period.count() <= 0) { return; }
 
-    auto now = mcu::chrono::system_clock::now();
+    auto now = mcu::chrono::steady_clock::now();
     if (now >= _timepoint + _period) {
         can_payload payload = {};
         payload[0] = std::to_underlying(_server.nmt_state());

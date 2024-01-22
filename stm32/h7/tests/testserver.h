@@ -184,14 +184,14 @@ private:
 
     static can_payload _create_tpdo1() {
         CobTpdo1 tpdo;
-        tpdo.clock = mcu::chrono::system_clock::now().count();
+        tpdo.clock = mcu::chrono::steady_clock::now().count();
         return to_payload<CobTpdo1>(tpdo);
     }
 
     static can_payload _create_tpdo2() {
         CobTpdo2 tpdo;
-        tpdo.seconds = static_cast<uint32_t>(mcu::chrono::system_clock::now().count() / 1000);
-        tpdo.milliseconds = static_cast<uint32_t>(mcu::chrono::system_clock::now().count() - 1000 * tpdo.seconds);
+        tpdo.seconds = static_cast<uint32_t>(mcu::chrono::steady_clock::now().count() / 1000);
+        tpdo.milliseconds = static_cast<uint32_t>(mcu::chrono::steady_clock::now().count() - 1000 * tpdo.seconds);
         return to_payload<CobTpdo2>(tpdo);
     }
 
