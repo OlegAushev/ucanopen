@@ -12,14 +12,14 @@ HeartbeatService::HeartbeatService(impl::Server& server, std::chrono::millisecon
         : _server(server)
         , _period(period) {
     _id = calculate_cob_id(Cob::heartbeat, _server.node_id());   
-    _timepoint = mcu::chrono::system_clock::now();
+    _timepoint = mcu::chrono::steady_clock::now();
 }
 
 
 void HeartbeatService::send() {
     if (_period.count() <= 0) { return; }
 
-    auto now = mcu::chrono::system_clock::now();
+    auto now = mcu::chrono::steady_clock::now();
     if (now >= _timepoint + _period) {
         can_payload payload = {};
         payload[0] = std::to_underlying(_server.nmt_state());
