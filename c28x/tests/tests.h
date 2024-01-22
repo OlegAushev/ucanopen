@@ -177,7 +177,7 @@ protected:
     static can_payload _create_tpdo1() {
         CobTpdo1 tpdo;
 
-        tpdo.clock = mcu::chrono::system_clock::now().count();
+        tpdo.clock = mcu::chrono::steady_clock::now().count();
 
         return to_payload<CobTpdo1>(tpdo);
     }
@@ -185,8 +185,8 @@ protected:
     static can_payload _create_tpdo2() {
         CobTpdo2 tpdo;
 
-        tpdo.seconds = mcu::chrono::system_clock::now().count() / 1000;
-        tpdo.milliseconds = mcu::chrono::system_clock::now().count() - 1000 * tpdo.seconds;
+        tpdo.seconds = mcu::chrono::steady_clock::now().count() / 1000;
+        tpdo.milliseconds = mcu::chrono::steady_clock::now().count() - 1000 * tpdo.seconds;
 
         return to_payload<CobTpdo2>(tpdo);
     }
@@ -241,10 +241,10 @@ protected:
         if (syslog::warning(sys::Warning::can_bus_connection_lost)) {
             if (!warning_detected) {
                 warning_detected = true;
-                warning_timepoint = mcu::chrono::system_clock::now();
+                warning_timepoint = mcu::chrono::steady_clock::now();
             }
 
-            if (mcu::chrono::system_clock::now() > warning_timepoint + emb::chrono::milliseconds(5000)) {
+            if (mcu::chrono::steady_clock::now() > warning_timepoint + emb::chrono::milliseconds(5000)) {
                 syslog::set_error(sys::Error::can_bus_connection_lost);
             }
         } else {

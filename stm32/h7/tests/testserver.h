@@ -165,10 +165,10 @@ public:
         // if (syslog::has_warning(sys::Warning::can_bus_connection_lost)) {
         //     if (!warning_detected) {
         //         warning_detected = true;
-        //         warning_timepoint = mcu::chrono::system_clock::now();
+        //         warning_timepoint = mcu::chrono::steady_clock::now();
         //     }
 
-        //     if (mcu::chrono::system_clock::now() > warning_timepoint + std::chrono::milliseconds(5000)) {
+        //     if (mcu::chrono::steady_clock::now() > warning_timepoint + std::chrono::milliseconds(5000)) {
         //         syslog::set_error(sys::Error::can_bus_connection_lost);
         //     }
         // } else {

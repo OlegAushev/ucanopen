@@ -33,7 +33,7 @@ RpdoService::RpdoService(impl::Server& server, const IpcFlags& ipc_flags)
 
     for (size_t i = 0; i < _rpdo_msgs->size(); ++i) {
         (*_rpdo_msgs)[i].timeout = emb::chrono::milliseconds(-1);
-        (*_rpdo_msgs)[i].timepoint = mcu::chrono::system_clock::now();
+        (*_rpdo_msgs)[i].timepoint = mcu::chrono::steady_clock::now();
     }
 
     for (size_t i = 0; i < _handlers.size(); ++i) {
@@ -76,7 +76,7 @@ void RpdoService::recv(Cob cob) {
 
     CobRpdo rpdo((cob.underlying_value() - static_cast<unsigned int>(Cob::rpdo1)) / 2);
 
-    (*_rpdo_msgs)[rpdo.underlying_value()].timepoint = mcu::chrono::system_clock::now();
+    (*_rpdo_msgs)[rpdo.underlying_value()].timepoint = mcu::chrono::steady_clock::now();
     if (_received_flags[rpdo.underlying_value()].local.is_set()) {
         _server.on_rpdo_overrun();
     } else {

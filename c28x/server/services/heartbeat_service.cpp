@@ -10,7 +10,7 @@ namespace ucanopen {
 HeartbeatService::HeartbeatService(impl::Server& server, emb::chrono::milliseconds period)
         : _server(server)
         , _period(period) {
-    _timepoint = mcu::chrono::system_clock::now();
+    _timepoint = mcu::chrono::steady_clock::now();
 }
 
 
@@ -19,7 +19,7 @@ void HeartbeatService::send() {
 
     if (_period.count() <= 0)  { return; }
 
-    emb::chrono::milliseconds now = mcu::chrono::system_clock::now();
+    emb::chrono::milliseconds now = mcu::chrono::steady_clock::now();
     if (now >= _timepoint + _period) {
         can_payload payload;
         payload[0] = _server.nmt_state().underlying_value();
