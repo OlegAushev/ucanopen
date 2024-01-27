@@ -62,6 +62,8 @@ public:
     Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::secondary,
            mcu::can::Peripheral can_peripheral, ODEntry* object_dictionary, int object_dictionary_size);
 
+    virtual ~Server() {}
+
     NodeId node_id() const { return _node_id; }
     NmtState nmt_state() const { return _nmt_state; }
 protected:

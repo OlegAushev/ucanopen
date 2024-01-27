@@ -67,6 +67,8 @@ public:
     Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::secondary, const IpcFlags& ipc_flags,
            mcu::can::Peripheral can_peripheral, ODEntry* object_dictionary, size_t object_dictionary_size);
 
+    virtual ~Server() {}
+
     void enable() {
         if (this->_can_module) {
             this->_can_module->enable_interrupts();
