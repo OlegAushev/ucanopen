@@ -25,7 +25,7 @@ Server::Server(mcu::can::Module& can_module, const ServerConfig& config,
 #if defined(MCUDRV_STM32)
     can_module.initialize_interrupts(CAN_IT_RX_FIFO0_MSG_PENDING | CAN_IT_RX_FIFO1_MSG_PENDING | CAN_IT_TX_MAILBOX_EMPTY);
 #elif defined(MCUDRV_APM32)
-    can_module.init_interrupts(CAN_INT_F0MP | CAN_INT_F1MP | CAN_INT_TXME);
+    can_module.initialize_interrupts(CAN_INT_F0MP | CAN_INT_F1MP | CAN_INT_TXME);
 #endif
 
 
