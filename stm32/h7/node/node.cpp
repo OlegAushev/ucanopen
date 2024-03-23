@@ -88,7 +88,7 @@ void Node::handle_recv_frames() {
 }
 
 
-bool Node::connection_ok() {
+bool Node::good() {
     auto now = mcu::chrono::steady_clock::now();
     for (const auto& msg : _rx_messages) {
         if (now > msg.timepoint + msg.timeout) {

@@ -53,11 +53,8 @@ public:
     virtual FrameRecvStatus recv_frame(const mcu::can::RxMessageAttribute& attr, const can_frame& frame) override;
     virtual void handle_recv_frames() override;
     virtual void on_run() {}
-
     void send();
-
-    bool connection_ok();
-
+    bool good();
     void enable() { _enabled = true; }
     void disable() { _enabled = false; }
 };
