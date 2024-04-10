@@ -42,7 +42,7 @@ void TpdoService::send() {
         if (now < _tpdo_msgs[i].timepoint + _tpdo_msgs[i].period) { continue; }
 
         can_payload payload = _tpdo_msgs[i].creator();
-        _server._can_module.send(_tpdo_msgs[i].header, payload);
+        _server._can_module.put_frame(_tpdo_msgs[i].header, payload);
         _tpdo_msgs[i].timepoint = now;
     }
 }

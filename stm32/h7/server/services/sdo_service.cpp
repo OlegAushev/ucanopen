@@ -171,7 +171,7 @@ SdoAbortCode SdoService::_write_expedited(const ODEntry* od_entry, ExpeditedSdo&
 
 void SdoService::send() {
     if (!_tsdo.not_sent) { return; }
-    _server._can_module.send(_tsdo.header, _tsdo.payload);
+    _server._can_module.put_frame(_tsdo.header, _tsdo.payload);
     _tsdo.not_sent = false;
 }
 
