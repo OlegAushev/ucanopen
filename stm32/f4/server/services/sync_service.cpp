@@ -22,7 +22,7 @@ void SyncService::send() {
     auto now = mcu::chrono::steady_clock::now();
     if (now >= _timepoint + _period) {
         can_payload payload = {};
-        _server._can_module.send({_id, _len, payload});
+        _server._can_module.put_frame({_id, _len, payload});
         _timepoint = now;
     }
 }

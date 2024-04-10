@@ -45,7 +45,7 @@ void Node::send() {
         if (now < message.timepoint + message.period) { continue; }
 
         can_payload payload = message.creator();
-        _can_module.send({message.id, message.len, payload});
+        _can_module.put_frame({message.id, message.len, payload});
         message.timepoint = now;
     }
 }

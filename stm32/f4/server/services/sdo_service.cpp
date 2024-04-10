@@ -206,7 +206,7 @@ SdoAbortCode SdoService::_restore_default_parameter(ODObjectKey key) {
 
 void SdoService::send() {
     if (!_tsdo.not_sent) { return; }
-    _server._can_module.send({_tsdo.id, _tsdo.len, _tsdo.payload});
+    _server._can_module.put_frame({_tsdo.id, _tsdo.len, _tsdo.payload});
     _tsdo.not_sent = false;
 }
 

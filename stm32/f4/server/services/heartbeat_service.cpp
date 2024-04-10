@@ -23,7 +23,7 @@ void HeartbeatService::send() {
     if (now >= _timepoint + _period) {
         can_payload payload = {};
         payload[0] = std::to_underlying(_server.nmt_state());
-        _server._can_module.send({_id, _len, payload});
+        _server._can_module.put_frame({_id, _len, payload});
         _timepoint = now;
     }
 }
