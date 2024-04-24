@@ -43,6 +43,24 @@ private:
 };
 
 
+template <typename T, size_t Size>
+class SdoProvider {
+private:
+    static inline uint32_t _dummy_data = 42;
+protected:
+    SdoProvider() {
+        std::fill(std::begin(sdo_data), std::end(sdo_data), &_dummy_data);
+    }
+
+    template <typename V>
+    void _register_sdo_data(size_t idx, V& dataobj) {
+        sdo_data[idx] = reinterpret_cast<uint32_t*>(&dataobj);
+    }
+public:
+    static inline uint32_t* sdo_data[Size];
+};
+
+
 } // namespace ucanopen
 
 
