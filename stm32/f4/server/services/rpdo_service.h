@@ -38,7 +38,7 @@ public:
     virtual FrameRecvStatus recv_frame(const mcu::can::RxMessageAttribute& attr, const can_frame& frame) override;
     virtual void handle_recv_frames() override;
 
-    bool is_ok(CobRpdo rpdo) {
+    bool good(CobRpdo rpdo) {
         if (_rpdo_msgs[std::to_underlying(rpdo)].timeout.count() <= 0) {
             return true;
         }
