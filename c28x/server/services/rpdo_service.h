@@ -33,11 +33,12 @@ public:
     void recv(Cob cob);
     void handle_received();
 
-    bool is_ok(CobRpdo rpdo) {
+    bool good(CobRpdo rpdo) {
         if ((*_rpdo_msgs)[rpdo.underlying_value()].timeout.count() <= 0) {
             return true;
         }
-        if (mcu::chrono::steady_clock::now() <= (*_rpdo_msgs)[rpdo.underlying_value()].timepoint + (*_rpdo_msgs)[rpdo.underlying_value()].timeout) {
+        if (mcu::chrono::steady_clock::now()
+                <= (*_rpdo_msgs)[rpdo.underlying_value()].timepoint + (*_rpdo_msgs)[rpdo.underlying_value()].timeout) {
             return true;
         }
         return false;
