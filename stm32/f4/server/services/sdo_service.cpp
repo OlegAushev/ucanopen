@@ -193,13 +193,13 @@ SdoAbortCode SdoService::_restore_default_parameter(ODObjectKey key) {
 
     if (od_entry->object.has_direct_access()) {
         if (od_entry->object.ptr.first) {
-            memcpy(od_entry->object.ptr.first, &od_entry->object.default_value.value().u32, od_object_type_sizes[od_entry->object.data_type]);
+            memcpy(od_entry->object.ptr.first, &od_entry->object.default_value->u32, od_object_type_sizes[od_entry->object.data_type]);
         } else {
-            memcpy(*od_entry->object.ptr.second, &od_entry->object.default_value.value().u32, od_object_type_sizes[od_entry->object.data_type]);
+            memcpy(*od_entry->object.ptr.second, &od_entry->object.default_value->u32, od_object_type_sizes[od_entry->object.data_type]);
         }
         return SdoAbortCode::no_error;
     } else {
-        return od_entry->object.write_func(od_entry->object.default_value.value());
+        return od_entry->object.write_func(*od_entry->object.default_value);
     }
 }
 
