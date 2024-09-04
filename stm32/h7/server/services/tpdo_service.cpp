@@ -12,7 +12,7 @@ TpdoService::TpdoService(impl::Server& server)
         : _server(server) {
     for (size_t i = 0; i < _tpdo_msgs.size(); ++i) {
         _tpdo_msgs[i].period = std::chrono::milliseconds(0);
-        _tpdo_msgs[i].timepoint = mcu::chrono::steady_clock::now();
+        _tpdo_msgs[i].timepoint = std::chrono::milliseconds(0);
         _tpdo_msgs[i].header = {
             .Identifier = calculate_cob_id(to_cob_type(CobTpdo(i)), _server.node_id()),
             .IdType = FDCAN_STANDARD_ID,
@@ -31,6 +31,7 @@ TpdoService::TpdoService(impl::Server& server)
 
 void TpdoService::register_tpdo(CobTpdo tpdo, std::chrono::milliseconds period, can_payload (*creator)()) {
     _tpdo_msgs[std::to_underlying(tpdo)].period = period;
+    _tpdo_msgs[std::to_underlying(tpdo)].timepoint = mcu::chrono::steady_clock::now();
     _tpdo_msgs[std::to_underlying(tpdo)].creator = creator;
 }
 

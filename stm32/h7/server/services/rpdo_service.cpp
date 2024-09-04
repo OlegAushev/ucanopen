@@ -12,7 +12,7 @@ RpdoService::RpdoService(impl::Server& server)
         : _server(server) {
     for (size_t i = 0; i < _rpdo_msgs.size(); ++i) {
         _rpdo_msgs[i].timeout = std::chrono::milliseconds(0);
-        _rpdo_msgs[i].timepoint = mcu::chrono::steady_clock::now();
+        _rpdo_msgs[i].timepoint = std::chrono::milliseconds(0);
         _rpdo_msgs[i].is_unhandled = false;
         _rpdo_msgs[i].handler = nullptr;
     }
@@ -38,6 +38,7 @@ void RpdoService::register_rpdo(CobRpdo rpdo, std::chrono::milliseconds timeout,
     auto idx = std::to_underlying(rpdo);
     _rpdo_msgs[idx].attr = _server._can_module.register_message(filter);
     _rpdo_msgs[idx].timeout = timeout;
+    _rpdo_msgs[idx].timepoint = mcu::chrono::steady_clock::now();
     _rpdo_msgs[idx].handler = handler;
 }
 
