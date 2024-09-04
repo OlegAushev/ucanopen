@@ -32,8 +32,8 @@ RpdoService::RpdoService(impl::Server& server, const IpcFlags& ipc_flags)
     }
 
     for (size_t i = 0; i < _rpdo_msgs->size(); ++i) {
-        (*_rpdo_msgs)[i].timeout = emb::chrono::milliseconds(-1);
-        (*_rpdo_msgs)[i].timepoint = mcu::chrono::steady_clock::now();
+        (*_rpdo_msgs)[i].timeout = emb::chrono::milliseconds(0);
+        (*_rpdo_msgs)[i].timepoint = emb::chrono::milliseconds(0);
     }
 
     for (size_t i = 0; i < _handlers.size(); ++i) {
@@ -51,6 +51,7 @@ void RpdoService::register_rpdo(CobRpdo rpdo, emb::chrono::milliseconds timeout,
     assert(_server._ipc_role == mcu::ipc::Role::primary);
 
     (*_rpdo_msgs)[rpdo.underlying_value()].timeout = timeout;
+    (*_rpdo_msgs)[rpdo.underlying_value()].timepoint = mcu::chrono::steady_clock::now();
     if (id != 0) {
         Cob cob = to_cob(rpdo);
         _server._message_objects[cob.underlying_value()].frame_id = id;
