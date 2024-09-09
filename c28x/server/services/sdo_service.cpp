@@ -163,6 +163,7 @@ SdoAbortCode SdoService::_write_expedited(const ODEntry* od_entry, ExpeditedSdo&
         if (od_entry->key == restore_default_parameter_key) {
             ODObjectKey arg_key = {};
             memcpy(&arg_key, &rsdo.data.u32, sizeof(arg_key));
+            arg_key.subindex &= 0xFF;
             abort_code = _restore_default_parameter(arg_key);
         }
     }

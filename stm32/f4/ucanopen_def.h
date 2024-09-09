@@ -276,7 +276,7 @@ const size_t od_object_type_sizes[10] = {sizeof(bool), sizeof(int8_t), sizeof(in
 
 struct ODObjectKey {
     uint16_t index;
-    uint16_t subindex;
+    uint8_t subindex;
 };
 
 

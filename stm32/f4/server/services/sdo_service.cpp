@@ -80,7 +80,7 @@ void SdoService::handle_recv_frames() {
     ExpeditedSdo tsdo;
     SdoAbortCode abort_code = SdoAbortCode::general_error;
     ODEntry* dictionary_end = _server._dictionary + _server._dictionary_size;
-    ODObjectKey key = {static_cast<uint16_t>(rsdo.index), static_cast<uint16_t>(rsdo.subindex)};
+    ODObjectKey key = {static_cast<uint16_t>(rsdo.index), static_cast<uint8_t>(rsdo.subindex)};
 
     const ODEntry* od_entry = emb::binary_find(_server._dictionary, dictionary_end, key);
 
