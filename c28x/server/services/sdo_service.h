@@ -53,6 +53,7 @@ protected:
     }
 public:
     static uint32_t* sdo_data[Size];
+    size_t capacity() const { return Size; }
 };
 
 
