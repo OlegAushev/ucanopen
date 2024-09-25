@@ -39,76 +39,76 @@ SdoService::SdoService(impl::Server& server)
         .filterScale = CAN_FILTER_SCALE_32BIT
     };
 #endif
-    _rsdo.attr = _server._can_module.register_rxmessage(rsdo_filter);
-    _rsdo.is_unhandled = false;
-
-    _tsdo.id = calculate_cob_id(Cob::tsdo, _server.node_id());
-    _tsdo.not_sent = false;
+    _rsdo_rxattr = _server._can_module.register_rxmessage(rsdo_filter);
+    _tsdo_id = calculate_cob_id(Cob::tsdo, _server.node_id());
 }
 
 
 std::vector<mcu::can::RxMessageAttribute> SdoService::get_rx_attr() const {
-    return {_rsdo.attr};
+    return {_rsdo_rxattr};
 }
 
 
 FrameRecvStatus SdoService::recv_frame(const mcu::can::RxMessageAttribute& attr, const can_frame& frame) {
-    if (attr != _rsdo.attr) {
+    if (attr != _rsdo_rxattr) {
         return FrameRecvStatus::attr_mismatch;
     }
 
-    if (_rsdo.is_unhandled) {
+    if (_rsdo_queue.full()) {
         return FrameRecvStatus::overrun;
     }
 
-    _rsdo.frame = frame;
-    _rsdo.is_unhandled = true;
+    _rsdo_queue.push(frame.payload);
     return FrameRecvStatus::success;
 }
 
 
 void SdoService::handle_recv_frames() {
-    if (!_rsdo.is_unhandled) { return; }
+    while (!_rsdo_queue.empty()) {
+        can_payload rsdo_payload = _rsdo_queue.front();
+        ExpeditedSdo rsdo = from_payload<ExpeditedSdo>(rsdo_payload);
+        _rsdo_queue.pop();
 
-    ExpeditedSdo rsdo = from_payload<ExpeditedSdo>(_rsdo.frame.payload);
-    _rsdo.is_unhandled = false;
+        if (rsdo.cs == sdo_cs_codes::abort) {
+            continue;
+        }
 
-    if (rsdo.cs == sdo_cs_codes::abort) {
-        return;
+        ExpeditedSdo tsdo;
+        SdoAbortCode abort_code = SdoAbortCode::general_error;
+        ODEntry* dictionary_end = _server._dictionary + _server._dictionary_size;
+        ODObjectKey key = {static_cast<uint16_t>(rsdo.index), static_cast<uint8_t>(rsdo.subindex)};
+
+        const ODEntry* od_entry = emb::binary_find(_server._dictionary, dictionary_end, key);
+
+        if (od_entry == dictionary_end) {
+            abort_code = SdoAbortCode::object_not_found;
+        }
+        else if (rsdo.cs == sdo_cs_codes::client_init_read) {
+            abort_code = _read_expedited(od_entry, tsdo, rsdo);
+        } else if (rsdo.cs == sdo_cs_codes::client_init_write) {
+            abort_code = _write_expedited(od_entry, tsdo, rsdo);
+        } else {
+            abort_code = SdoAbortCode::invalid_cs;
+        }
+
+        can_payload tsdo_payload;
+        switch (abort_code) {
+        case SdoAbortCode::no_error:
+            tsdo_payload = to_payload<ExpeditedSdo>(tsdo);
+            break;
+        default:
+            AbortSdo abort_tsdo;
+            abort_tsdo.index = rsdo.index;
+            abort_tsdo.subindex = rsdo.subindex;
+            abort_tsdo.error_code = std::to_underlying(abort_code);
+            tsdo_payload = to_payload<AbortSdo>(abort_tsdo);
+            break;
+        }
+
+        if (!_tsdo_queue.full()) {
+            _tsdo_queue.push(tsdo_payload);
+        }
     }
-
-    ExpeditedSdo tsdo;
-    SdoAbortCode abort_code = SdoAbortCode::general_error;
-    ODEntry* dictionary_end = _server._dictionary + _server._dictionary_size;
-    ODObjectKey key = {static_cast<uint16_t>(rsdo.index), static_cast<uint8_t>(rsdo.subindex)};
-
-    const ODEntry* od_entry = emb::binary_find(_server._dictionary, dictionary_end, key);
-
-    if (od_entry == dictionary_end) {
-        abort_code = SdoAbortCode::object_not_found;
-    }
-    else if (rsdo.cs == sdo_cs_codes::client_init_read) {
-        abort_code = _read_expedited(od_entry, tsdo, rsdo);
-    } else if (rsdo.cs == sdo_cs_codes::client_init_write) {
-        abort_code = _write_expedited(od_entry, tsdo, rsdo);
-    } else {
-        abort_code = SdoAbortCode::invalid_cs;
-    }
-
-    switch (abort_code) {
-    case SdoAbortCode::no_error:
-        _tsdo.payload = to_payload<ExpeditedSdo>(tsdo);
-        break;
-    default:
-        AbortSdo abort_tsdo;
-        abort_tsdo.index = rsdo.index;
-        abort_tsdo.subindex = rsdo.subindex;
-        abort_tsdo.error_code = std::to_underlying(abort_code);
-        _tsdo.payload = to_payload<AbortSdo>(abort_tsdo);
-        break;
-    }
-
-    _tsdo.not_sent = true;
 }
 
 
@@ -205,9 +205,11 @@ SdoAbortCode SdoService::_restore_default_parameter(ODObjectKey key) {
 
 
 void SdoService::send() {
-    if (!_tsdo.not_sent) { return; }
-    _server._can_module.put_frame({_tsdo.id, _tsdo.len, _tsdo.payload});
-    _tsdo.not_sent = false;
+    while (!_tsdo_queue.empty()) {
+        can_payload payload = _tsdo_queue.front();
+        _server._can_module.put_frame({_tsdo_id, _tsdo_len, payload});
+        _tsdo_queue.pop();
+    }
 }
 
 

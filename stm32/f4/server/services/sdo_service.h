@@ -7,6 +7,7 @@
 
 #include "../impl/impl_server.h"
 #include <emblib/algorithm.h>
+#include <emblib/queue.h>
 
 
 namespace ucanopen {
@@ -16,18 +17,12 @@ class SdoService : public impl::FrameReceiver {
 private:
     impl::Server& _server;
 
-    struct RxMessage {
-        mcu::can::RxMessageAttribute attr;
-        bool is_unhandled;
-        can_frame frame;
-    } _rsdo;
+    mcu::can::RxMessageAttribute _rsdo_rxattr;
+    emb::queue<can_payload, 16> _rsdo_queue;
 
-    struct TxMessage {
-        can_id id;
-        static constexpr uint8_t len = cob_sizes[std::to_underlying(Cob::tsdo)];
-        bool not_sent;
-        can_payload payload;
-    } _tsdo;
+    can_id _tsdo_id;
+    static constexpr uint8_t _tsdo_len = cob_sizes[std::to_underlying(Cob::tsdo)];
+    emb::queue<can_payload, 16> _tsdo_queue;
 public:
     SdoService(impl::Server& server);
     virtual std::vector<mcu::can::RxMessageAttribute> get_rx_attr() const override;
