@@ -7,18 +7,87 @@
 
 #include <ucanopen/stm32/f4/server/impl/impl_server.h>
 #include <ucanopen/stm32/f4/server/services/sdo_service/sdo_block_service_def.h>
+#include <emblib/fsm.h>
 
 
 namespace ucanopen {
+namespace blk {
 
 
+class SdoBlockService;
 
 
+constexpr size_t state_count = 3;
+enum class State {
+    idle,
+    download,
+    download_end,
+};
 
 
+namespace fsm {
 
 
+class AbstractState : public emb::fsm::abstract_state<SdoBlockService, State, AbstractState> {
+protected:
+    AbstractState(State id) : emb::fsm::abstract_state<SdoBlockService, State, AbstractState>(id) {}
+public:
+    static AbstractState* create(State state);
+    static void destroy(State state, AbstractState* stateobj);
+    virtual ~AbstractState() {}
 
+    virtual void handle_message(SdoBlockService* _service, const can_payload& payload) = 0;
+};
+
+
+class IdleState final : public AbstractState {
+protected:
+    virtual void _initiate(SdoBlockService* _service) override {}
+    virtual void _finalize(SdoBlockService* _service) override {}
+public:
+    IdleState() : AbstractState(State::idle) {}
+    virtual void handle_message(SdoBlockService* _service, const can_payload& payload) override;
+
+};
+
+
+class DownloadState final : public AbstractState {
+protected:
+    virtual void _initiate(SdoBlockService* _service) override {}
+    virtual void _finalize(SdoBlockService* _service) override {}
+public:
+    DownloadState() : AbstractState(State::download) {}
+    virtual void handle_message(SdoBlockService* _service, const can_payload& payload) override;
+
+};
+
+
+class DownloadEndState final : public AbstractState {
+protected:
+    virtual void _initiate(SdoBlockService* _service) override {}
+    virtual void _finalize(SdoBlockService* _service) override {}
+public:
+    DownloadEndState() : AbstractState(State::download_end) {}
+    virtual void handle_message(SdoBlockService* _service, const can_payload& payload) override;
+
+};
+
+
+} // namespace fsm
+
+
+class SdoBlockService final : public emb::fsm::abstract_object<State, fsm::AbstractState, state_count> {
+private:
+    impl::Server& _server;
+public:
+    SdoBlockService(impl::Server& server);
+    void handle_message(const can_payload& payload) {
+        _current_state->handle_message(this, payload);
+    }
+};
+
+
+} // namespace blk
 } // namespace ucanopen
 
 
