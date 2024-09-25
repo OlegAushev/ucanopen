@@ -231,12 +231,14 @@ struct AbortSdo {
     uint32_t index : 16;
     uint32_t subindex : 8;
     uint32_t error_code;
+    AbortSdo() = default;
     AbortSdo(uint16_t index_, uint8_t subindex_, SdoAbortCode error_code_)
             : _reserved(0)
             , cs(sdo_cs_codes::abort)
             , index(index_)
             , subindex(subindex_)
             , error_code(std::to_underlying(error_code_)) {}
+    bool valid() const { return cs == sdo_cs_codes::abort; }
 };
 
 
