@@ -97,10 +97,7 @@ void SdoService::handle_recv_frames() {
             tsdo_payload = to_payload<ExpeditedSdo>(tsdo);
             break;
         default:
-            AbortSdo abort_tsdo;
-            abort_tsdo.index = rsdo.index;
-            abort_tsdo.subindex = rsdo.subindex;
-            abort_tsdo.error_code = std::to_underlying(abort_code);
+            AbortSdo abort_tsdo(rsdo.index, rsdo.subindex, abort_code);
             tsdo_payload = to_payload<AbortSdo>(abort_tsdo);
             break;
         }

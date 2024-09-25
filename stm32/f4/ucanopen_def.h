@@ -154,6 +154,12 @@ const uint32_t client_init_read = 2;
 const uint32_t server_init_read = 2;
 
 const uint32_t abort = 4;
+
+const uint32_t client_block_write = 6;
+const uint32_t server_block_write = 5;
+
+const uint32_t client_block_read = 5;
+const uint32_t server_block_read = 6;
 }
 
 
@@ -189,21 +195,15 @@ struct ExpeditedSdo {
     uint32_t index : 16;
     uint32_t subindex : 8;
     ExpeditedSdoData data;
-    ExpeditedSdo() : data_size_indicated(0), expedited_transfer(0), data_empty_bytes(0), _reserved(0)
-                   , cs(0), index(0), subindex(0), data() {}
-};
-
-
-struct AbortSdo {
-    uint32_t _reserved : 5;
-    uint32_t cs : 3;
-    uint32_t index : 16;
-    uint32_t subindex : 8;
-    uint32_t error_code;
-    AbortSdo() {
-        memset(this, 0, sizeof(AbortSdo));
-        cs = sdo_cs_codes::abort;
-    }
+    ExpeditedSdo()
+            : data_size_indicated(0)
+            , expedited_transfer(0)
+            , data_empty_bytes(0)
+            , _reserved(0)
+            , cs(0)
+            , index(0)
+            , subindex(0)
+            , data() {}
 };
 
 
@@ -222,6 +222,21 @@ enum class SdoAbortCode : uint32_t {
     data_store_error        = 0x08000020,
     local_control_error     = 0x08000021,
     state_error             = 0x08000022
+};
+
+
+struct AbortSdo {
+    uint32_t _reserved : 5;
+    uint32_t cs : 3;
+    uint32_t index : 16;
+    uint32_t subindex : 8;
+    uint32_t error_code;
+    AbortSdo(uint16_t index_, uint8_t subindex_, SdoAbortCode error_code_)
+            : _reserved(0)
+            , cs(sdo_cs_codes::abort)
+            , index(index_)
+            , subindex(subindex_)
+            , error_code(std::to_underlying(error_code_)) {}
 };
 
 

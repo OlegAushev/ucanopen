@@ -5,7 +5,7 @@
 #if defined(STM32F4xx) || defined(APM32F4xx)
 
 
-#include "../impl/impl_server.h"
+#include <ucanopen/stm32/f4/server/impl/impl_server.h>
 #include <emblib/algorithm.h>
 #include <emblib/queue.h>
 

@@ -5,7 +5,7 @@
 #if defined(STM32F4xx) || defined(APM32F4xx)
 
 
-#include "../impl/impl_server.h"
+#include <ucanopen/stm32/f4/server/impl/impl_server.h>
 #if defined(MCUDRV_STM32)
 #include <mcudrv/stm32/f4/chrono/chrono.h>
 #elif defined(MCUDRV_APM32)

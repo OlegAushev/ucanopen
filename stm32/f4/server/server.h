@@ -5,14 +5,14 @@
 #if defined(STM32F4xx) || defined(APM32F4xx)
 
 
-#include "../ucanopen_def.h"
-#include "impl/impl_server.h"
-#include "services/heartbeat_service.h"
-#include "services/rpdo_service.h"
-#include "services/sdo_service.h"
-#include "services/sync_service.h"
-#include "services/tpdo_service.h"
-#include "../node/node.h"
+#include <ucanopen/stm32/f4/ucanopen_def.h>
+#include <ucanopen/stm32/f4/server/impl/impl_server.h>
+#include <ucanopen/stm32/f4/server/services/heartbeat_service/heartbeat_service.h>
+#include <ucanopen/stm32/f4/server/services/rpdo_service/rpdo_service.h>
+#include <ucanopen/stm32/f4/server/services/sdo_service/sdo_service.h>
+#include <ucanopen/stm32/f4/server/services/sync_service/sync_service.h>
+#include <ucanopen/stm32/f4/server/services/tpdo_service/tpdo_service.h>
+#include <ucanopen/stm32/f4/node/node.h>
 
 #include <bitset>
 #include <vector>
