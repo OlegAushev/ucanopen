@@ -18,7 +18,7 @@ class SdoBlockService;
 
 
 constexpr size_t state_count = 3;
-enum class State {
+enum class State : unsigned int {
     idle,
     download,
     download_end,
@@ -28,9 +28,9 @@ enum class State {
 namespace fsm {
 
 
-class AbstractState : public emb::fsm::abstract_state<SdoBlockService, State, AbstractState> {
+class AbstractState : public emb::fsm::abstract_state<SdoBlockService, State> {
 protected:
-    AbstractState(State id) : emb::fsm::abstract_state<SdoBlockService, State, AbstractState>(id) {}
+    AbstractState(State id) : emb::fsm::abstract_state<SdoBlockService, State>(id) {}
 public:
     static AbstractState* create(State state);
     static void destroy(State state, AbstractState* stateobj);
