@@ -207,8 +207,8 @@ protected:
         CobTpdo4 tpdo;
 
         tpdo.counter = counter;
-        tpdo.errors = syslog::errors();
-        tpdo.warnings = syslog::warnings();
+//        tpdo.errors = syslog::errors();
+//        tpdo.warnings = syslog::warnings();
 
         counter = (counter + 1) % 4;
         return to_payload<CobTpdo4>(tpdo);
@@ -238,18 +238,18 @@ protected:
         static bool warning_detected = false;
         static emb::chrono::milliseconds warning_timepoint = emb::chrono::milliseconds(0);
 
-        if (syslog::warning(sys::Warning::can_bus_connection_lost)) {
-            if (!warning_detected) {
-                warning_detected = true;
-                warning_timepoint = mcu::chrono::steady_clock::now();
-            }
-
-            if (mcu::chrono::steady_clock::now() > warning_timepoint + emb::chrono::milliseconds(5000)) {
-                syslog::set_error(sys::Error::can_bus_connection_lost);
-            }
-        } else {
-            warning_detected = false;
-        }
+//        if (syslog::warning(sys::Warning::can_bus_connection_lost)) {
+//            if (!warning_detected) {
+//                warning_detected = true;
+//                warning_timepoint = mcu::chrono::steady_clock::now();
+//            }
+//
+//            if (mcu::chrono::steady_clock::now() > warning_timepoint + emb::chrono::milliseconds(5000)) {
+//                syslog::set_error(sys::Error::can_bus_connection_lost);
+//            }
+//        } else {
+//            warning_detected = false;
+//        }
     }
 };
 
