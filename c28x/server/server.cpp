@@ -7,18 +7,18 @@
 namespace ucanopen {
 
 
-Server::Server(mcu::ipc::traits::singlecore, mcu::ipc::traits::primary, const IpcFlags& ipc_flags,
-               mcu::can::Module* can_module, const ServerConfig& config,
+Server::Server(mcu::c28x::ipc::traits::singlecore, mcu::c28x::ipc::traits::primary, const IpcFlags& ipc_flags,
+               mcu::c28x::can::Module* can_module, const ServerConfig& config,
                ODEntry* object_dictionary, size_t object_dictionary_size)
-        : impl::Server(mcu::ipc::traits::singlecore(), mcu::ipc::traits::primary(),
+        : impl::Server(mcu::c28x::ipc::traits::singlecore(), mcu::c28x::ipc::traits::primary(),
                        can_module, NodeId(config.node_id), object_dictionary, object_dictionary_size)
-        , emb::interrupt_invoker_array<Server, mcu::can::peripheral_count>(this, can_module->peripheral().underlying_value()) {
-    assert(ipc_flags.rpdo1_received.mode() == mcu::ipc::Mode::singlecore);
-    assert(ipc_flags.rpdo2_received.mode() == mcu::ipc::Mode::singlecore);
-    assert(ipc_flags.rpdo3_received.mode() == mcu::ipc::Mode::singlecore);
-    assert(ipc_flags.rpdo4_received.mode() == mcu::ipc::Mode::singlecore);
-    assert(ipc_flags.rsdo_received.mode() == mcu::ipc::Mode::singlecore);
-    assert(ipc_flags.tsdo_ready.mode() == mcu::ipc::Mode::singlecore);
+        , emb::interrupt_invoker_array<Server, mcu::c28x::can::peripheral_count>(this, can_module->peripheral().underlying_value()) {
+    assert(ipc_flags.rpdo1_received.mode() == mcu::c28x::ipc::Mode::singlecore);
+    assert(ipc_flags.rpdo2_received.mode() == mcu::c28x::ipc::Mode::singlecore);
+    assert(ipc_flags.rpdo3_received.mode() == mcu::c28x::ipc::Mode::singlecore);
+    assert(ipc_flags.rpdo4_received.mode() == mcu::c28x::ipc::Mode::singlecore);
+    assert(ipc_flags.rsdo_received.mode() == mcu::c28x::ipc::Mode::singlecore);
+    assert(ipc_flags.tsdo_ready.mode() == mcu::c28x::ipc::Mode::singlecore);
 
     heartbeat_service = new HeartbeatService(*this, emb::chrono::milliseconds(config.heartbeat_period_ms));
     tpdo_service = new TpdoService(*this);
@@ -31,16 +31,16 @@ Server::Server(mcu::ipc::traits::singlecore, mcu::ipc::traits::primary, const Ip
 }
 
 
-Server::Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::primary, const IpcFlags& ipc_flags,
-               mcu::can::Module* can_module, const ServerConfig& config)
-        : impl::Server(mcu::ipc::traits::dualcore(), mcu::ipc::traits::primary(), can_module, NodeId(config.node_id))
-        , emb::interrupt_invoker_array<Server, mcu::can::peripheral_count>(this, can_module->peripheral().underlying_value()) {
-    assert(ipc_flags.rpdo1_received.mode() == mcu::ipc::Mode::dualcore);
-    assert(ipc_flags.rpdo2_received.mode() == mcu::ipc::Mode::dualcore);
-    assert(ipc_flags.rpdo3_received.mode() == mcu::ipc::Mode::dualcore);
-    assert(ipc_flags.rpdo4_received.mode() == mcu::ipc::Mode::dualcore);
-    assert(ipc_flags.rsdo_received.mode() == mcu::ipc::Mode::dualcore);
-    assert(ipc_flags.tsdo_ready.mode() == mcu::ipc::Mode::dualcore);
+Server::Server(mcu::c28x::ipc::traits::dualcore, mcu::c28x::ipc::traits::primary, const IpcFlags& ipc_flags,
+               mcu::c28x::can::Module* can_module, const ServerConfig& config)
+        : impl::Server(mcu::c28x::ipc::traits::dualcore(), mcu::c28x::ipc::traits::primary(), can_module, NodeId(config.node_id))
+        , emb::interrupt_invoker_array<Server, mcu::c28x::can::peripheral_count>(this, can_module->peripheral().underlying_value()) {
+    assert(ipc_flags.rpdo1_received.mode() == mcu::c28x::ipc::Mode::dualcore);
+    assert(ipc_flags.rpdo2_received.mode() == mcu::c28x::ipc::Mode::dualcore);
+    assert(ipc_flags.rpdo3_received.mode() == mcu::c28x::ipc::Mode::dualcore);
+    assert(ipc_flags.rpdo4_received.mode() == mcu::c28x::ipc::Mode::dualcore);
+    assert(ipc_flags.rsdo_received.mode() == mcu::c28x::ipc::Mode::dualcore);
+    assert(ipc_flags.tsdo_ready.mode() == mcu::c28x::ipc::Mode::dualcore);
 
     heartbeat_service = new HeartbeatService(*this, emb::chrono::milliseconds(config.heartbeat_period_ms));
     tpdo_service = new TpdoService(*this);
@@ -53,16 +53,16 @@ Server::Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::primary, const IpcF
 }
 
 
-Server::Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::secondary, const IpcFlags& ipc_flags,
-               mcu::can::Peripheral can_peripheral, ODEntry* object_dictionary, size_t object_dictionary_size)
-        : impl::Server(mcu::ipc::traits::dualcore(), mcu::ipc::traits::secondary(), can_peripheral, object_dictionary, object_dictionary_size)
-        , emb::interrupt_invoker_array<Server, mcu::can::peripheral_count>(this, can_peripheral.underlying_value()) {
-    assert(ipc_flags.rpdo1_received.mode() == mcu::ipc::Mode::dualcore);
-    assert(ipc_flags.rpdo2_received.mode() == mcu::ipc::Mode::dualcore);
-    assert(ipc_flags.rpdo3_received.mode() == mcu::ipc::Mode::dualcore);
-    assert(ipc_flags.rpdo4_received.mode() == mcu::ipc::Mode::dualcore);
-    assert(ipc_flags.rsdo_received.mode() == mcu::ipc::Mode::dualcore);
-    assert(ipc_flags.tsdo_ready.mode() == mcu::ipc::Mode::dualcore);
+Server::Server(mcu::c28x::ipc::traits::dualcore, mcu::c28x::ipc::traits::secondary, const IpcFlags& ipc_flags,
+               mcu::c28x::can::Peripheral can_peripheral, ODEntry* object_dictionary, size_t object_dictionary_size)
+        : impl::Server(mcu::c28x::ipc::traits::dualcore(), mcu::c28x::ipc::traits::secondary(), can_peripheral, object_dictionary, object_dictionary_size)
+        , emb::interrupt_invoker_array<Server, mcu::c28x::can::peripheral_count>(this, can_peripheral.underlying_value()) {
+    assert(ipc_flags.rpdo1_received.mode() == mcu::c28x::ipc::Mode::dualcore);
+    assert(ipc_flags.rpdo2_received.mode() == mcu::c28x::ipc::Mode::dualcore);
+    assert(ipc_flags.rpdo3_received.mode() == mcu::c28x::ipc::Mode::dualcore);
+    assert(ipc_flags.rpdo4_received.mode() == mcu::c28x::ipc::Mode::dualcore);
+    assert(ipc_flags.rsdo_received.mode() == mcu::c28x::ipc::Mode::dualcore);
+    assert(ipc_flags.tsdo_ready.mode() == mcu::c28x::ipc::Mode::dualcore);
 
     rpdo_service = new RpdoService(*this, ipc_flags);
     sdo_service = new SdoService(*this, ipc_flags);
@@ -71,7 +71,7 @@ Server::Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::secondary, const Ip
 
 void Server::run() {
     switch (this->_ipc_mode.underlying_value()) {
-    case mcu::ipc::Mode::singlecore:
+    case mcu::c28x::ipc::Mode::singlecore:
         heartbeat_service->send();
         tpdo_service->send();
         rpdo_service->handle_received();
@@ -79,14 +79,14 @@ void Server::run() {
         sdo_service->send();
         on_run();
         break;
-    case mcu::ipc::Mode::dualcore:
+    case mcu::c28x::ipc::Mode::dualcore:
         switch (this->_ipc_role.underlying_value()) {
-        case mcu::ipc::Role::primary:
+        case mcu::c28x::ipc::Role::primary:
             heartbeat_service->send();
             tpdo_service->send();
             sdo_service->send();
             break;
-        case mcu::ipc::Role::secondary:
+        case mcu::c28x::ipc::Role::secondary:
             rpdo_service->handle_received();
             sdo_service->handle_received();
             on_run();
@@ -97,7 +97,7 @@ void Server::run() {
 }
 
 
-void Server::on_frame_received(mcu::can::Module* can_module, uint32_t interrupt_cause, uint16_t status) {
+void Server::on_frame_received(mcu::c28x::can::Module* can_module, uint32_t interrupt_cause, uint16_t status) {
     Server* server = Server::instance(can_module->peripheral().underlying_value());
 
     switch (interrupt_cause) {

@@ -47,7 +47,7 @@ struct ServerConfig {
 };
 
 
-class Server : public impl::Server, public emb::interrupt_invoker_array<Server, mcu::can::peripheral_count> {
+class Server : public impl::Server, public emb::interrupt_invoker_array<Server, mcu::c28x::can::peripheral_count> {
 protected:
     HeartbeatService* heartbeat_service;
     TpdoService* tpdo_service;
@@ -57,15 +57,15 @@ protected:
     virtual void on_run() {}
     virtual void on_can_bus_error() {}
 public:
-    Server(mcu::ipc::traits::singlecore, mcu::ipc::traits::primary, const IpcFlags& ipc_flags,
-           mcu::can::Module* can_module, const ServerConfig& config,
+    Server(mcu::c28x::ipc::traits::singlecore, mcu::c28x::ipc::traits::primary, const IpcFlags& ipc_flags,
+           mcu::c28x::can::Module* can_module, const ServerConfig& config,
            ODEntry* object_dictionary, size_t object_dictionary_size);
 
-    Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::primary, const IpcFlags& ipc_flags,
-           mcu::can::Module* can_module, const ServerConfig& config);
+    Server(mcu::c28x::ipc::traits::dualcore, mcu::c28x::ipc::traits::primary, const IpcFlags& ipc_flags,
+           mcu::c28x::can::Module* can_module, const ServerConfig& config);
 
-    Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::secondary, const IpcFlags& ipc_flags,
-           mcu::can::Peripheral can_peripheral, ODEntry* object_dictionary, size_t object_dictionary_size);
+    Server(mcu::c28x::ipc::traits::dualcore, mcu::c28x::ipc::traits::secondary, const IpcFlags& ipc_flags,
+           mcu::c28x::can::Peripheral can_peripheral, ODEntry* object_dictionary, size_t object_dictionary_size);
 
     virtual ~Server() {}
 
@@ -85,7 +85,7 @@ public:
 
     void run();
 private:
-    static void on_frame_received(mcu::can::Module* can_module, uint32_t interrupt_cause, uint16_t status);
+    static void on_frame_received(mcu::c28x::can::Module* can_module, uint32_t interrupt_cause, uint16_t status);
 };
 
 

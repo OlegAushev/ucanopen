@@ -16,8 +16,8 @@ class SdoService {
 private:
     impl::Server& _server;
 
-    mcu::ipc::Flag _rsdo_flag;
-    mcu::ipc::Flag _tsdo_flag;
+    mcu::c28x::ipc::Flag _rsdo_flag;
+    mcu::c28x::ipc::Flag _tsdo_flag;
     can_payload* _rsdo_data;
     can_payload* _tsdo_data;
     static unsigned char cana_rsdo_dualcore_alloc[sizeof(can_payload)];

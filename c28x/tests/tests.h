@@ -123,9 +123,9 @@ class Server : public ucanopen::Server {
 private:
     static Object* _object;
 public:
-    Server(mcu::ipc::traits::singlecore, mcu::ipc::traits::primary, const IpcFlags& ipc_flags,
-            mcu::can::Module* can_module, const ServerConfig& config, Object* object)
-            : ucanopen::Server(mcu::ipc::traits::singlecore(), mcu::ipc::traits::primary(), ipc_flags,
+    Server(mcu::c28x::ipc::traits::singlecore, mcu::c28x::ipc::traits::primary, const IpcFlags& ipc_flags,
+            mcu::c28x::can::Module* can_module, const ServerConfig& config, Object* object)
+            : ucanopen::Server(mcu::c28x::ipc::traits::singlecore(), mcu::c28x::ipc::traits::primary(), ipc_flags,
                     can_module, config, object_dictionary, object_dictionary_size) {
         _object = object;
 
@@ -144,9 +144,9 @@ public:
         this->rpdo_service->register_rpdo_handler(CobRpdo::rpdo4, _handle_rpdo4);
     }
 
-    Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::primary, const IpcFlags& ipc_flags,
-            mcu::can::Module* can_module, const ServerConfig& config, Object* object)
-            : ucanopen::Server(mcu::ipc::traits::dualcore(), mcu::ipc::traits::primary(), ipc_flags,
+    Server(mcu::c28x::ipc::traits::dualcore, mcu::c28x::ipc::traits::primary, const IpcFlags& ipc_flags,
+            mcu::c28x::can::Module* can_module, const ServerConfig& config, Object* object)
+            : ucanopen::Server(mcu::c28x::ipc::traits::dualcore(), mcu::c28x::ipc::traits::primary(), ipc_flags,
                     can_module, config) {
         _object = object;
 
@@ -161,9 +161,9 @@ public:
         this->rpdo_service->register_rpdo(CobRpdo::rpdo4, emb::chrono::milliseconds(config.rpdo4_timeout_ms), config.rpdo4_id);
     }
 
-    Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::secondary, const IpcFlags& ipc_flags,
-            mcu::can::Peripheral can_peripheral, Object* object)
-            : ucanopen::Server(mcu::ipc::traits::dualcore(), mcu::ipc::traits::secondary(), ipc_flags, can_peripheral,
+    Server(mcu::c28x::ipc::traits::dualcore, mcu::c28x::ipc::traits::secondary, const IpcFlags& ipc_flags,
+            mcu::c28x::can::Peripheral can_peripheral, Object* object)
+            : ucanopen::Server(mcu::c28x::ipc::traits::dualcore(), mcu::c28x::ipc::traits::secondary(), ipc_flags, can_peripheral,
                     object_dictionary, object_dictionary_size) {
         _object = object;
 
@@ -177,7 +177,7 @@ protected:
     static can_payload _create_tpdo1() {
         CobTpdo1 tpdo;
 
-        tpdo.clock = mcu::chrono::steady_clock::now().count();
+        tpdo.clock = mcu::c28x::chrono::steady_clock::now().count();
 
         return to_payload<CobTpdo1>(tpdo);
     }
@@ -185,8 +185,8 @@ protected:
     static can_payload _create_tpdo2() {
         CobTpdo2 tpdo;
 
-        tpdo.seconds = mcu::chrono::steady_clock::now().count() / 1000;
-        tpdo.milliseconds = mcu::chrono::steady_clock::now().count() - 1000 * tpdo.seconds;
+        tpdo.seconds = mcu::c28x::chrono::steady_clock::now().count() / 1000;
+        tpdo.milliseconds = mcu::c28x::chrono::steady_clock::now().count() - 1000 * tpdo.seconds;
 
         return to_payload<CobTpdo2>(tpdo);
     }
@@ -241,10 +241,10 @@ protected:
 //        if (syslog::warning(sys::Warning::can_bus_connection_lost)) {
 //            if (!warning_detected) {
 //                warning_detected = true;
-//                warning_timepoint = mcu::chrono::steady_clock::now();
+//                warning_timepoint = mcu::c28x::chrono::steady_clock::now();
 //            }
 //
-//            if (mcu::chrono::steady_clock::now() > warning_timepoint + emb::chrono::milliseconds(5000)) {
+//            if (mcu::c28x::chrono::steady_clock::now() > warning_timepoint + emb::chrono::milliseconds(5000)) {
 //                syslog::set_error(sys::Error::can_bus_connection_lost);
 //            }
 //        } else {

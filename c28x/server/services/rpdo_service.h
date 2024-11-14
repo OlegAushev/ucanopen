@@ -24,7 +24,7 @@ private:
     emb::array<Message, 4>* _rpdo_msgs;
     static unsigned char cana_rpdo_dualcore_alloc[sizeof(emb::array<Message, 4>)];
     static unsigned char canb_rpdo_dualcore_alloc[sizeof(emb::array<Message, 4>)];
-    emb::array<mcu::ipc::Flag, 4> _received_flags;
+    emb::array<mcu::c28x::ipc::Flag, 4> _received_flags;
     emb::array<void(*)(const can_payload& payload), 4> _handlers;
 public:
     RpdoService(impl::Server& server, const IpcFlags& ipc_flags);
@@ -37,7 +37,7 @@ public:
         if ((*_rpdo_msgs)[rpdo.underlying_value()].timeout.count() <= 0) {
             return true;
         }
-        if (mcu::chrono::steady_clock::now()
+        if (mcu::c28x::chrono::steady_clock::now()
                 <= (*_rpdo_msgs)[rpdo.underlying_value()].timepoint + (*_rpdo_msgs)[rpdo.underlying_value()].timeout) {
             return true;
         }

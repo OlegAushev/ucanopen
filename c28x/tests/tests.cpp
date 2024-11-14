@@ -87,7 +87,7 @@ SdoAbortCode get_serial_number(ExpeditedSdoData& retval) {
 
 inline SdoAbortCode reset_device(ExpeditedSdoData val) {
     syslog::add_message(sys::Message::device_resetting);
-    emb::scheduler::basic_scheduler::add_delayed_task(mcu::reset_device, emb::chrono::milliseconds(2000));
+    emb::scheduler::basic_scheduler::add_delayed_task(mcu::c28x::reset_device, emb::chrono::milliseconds(2000));
     return SdoAbortCode::no_error;
 }
 
@@ -105,7 +105,7 @@ inline SdoAbortCode get_syslog_message(ExpeditedSdoData& retval) {
 }
 
 inline SdoAbortCode get_uptime(ExpeditedSdoData& retval) {
-    retval.f32 = mcu::chrono::steady_clock::now().count() / 1000.f;
+    retval.f32 = mcu::c28x::chrono::steady_clock::now().count() / 1000.f;
     return SdoAbortCode::no_error;
 }
 

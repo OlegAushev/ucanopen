@@ -27,17 +27,17 @@ SdoService::SdoService(impl::Server& server, const IpcFlags& ipc_flags)
     _tsdo_flag = ipc_flags.tsdo_ready;
 
     switch (_server._ipc_mode.underlying_value()) {
-    case mcu::ipc::Mode::singlecore:
+    case mcu::c28x::ipc::Mode::singlecore:
         _rsdo_data = new can_payload;
         _tsdo_data = new can_payload;
         break;
-    case mcu::ipc::Mode::dualcore:
+    case mcu::c28x::ipc::Mode::dualcore:
         switch (_server._can_peripheral.native_value()) {
-        case mcu::can::Peripheral::cana:
+        case mcu::c28x::can::Peripheral::cana:
             _rsdo_data = new(cana_rsdo_dualcore_alloc) can_payload;
             _tsdo_data = new(cana_tsdo_dualcore_alloc) can_payload;
             break;
-        case mcu::can::Peripheral::canb:
+        case mcu::c28x::can::Peripheral::canb:
             _rsdo_data = new(canb_rsdo_dualcore_alloc) can_payload;
             _tsdo_data = new(canb_tsdo_dualcore_alloc) can_payload;
             break;
@@ -48,7 +48,7 @@ SdoService::SdoService(impl::Server& server, const IpcFlags& ipc_flags)
 
 
 void SdoService::recv() {
-    assert(_server._ipc_role == mcu::ipc::Role::primary);
+    assert(_server._ipc_role == mcu::c28x::ipc::Role::primary);
 
     if (_rsdo_flag.local.is_set() || _tsdo_flag.is_set()) {
         _server.on_sdo_overrun();
@@ -59,7 +59,7 @@ void SdoService::recv() {
 }
 
 void SdoService::send() {
-    assert(_server._ipc_role == mcu::ipc::Role::primary);
+    assert(_server._ipc_role == mcu::c28x::ipc::Role::primary);
 
     if (!_tsdo_flag.is_set()) { return; }
     _server._can_module->send(Cob::tsdo, _tsdo_data->data, cob_data_len[Cob::tsdo]);
@@ -68,7 +68,7 @@ void SdoService::send() {
 
 
 void SdoService::handle_received() {
-    assert(_server._ipc_mode == mcu::ipc::Mode::singlecore || _server._ipc_role == mcu::ipc::Role::secondary);
+    assert(_server._ipc_mode == mcu::c28x::ipc::Mode::singlecore || _server._ipc_role == mcu::c28x::ipc::Role::secondary);
 
     if (!_rsdo_flag.is_set()) { return; }   // no RSDO received
 
@@ -178,7 +178,7 @@ SdoAbortCode SdoService::_write_expedited(const ODEntry* od_entry, ExpeditedSdo&
 
 
 SdoAbortCode SdoService::_restore_default_parameter(ODObjectKey key) {
-    assert(_server._ipc_mode == mcu::ipc::Mode::singlecore || _server._ipc_role == mcu::ipc::Role::secondary);
+    assert(_server._ipc_mode == mcu::c28x::ipc::Mode::singlecore || _server._ipc_role == mcu::c28x::ipc::Role::secondary);
 
     ODEntry* dictionary_end = _server._dictionary + _server._dictionary_size;
     const ODEntry* od_entry = emb::binary_find(_server._dictionary, dictionary_end, key);

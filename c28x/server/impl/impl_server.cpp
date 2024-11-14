@@ -7,11 +7,11 @@
 namespace ucanopen {
 
 
-impl::Server::Server(mcu::ipc::traits::singlecore, mcu::ipc::traits::primary,
-                     mcu::can::Module* can_module, NodeId node_id,
+impl::Server::Server(mcu::c28x::ipc::traits::singlecore, mcu::c28x::ipc::traits::primary,
+                     mcu::c28x::can::Module* can_module, NodeId node_id,
                      ODEntry* object_dictionary, int object_dictionary_size)
-        : _ipc_mode(mcu::ipc::Mode::singlecore)
-        , _ipc_role(mcu::ipc::Role::primary)
+        : _ipc_mode(mcu::c28x::ipc::Mode::singlecore)
+        , _ipc_role(mcu::c28x::ipc::Role::primary)
         , _node_id(node_id)
         , _can_module(can_module)
         , _dictionary(object_dictionary)
@@ -23,10 +23,10 @@ impl::Server::Server(mcu::ipc::traits::singlecore, mcu::ipc::traits::primary,
 }
 
 
-impl::Server::Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::primary,
-                     mcu::can::Module* can_module, NodeId node_id)
-        : _ipc_mode(mcu::ipc::Mode::dualcore)
-        , _ipc_role(mcu::ipc::Role::primary)
+impl::Server::Server(mcu::c28x::ipc::traits::dualcore, mcu::c28x::ipc::traits::primary,
+                     mcu::c28x::can::Module* can_module, NodeId node_id)
+        : _ipc_mode(mcu::c28x::ipc::Mode::dualcore)
+        , _ipc_role(mcu::c28x::ipc::Role::primary)
         , _node_id(node_id)
         , _can_module(can_module)
         , _dictionary(static_cast<ODEntry*>(NULL))
@@ -37,12 +37,12 @@ impl::Server::Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::primary,
 }
 
 
-impl::Server::Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::secondary,
-                     mcu::can::Peripheral can_peripheral, ODEntry* object_dictionary, int object_dictionary_size)
-        : _ipc_mode(mcu::ipc::Mode::dualcore)
-        , _ipc_role(mcu::ipc::Role::secondary)
+impl::Server::Server(mcu::c28x::ipc::traits::dualcore, mcu::c28x::ipc::traits::secondary,
+                     mcu::c28x::can::Peripheral can_peripheral, ODEntry* object_dictionary, int object_dictionary_size)
+        : _ipc_mode(mcu::c28x::ipc::Mode::dualcore)
+        , _ipc_role(mcu::c28x::ipc::Role::secondary)
         , _node_id(NodeId(0))
-        , _can_module(static_cast<mcu::can::Module*>(NULL))
+        , _can_module(static_cast<mcu::c28x::can::Module*>(NULL))
         , _dictionary(object_dictionary)
         , _dictionary_size(object_dictionary_size) {
     _can_peripheral = can_peripheral;

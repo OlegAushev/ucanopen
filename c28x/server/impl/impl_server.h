@@ -14,12 +14,12 @@ namespace ucanopen {
 
 
 struct IpcFlags {
-    mcu::ipc::Flag rpdo1_received;
-    mcu::ipc::Flag rpdo2_received;
-    mcu::ipc::Flag rpdo3_received;
-    mcu::ipc::Flag rpdo4_received;
-    mcu::ipc::Flag rsdo_received;
-    mcu::ipc::Flag tsdo_ready;
+    mcu::c28x::ipc::Flag rpdo1_received;
+    mcu::c28x::ipc::Flag rpdo2_received;
+    mcu::c28x::ipc::Flag rpdo3_received;
+    mcu::c28x::ipc::Flag rpdo4_received;
+    mcu::c28x::ipc::Flag rsdo_received;
+    mcu::c28x::ipc::Flag tsdo_ready;
 };
 
 
@@ -38,29 +38,29 @@ class Server {
     friend class ucanopen::RpdoService;
     friend class ucanopen::SdoService;
 protected:
-    const mcu::ipc::Mode _ipc_mode;
-    const mcu::ipc::Role _ipc_role;
+    const mcu::c28x::ipc::Mode _ipc_mode;
+    const mcu::c28x::ipc::Role _ipc_role;
 
     NodeId _node_id;
-    mcu::can::Peripheral _can_peripheral;
-    mcu::can::Module* _can_module;
+    mcu::c28x::can::Peripheral _can_peripheral;
+    mcu::c28x::can::Module* _can_module;
 
     ODEntry* _dictionary;
     size_t _dictionary_size;
 
     NmtState _nmt_state;
 private:
-    emb::array<mcu::can::MessageObject, cob_count> _message_objects;
+    emb::array<mcu::c28x::can::MessageObject, cob_count> _message_objects;
 public:
-    Server(mcu::ipc::traits::singlecore, mcu::ipc::traits::primary,
-           mcu::can::Module* can_module, NodeId node_id,
+    Server(mcu::c28x::ipc::traits::singlecore, mcu::c28x::ipc::traits::primary,
+           mcu::c28x::can::Module* can_module, NodeId node_id,
            ODEntry* object_dictionary, int object_dictionary_size);
 
-    Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::primary,
-           mcu::can::Module* can_module, NodeId node_id);
+    Server(mcu::c28x::ipc::traits::dualcore, mcu::c28x::ipc::traits::primary,
+           mcu::c28x::can::Module* can_module, NodeId node_id);
 
-    Server(mcu::ipc::traits::dualcore, mcu::ipc::traits::secondary,
-           mcu::can::Peripheral can_peripheral, ODEntry* object_dictionary, int object_dictionary_size);
+    Server(mcu::c28x::ipc::traits::dualcore, mcu::c28x::ipc::traits::secondary,
+           mcu::c28x::can::Peripheral can_peripheral, ODEntry* object_dictionary, int object_dictionary_size);
 
     virtual ~Server() {}
 

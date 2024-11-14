@@ -18,18 +18,18 @@ TpdoService::TpdoService(impl::Server& server)
 
 
 void TpdoService::register_tpdo(CobTpdo tpdo, emb::chrono::milliseconds period, can_payload (*creator)()) {
-    assert(_server._ipc_role == mcu::ipc::Role::primary);
+    assert(_server._ipc_role == mcu::c28x::ipc::Role::primary);
 
     _tpdo_msgs[tpdo.underlying_value()].period = period;
-    _tpdo_msgs[tpdo.underlying_value()].timepoint = mcu::chrono::steady_clock::now();
+    _tpdo_msgs[tpdo.underlying_value()].timepoint = mcu::c28x::chrono::steady_clock::now();
     _tpdo_msgs[tpdo.underlying_value()].creator = creator;
 }
 
 
 void TpdoService::send() {
-    assert(_server._ipc_role == mcu::ipc::Role::primary);
+    assert(_server._ipc_role == mcu::c28x::ipc::Role::primary);
 
-    emb::chrono::milliseconds now = mcu::chrono::steady_clock::now();
+    emb::chrono::milliseconds now = mcu::c28x::chrono::steady_clock::now();
     for (size_t i = 0; i < _tpdo_msgs.size(); ++i) {
         if (!_tpdo_msgs[i].creator || _tpdo_msgs[i].period.count() <= 0) { continue; }
         if (now < _tpdo_msgs[i].timepoint + _tpdo_msgs[i].period) { continue; }
