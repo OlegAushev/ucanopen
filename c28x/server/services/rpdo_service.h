@@ -24,7 +24,7 @@ private:
     emb::array<Message, 4>* _rpdo_msgs;
     static unsigned char cana_rpdo_dualcore_alloc[sizeof(emb::array<Message, 4>)];
     static unsigned char canb_rpdo_dualcore_alloc[sizeof(emb::array<Message, 4>)];
-    emb::array<mcu::c28x::ipc::Flag, 4> _received_flags;
+    emb::array<mcu::c28x::ipc::NewFlag, 4> _received_flags;
     emb::array<void(*)(const can_payload& payload), 4> _handlers;
 public:
     RpdoService(impl::Server& server, const IpcFlags& ipc_flags);

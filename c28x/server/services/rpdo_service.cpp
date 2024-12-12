@@ -14,7 +14,12 @@ unsigned char RpdoService::canb_rpdo_dualcore_alloc[sizeof(emb::array<RpdoServic
 
 
 RpdoService::RpdoService(impl::Server& server, const IpcFlags& ipc_flags)
-        : _server(server) {
+        : _server(server),
+          _received_flags((emb::array<mcu::c28x::ipc::NewFlag, 4>){
+              ipc_flags.rpdo1_received,
+              ipc_flags.rpdo2_received,
+              ipc_flags.rpdo3_received,
+              ipc_flags.rpdo4_received}) {
     switch (_server._ipc_mode.underlying_value()) {
     case mcu::c28x::ipc::Mode::singlecore:
         _rpdo_msgs = new emb::array<Message, 4>;
@@ -39,11 +44,6 @@ RpdoService::RpdoService(impl::Server& server, const IpcFlags& ipc_flags)
     for (size_t i = 0; i < _handlers.size(); ++i) {
         _handlers[i] = reinterpret_cast<void(*)(const can_payload& data)>(NULL);
     }
-
-    _received_flags[CobRpdo::rpdo1] = ipc_flags.rpdo1_received;
-    _received_flags[CobRpdo::rpdo2] = ipc_flags.rpdo2_received;
-    _received_flags[CobRpdo::rpdo3] = ipc_flags.rpdo3_received;
-    _received_flags[CobRpdo::rpdo4] = ipc_flags.rpdo4_received;
 }
 
 
@@ -78,12 +78,12 @@ void RpdoService::recv(Cob cob) {
     CobRpdo rpdo((cob.underlying_value() - static_cast<unsigned int>(Cob::rpdo1)) / 2);
 
     (*_rpdo_msgs)[rpdo.underlying_value()].timepoint = mcu::c28x::chrono::steady_clock::now();
-    if (_received_flags[rpdo.underlying_value()].local.is_set()) {
+    if (_received_flags[rpdo.underlying_value()].is_set()) {
         _server.on_rpdo_overrun();
     } else {
         // there is no unprocessed RPDO of this type
         _server._can_module->recv(cob.underlying_value(), (*_rpdo_msgs)[rpdo.underlying_value()].payload.data);
-        _received_flags[rpdo.underlying_value()].local.set();
+        _received_flags[rpdo.underlying_value()].set();
     }
 }
 
@@ -95,7 +95,7 @@ void RpdoService::handle_received() {
         if (!_handlers[i]) { continue; }
         if (_received_flags[i].is_set()) {
             _handlers[i]((*_rpdo_msgs)[i].payload);
-            _received_flags[i].reset();
+            _received_flags[i].clear();
         }
     }
 }

@@ -22,10 +22,9 @@ const ODObjectKey SdoService::restore_default_parameter_key = {0x1011, 0x04};
 
 
 SdoService::SdoService(impl::Server& server, const IpcFlags& ipc_flags)
-        : _server(server) {
-    _rsdo_flag = ipc_flags.rsdo_received;
-    _tsdo_flag = ipc_flags.tsdo_ready;
-
+        : _server(server),
+          _rsdo_flag(ipc_flags.rsdo_received),
+          _tsdo_flag(ipc_flags.tsdo_ready) {
     switch (_server._ipc_mode.underlying_value()) {
     case mcu::c28x::ipc::Mode::singlecore:
         _rsdo_data = new can_payload;
@@ -50,11 +49,11 @@ SdoService::SdoService(impl::Server& server, const IpcFlags& ipc_flags)
 void SdoService::recv() {
     assert(_server._ipc_role == mcu::c28x::ipc::Role::primary);
 
-    if (_rsdo_flag.local.is_set() || _tsdo_flag.is_set()) {
+    if (_rsdo_flag.is_set() || _tsdo_flag.is_set()) {
         _server.on_sdo_overrun();
     } else {
         _server._can_module->recv(Cob::rsdo, _rsdo_data->data);
-        _rsdo_flag.local.set();
+        _rsdo_flag.set();
     }
 }
 
@@ -63,7 +62,7 @@ void SdoService::send() {
 
     if (!_tsdo_flag.is_set()) { return; }
     _server._can_module->send(Cob::tsdo, _tsdo_data->data, cob_data_len[Cob::tsdo]);
-    _tsdo_flag.reset();
+    _tsdo_flag.clear();
 }
 
 
@@ -73,7 +72,7 @@ void SdoService::handle_received() {
     if (!_rsdo_flag.is_set()) { return; }   // no RSDO received
 
     ExpeditedSdo rsdo = from_payload<ExpeditedSdo>(*_rsdo_data);
-    _rsdo_flag.reset();
+    _rsdo_flag.clear();
     if (rsdo.cs == sdo_cs_codes::abort) {
         return;
     }
@@ -109,7 +108,7 @@ void SdoService::handle_received() {
         break;
     }
 
-    _tsdo_flag.local.set();
+    _tsdo_flag.set();
 }
 
 

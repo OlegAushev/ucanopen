@@ -14,12 +14,12 @@ namespace ucanopen {
 
 
 struct IpcFlags {
-    mcu::c28x::ipc::Flag rpdo1_received;
-    mcu::c28x::ipc::Flag rpdo2_received;
-    mcu::c28x::ipc::Flag rpdo3_received;
-    mcu::c28x::ipc::Flag rpdo4_received;
-    mcu::c28x::ipc::Flag rsdo_received;
-    mcu::c28x::ipc::Flag tsdo_ready;
+    mcu::c28x::ipc::NewFlag rpdo1_received;
+    mcu::c28x::ipc::NewFlag rpdo2_received;
+    mcu::c28x::ipc::NewFlag rpdo3_received;
+    mcu::c28x::ipc::NewFlag rpdo4_received;
+    mcu::c28x::ipc::NewFlag rsdo_received;
+    mcu::c28x::ipc::NewFlag tsdo_ready;
 };
 
 

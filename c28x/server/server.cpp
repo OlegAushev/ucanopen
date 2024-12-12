@@ -13,12 +13,12 @@ Server::Server(mcu::c28x::ipc::traits::singlecore, mcu::c28x::ipc::traits::prima
         : impl::Server(mcu::c28x::ipc::traits::singlecore(), mcu::c28x::ipc::traits::primary(),
                        can_module, NodeId(config.node_id), object_dictionary, object_dictionary_size)
         , emb::interrupt_invoker_array<Server, mcu::c28x::can::peripheral_count>(this, can_module->peripheral().underlying_value()) {
-    assert(ipc_flags.rpdo1_received.mode() == mcu::c28x::ipc::Mode::singlecore);
-    assert(ipc_flags.rpdo2_received.mode() == mcu::c28x::ipc::Mode::singlecore);
-    assert(ipc_flags.rpdo3_received.mode() == mcu::c28x::ipc::Mode::singlecore);
-    assert(ipc_flags.rpdo4_received.mode() == mcu::c28x::ipc::Mode::singlecore);
-    assert(ipc_flags.rsdo_received.mode() == mcu::c28x::ipc::Mode::singlecore);
-    assert(ipc_flags.tsdo_ready.mode() == mcu::c28x::ipc::Mode::singlecore);
+    assert(ipc_flags.rpdo1_received.type() == mcu::c28x::ipc::FlagType::local);
+    assert(ipc_flags.rpdo2_received.type() == mcu::c28x::ipc::FlagType::local);
+    assert(ipc_flags.rpdo3_received.type() == mcu::c28x::ipc::FlagType::local);
+    assert(ipc_flags.rpdo4_received.type() == mcu::c28x::ipc::FlagType::local);
+    assert(ipc_flags.rsdo_received.type() == mcu::c28x::ipc::FlagType::local);
+    assert(ipc_flags.tsdo_ready.type() == mcu::c28x::ipc::FlagType::local);
 
     heartbeat_service = new HeartbeatService(*this, emb::chrono::milliseconds(config.heartbeat_period_ms));
     tpdo_service = new TpdoService(*this);
@@ -35,12 +35,12 @@ Server::Server(mcu::c28x::ipc::traits::dualcore, mcu::c28x::ipc::traits::primary
                mcu::c28x::can::Module* can_module, const ServerConfig& config)
         : impl::Server(mcu::c28x::ipc::traits::dualcore(), mcu::c28x::ipc::traits::primary(), can_module, NodeId(config.node_id))
         , emb::interrupt_invoker_array<Server, mcu::c28x::can::peripheral_count>(this, can_module->peripheral().underlying_value()) {
-    assert(ipc_flags.rpdo1_received.mode() == mcu::c28x::ipc::Mode::dualcore);
-    assert(ipc_flags.rpdo2_received.mode() == mcu::c28x::ipc::Mode::dualcore);
-    assert(ipc_flags.rpdo3_received.mode() == mcu::c28x::ipc::Mode::dualcore);
-    assert(ipc_flags.rpdo4_received.mode() == mcu::c28x::ipc::Mode::dualcore);
-    assert(ipc_flags.rsdo_received.mode() == mcu::c28x::ipc::Mode::dualcore);
-    assert(ipc_flags.tsdo_ready.mode() == mcu::c28x::ipc::Mode::dualcore);
+    assert(ipc_flags.rpdo1_received.type() == mcu::c28x::ipc::FlagType::local);
+    assert(ipc_flags.rpdo2_received.type() == mcu::c28x::ipc::FlagType::local);
+    assert(ipc_flags.rpdo3_received.type() == mcu::c28x::ipc::FlagType::local);
+    assert(ipc_flags.rpdo4_received.type() == mcu::c28x::ipc::FlagType::local);
+    assert(ipc_flags.rsdo_received.type() == mcu::c28x::ipc::FlagType::local);
+    assert(ipc_flags.tsdo_ready.type() == mcu::c28x::ipc::FlagType::remote);
 
     heartbeat_service = new HeartbeatService(*this, emb::chrono::milliseconds(config.heartbeat_period_ms));
     tpdo_service = new TpdoService(*this);
@@ -57,12 +57,12 @@ Server::Server(mcu::c28x::ipc::traits::dualcore, mcu::c28x::ipc::traits::seconda
                mcu::c28x::can::Peripheral can_peripheral, ODEntry* object_dictionary, size_t object_dictionary_size)
         : impl::Server(mcu::c28x::ipc::traits::dualcore(), mcu::c28x::ipc::traits::secondary(), can_peripheral, object_dictionary, object_dictionary_size)
         , emb::interrupt_invoker_array<Server, mcu::c28x::can::peripheral_count>(this, can_peripheral.underlying_value()) {
-    assert(ipc_flags.rpdo1_received.mode() == mcu::c28x::ipc::Mode::dualcore);
-    assert(ipc_flags.rpdo2_received.mode() == mcu::c28x::ipc::Mode::dualcore);
-    assert(ipc_flags.rpdo3_received.mode() == mcu::c28x::ipc::Mode::dualcore);
-    assert(ipc_flags.rpdo4_received.mode() == mcu::c28x::ipc::Mode::dualcore);
-    assert(ipc_flags.rsdo_received.mode() == mcu::c28x::ipc::Mode::dualcore);
-    assert(ipc_flags.tsdo_ready.mode() == mcu::c28x::ipc::Mode::dualcore);
+    assert(ipc_flags.rpdo1_received.type() == mcu::c28x::ipc::FlagType::remote);
+    assert(ipc_flags.rpdo2_received.type() == mcu::c28x::ipc::FlagType::remote);
+    assert(ipc_flags.rpdo3_received.type() == mcu::c28x::ipc::FlagType::remote);
+    assert(ipc_flags.rpdo4_received.type() == mcu::c28x::ipc::FlagType::remote);
+    assert(ipc_flags.rsdo_received.type() == mcu::c28x::ipc::FlagType::remote);
+    assert(ipc_flags.tsdo_ready.type() == mcu::c28x::ipc::FlagType::local);
 
     rpdo_service = new RpdoService(*this, ipc_flags);
     sdo_service = new SdoService(*this, ipc_flags);
