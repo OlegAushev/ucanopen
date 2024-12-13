@@ -1,118 +1,89 @@
 #ifdef MCUDRV_C28X
 
-
 #include "sdo_service.h"
-
 
 namespace ucanopen {
 
-
-unsigned char SdoService::cana_rsdo_dualcore_alloc[sizeof(can_payload)]
-        __attribute__((section("shared_ucanopen_cana_rsdo_data"), retain));
-unsigned char SdoService::canb_rsdo_dualcore_alloc[sizeof(can_payload)]
-        __attribute__((section("shared_ucanopen_canb_rsdo_data"), retain));
-
-unsigned char SdoService::cana_tsdo_dualcore_alloc[sizeof(can_payload)]
-        __attribute__((section("shared_ucanopen_cana_tsdo_data"), retain));
-unsigned char SdoService::canb_tsdo_dualcore_alloc[sizeof(can_payload)]
-        __attribute__((section("shared_ucanopen_canb_tsdo_data"), retain));
-
-
 const ODObjectKey SdoService::restore_default_parameter_key = {0x1011, 0x04};
 
-
-SdoService::SdoService(impl::Server& server, const IpcFlags& ipc_flags)
-        : _server(server),
-          _rsdo_flag(ipc_flags.rsdo_received),
-          _tsdo_flag(ipc_flags.tsdo_ready) {
-    switch (_server._ipc_mode.underlying_value()) {
-    case mcu::c28x::ipc::Mode::singlecore:
-        _rsdo_data = new can_payload;
-        _tsdo_data = new can_payload;
-        break;
-    case mcu::c28x::ipc::Mode::dualcore:
-        switch (_server._can_peripheral.native_value()) {
-        case mcu::c28x::can::Peripheral::cana:
-            _rsdo_data = new(cana_rsdo_dualcore_alloc) can_payload;
-            _tsdo_data = new(cana_tsdo_dualcore_alloc) can_payload;
-            break;
-        case mcu::c28x::can::Peripheral::canb:
-            _rsdo_data = new(canb_rsdo_dualcore_alloc) can_payload;
-            _tsdo_data = new(canb_tsdo_dualcore_alloc) can_payload;
-            break;
-        }
-        break;
-    }
-}
+SdoService::SdoService(impl::Server& server) : server_(server) {}
 
 
-void SdoService::recv() {
-    assert(_server._ipc_role == mcu::c28x::ipc::Role::primary);
-
-    if (_rsdo_flag.is_set() || _tsdo_flag.is_set()) {
-        _server.on_sdo_overrun();
+void SdoService::recv_frame() {
+    if (rsdo_queue_.full()) {
+        server_.on_sdo_overrun();
     } else {
-        _server._can_module->recv(Cob::rsdo, _rsdo_data->data);
-        _rsdo_flag.set();
+        can_payload payload;
+        server_.can_module_.recv(Cob::rsdo, payload.data);
+        rsdo_queue_.push(payload);
     }
 }
 
 void SdoService::send() {
-    assert(_server._ipc_role == mcu::c28x::ipc::Role::primary);
-
-    if (!_tsdo_flag.is_set()) { return; }
-    _server._can_module->send(Cob::tsdo, _tsdo_data->data, cob_data_len[Cob::tsdo]);
-    _tsdo_flag.clear();
+    while (!tsdo_queue_.empty()) {
+        can_payload payload = tsdo_queue_.front();
+        server_.can_module_.send(Cob::tsdo,
+                                 payload.data,
+                                 cob_data_len[Cob::tsdo]);
+        tsdo_queue_.pop();
+    }
 }
 
 
-void SdoService::handle_received() {
-    assert(_server._ipc_mode == mcu::c28x::ipc::Mode::singlecore || _server._ipc_role == mcu::c28x::ipc::Role::secondary);
+void SdoService::handle_recv_frames() {
+    while (!rsdo_queue_.empty()) {
+        can_payload rsdo_payload = rsdo_queue_.front();
+        ExpeditedSdo rsdo = from_payload<ExpeditedSdo>(rsdo_payload);
+        rsdo_queue_.pop();
 
-    if (!_rsdo_flag.is_set()) { return; }   // no RSDO received
+        if (rsdo.cs == sdo_cs_codes::abort) {
+            return;
+        }
 
-    ExpeditedSdo rsdo = from_payload<ExpeditedSdo>(*_rsdo_data);
-    _rsdo_flag.clear();
-    if (rsdo.cs == sdo_cs_codes::abort) {
-        return;
+        ExpeditedSdo tsdo;
+        SdoAbortCode abort_code = SdoAbortCode::general_error;
+        ODEntry* dictionary_end = server_.dictionary_ +
+                                  server_.dictionary_size_;
+        ODObjectKey key = {rsdo.index, rsdo.subindex};
+
+        const ODEntry* od_entry = emb::binary_find(server_.dictionary_,
+                                                   dictionary_end,
+                                                   key);
+
+        if (od_entry == dictionary_end) {
+            abort_code = SdoAbortCode::object_not_found;
+        }
+        else if (rsdo.cs == sdo_cs_codes::client_init_read) {
+            abort_code = read_expedited(od_entry, tsdo, rsdo);
+        } else if (rsdo.cs == sdo_cs_codes::client_init_write) {
+            abort_code = write_expedited(od_entry, tsdo, rsdo);
+        } else {
+            abort_code = SdoAbortCode::invalid_cs;
+        }
+
+        can_payload tsdo_payload;
+        switch (abort_code.native_value()) {
+        case SdoAbortCode::no_error:
+            tsdo_payload = to_payload<ExpeditedSdo>(tsdo);
+            break;
+        default:
+            AbortSdo abort_tsdo;
+            abort_tsdo.index = rsdo.index;
+            abort_tsdo.subindex = rsdo.subindex;
+            abort_tsdo.error_code = abort_code.underlying_value();
+            tsdo_payload = to_payload<AbortSdo>(abort_tsdo);
+            break;
+        }
+
+        if (!tsdo_queue_.full()) {
+            tsdo_queue_.push(tsdo_payload);
+        }
     }
-
-    ExpeditedSdo tsdo;
-    SdoAbortCode abort_code = SdoAbortCode::general_error;
-    ODEntry* dictionary_end = _server._dictionary + _server._dictionary_size;
-    ODObjectKey key = {rsdo.index, rsdo.subindex};
-
-    const ODEntry* od_entry = emb::binary_find(_server._dictionary, dictionary_end, key);
-
-    if (od_entry == dictionary_end) {
-        abort_code = SdoAbortCode::object_not_found;
-    }
-    else if (rsdo.cs == sdo_cs_codes::client_init_read) {
-        abort_code = _read_expedited(od_entry, tsdo, rsdo);
-    } else if (rsdo.cs == sdo_cs_codes::client_init_write) {
-        abort_code = _write_expedited(od_entry, tsdo, rsdo);
-    } else {
-        abort_code = SdoAbortCode::invalid_cs;
-    }
-
-    switch (abort_code.native_value()) {
-    case SdoAbortCode::no_error:
-        to_payload<ExpeditedSdo>(*_tsdo_data, tsdo);
-        break;
-    default:
-        AbortSdo abort_tsdo;
-        abort_tsdo.index = rsdo.index;
-        abort_tsdo.subindex = rsdo.subindex;
-        abort_tsdo.error_code = abort_code.underlying_value();
-        to_payload<AbortSdo>(*_tsdo_data, abort_tsdo);
-        break;
-    }
-
-    _tsdo_flag.set();
 }
 
-
-SdoAbortCode SdoService::_read_expedited(const ODEntry* od_entry, ExpeditedSdo& tsdo, const ExpeditedSdo& rsdo) {
+SdoAbortCode SdoService::read_expedited(const ODEntry* od_entry,
+                                        ExpeditedSdo& tsdo,
+                                        const ExpeditedSdo& rsdo) {
     if (!od_entry->object.has_read_permission()) {
         return SdoAbortCode::read_access_wo;
     }
@@ -140,8 +111,9 @@ SdoAbortCode SdoService::_read_expedited(const ODEntry* od_entry, ExpeditedSdo& 
     return abort_code;
 }
 
-
-SdoAbortCode SdoService::_write_expedited(const ODEntry* od_entry, ExpeditedSdo& tsdo, const ExpeditedSdo& rsdo) {
+SdoAbortCode SdoService::write_expedited(const ODEntry* od_entry,
+                                         ExpeditedSdo& tsdo,
+                                         const ExpeditedSdo& rsdo) {
     if (!od_entry->object.has_write_permission()) {
         return SdoAbortCode::write_access_ro;
     }
@@ -163,7 +135,7 @@ SdoAbortCode SdoService::_write_expedited(const ODEntry* od_entry, ExpeditedSdo&
             ODObjectKey arg_key = {};
             memcpy(&arg_key, &rsdo.data.u32, sizeof(arg_key));
             arg_key.subindex &= 0xFF;
-            abort_code = _restore_default_parameter(arg_key);
+            abort_code = restore_default_parameter(arg_key);
         }
     }
 
@@ -176,11 +148,11 @@ SdoAbortCode SdoService::_write_expedited(const ODEntry* od_entry, ExpeditedSdo&
 }
 
 
-SdoAbortCode SdoService::_restore_default_parameter(ODObjectKey key) {
-    assert(_server._ipc_mode == mcu::c28x::ipc::Mode::singlecore || _server._ipc_role == mcu::c28x::ipc::Role::secondary);
-
-    ODEntry* dictionary_end = _server._dictionary + _server._dictionary_size;
-    const ODEntry* od_entry = emb::binary_find(_server._dictionary, dictionary_end, key);
+SdoAbortCode SdoService::restore_default_parameter(ODObjectKey key) {
+    ODEntry* dictionary_end = server_.dictionary_ + server_.dictionary_size_;
+    const ODEntry* od_entry = emb::binary_find(server_.dictionary_,
+                                               dictionary_end,
+                                               key);
 
     if (od_entry == dictionary_end) {
         return SdoAbortCode::object_not_found;
@@ -206,8 +178,6 @@ SdoAbortCode SdoService::_restore_default_parameter(ODObjectKey key) {
     }
 }
 
-
 } // namespace ucanopen
-
 
 #endif

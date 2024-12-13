@@ -1,52 +1,46 @@
 #pragma once
 
-
 #ifdef MCUDRV_C28X
 
-
 #include "../impl/impl_server.h"
-#include <mcudrv/c28x/f2837xd/chrono/chrono.h>
-#include <new>
-
+#include <emblib/chrono.h>
 
 namespace ucanopen {
 
-
 class RpdoService {
 private:
-    impl::Server& _server;
+    impl::Server& server_;
 
     struct Message {
         emb::chrono::milliseconds timeout;
         emb::chrono::milliseconds timepoint;
+        bool unhandled;
         can_payload payload;
+        void(*handler)(const can_payload&);
     };
-    emb::array<Message, 4>* _rpdo_msgs;
-    static unsigned char cana_rpdo_dualcore_alloc[sizeof(emb::array<Message, 4>)];
-    static unsigned char canb_rpdo_dualcore_alloc[sizeof(emb::array<Message, 4>)];
-    emb::array<mcu::c28x::ipc::NewFlag, 4> _received_flags;
-    emb::array<void(*)(const can_payload& payload), 4> _handlers;
+    emb::array<Message, 4> rpdo_msgs_;
 public:
-    RpdoService(impl::Server& server, const IpcFlags& ipc_flags);
-    void register_rpdo(CobRpdo rpdo, emb::chrono::milliseconds timeout, unsigned int id = 0);
-    void register_rpdo_handler(CobRpdo rpdo, void (*handler)(const can_payload& data));
-    void recv(Cob cob);
-    void handle_received();
+    RpdoService(impl::Server& server);
+    void register_rpdo(CobRpdo rpdo,
+                       emb::chrono::milliseconds timeout,
+                       void (*handler)(const can_payload&),
+                       can_id id = 0);
+    void recv_frame(Cob cob);
+    void handle_recv_frames();
 
-    bool good(CobRpdo rpdo) {
-        if ((*_rpdo_msgs)[rpdo.underlying_value()].timeout.count() <= 0) {
+    bool good(CobRpdo rpdo) const {
+        const size_t idx = rpdo.underlying_value();
+        if (rpdo_msgs_[idx].timeout.count() <= 0) {
             return true;
         }
-        if (mcu::c28x::chrono::steady_clock::now()
-                <= (*_rpdo_msgs)[rpdo.underlying_value()].timepoint + (*_rpdo_msgs)[rpdo.underlying_value()].timeout) {
+        if (emb::chrono::steady_clock::now() <=
+            (rpdo_msgs_[idx].timepoint + rpdo_msgs_[idx].timeout)) {
             return true;
         }
         return false;
     }
 };
 
-
 } // namespace ucanopen
-
 
 #endif

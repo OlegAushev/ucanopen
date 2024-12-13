@@ -1,28 +1,22 @@
 #pragma once
 
-
 #ifdef MCUDRV_C28X
 
-
-#include <mcudrv/c28x/f2837xd/chrono/chrono.h>
 #include "../impl/impl_server.h"
-
+#include <emblib/chrono.h>
 
 namespace ucanopen {
 
-
 class HeartbeatService {
 private:
-    impl::Server& _server;
-    emb::chrono::milliseconds _period;
-    emb::chrono::milliseconds _timepoint;
+    impl::Server& server_;
+    emb::chrono::milliseconds period_;
+    emb::chrono::milliseconds timepoint_;
 public:
     HeartbeatService(impl::Server& server, emb::chrono::milliseconds period);
     void send();
 };
 
-
 } // namespace ucanopen
-
 
 #endif

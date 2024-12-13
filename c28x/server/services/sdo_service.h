@@ -1,50 +1,43 @@
 #pragma once
 
-
 #ifdef MCUDRV_C28X
-
 
 #include "../impl/impl_server.h"
 #include <emblib/algorithm.h>
-#include <new>
-
+#include <emblib/queue.h>
 
 namespace ucanopen {
 
-
 class SdoService {
 private:
-    impl::Server& _server;
+    impl::Server& server_;
 
-    mcu::c28x::ipc::NewFlag _rsdo_flag;
-    mcu::c28x::ipc::NewFlag _tsdo_flag;
-    can_payload* _rsdo_data;
-    can_payload* _tsdo_data;
-    static unsigned char cana_rsdo_dualcore_alloc[sizeof(can_payload)];
-    static unsigned char canb_rsdo_dualcore_alloc[sizeof(can_payload)];
-    static unsigned char cana_tsdo_dualcore_alloc[sizeof(can_payload)];
-    static unsigned char canb_tsdo_dualcore_alloc[sizeof(can_payload)];
+    emb::queue<can_payload, 16> rsdo_queue_;
+    emb::queue<can_payload, 16> tsdo_queue_;
 public:
-    SdoService(impl::Server& server, const IpcFlags& ipc_flags);
-    void recv();
+    SdoService(impl::Server& server);
+    void recv_frame();
     void send();
-    void handle_received();
+    void handle_recv_frames();
 private:
-    SdoAbortCode _read_expedited(const ODEntry* od_entry, ExpeditedSdo& tsdo, const ExpeditedSdo& rsdo);
-    SdoAbortCode _write_expedited(const ODEntry* od_entry, ExpeditedSdo& tsdo, const ExpeditedSdo& rsdo);
-    SdoAbortCode _restore_default_parameter(ODObjectKey key);
+    SdoAbortCode read_expedited(const ODEntry* od_entry,
+                                ExpeditedSdo& tsdo,
+                                const ExpeditedSdo& rsdo);
+    SdoAbortCode write_expedited(const ODEntry* od_entry,
+                                 ExpeditedSdo& tsdo,
+                                 const ExpeditedSdo& rsdo);
+    SdoAbortCode restore_default_parameter(ODObjectKey key);
 
     static const ODObjectKey restore_default_parameter_key;
 };
 
-
 template<typename T, size_t Size>
 class SdoProvider {
 private:
-    static uint32_t _dummy_data;
+    static uint32_t dummy_data_;
 protected:
     SdoProvider() {
-        std::fill(sdo_data, sdo_data + Size, &_dummy_data);
+        std::fill(sdo_data, sdo_data + Size, &dummy_data_);
     }
 
     template<typename V>
@@ -56,14 +49,11 @@ public:
     size_t capacity() const { return Size; }
 };
 
-
 template<typename T, size_t Size>
-uint32_t SdoProvider<T, Size>::_dummy_data = 42;
+uint32_t SdoProvider<T, Size>::dummy_data_ = 42;
 template<typename T, size_t Size>
 uint32_t* SdoProvider<T, Size>::sdo_data[Size];
 
-
 } // namespace ucanopen
-
 
 #endif

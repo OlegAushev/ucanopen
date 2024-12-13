@@ -1,107 +1,66 @@
 #ifdef MCUDRV_C28X
 
-
 #include "rpdo_service.h"
-
 
 namespace ucanopen {
 
-
-unsigned char RpdoService::cana_rpdo_dualcore_alloc[sizeof(emb::array<RpdoService::Message, 4>)]
-        __attribute__((section("shared_ucanopen_cana_rpdo_data"), retain));
-unsigned char RpdoService::canb_rpdo_dualcore_alloc[sizeof(emb::array<RpdoService::Message, 4>)]
-        __attribute__((section("shared_ucanopen_canb_rpdo_data"), retain));
-
-
-RpdoService::RpdoService(impl::Server& server, const IpcFlags& ipc_flags)
-        : _server(server),
-          _received_flags((emb::array<mcu::c28x::ipc::NewFlag, 4>){
-              ipc_flags.rpdo1_received,
-              ipc_flags.rpdo2_received,
-              ipc_flags.rpdo3_received,
-              ipc_flags.rpdo4_received}) {
-    switch (_server._ipc_mode.underlying_value()) {
-    case mcu::c28x::ipc::Mode::singlecore:
-        _rpdo_msgs = new emb::array<Message, 4>;
-        break;
-    case mcu::c28x::ipc::Mode::dualcore:
-        switch (_server._can_peripheral.native_value()) {
-        case mcu::c28x::can::Peripheral::cana:
-            _rpdo_msgs = new(cana_rpdo_dualcore_alloc) emb::array<Message, 4>;
-            break;
-        case mcu::c28x::can::Peripheral::canb:
-            _rpdo_msgs = new(canb_rpdo_dualcore_alloc) emb::array<Message, 4>;
-            break;
-        }
-        break;
-    }
-
-    for (size_t i = 0; i < _rpdo_msgs->size(); ++i) {
-        (*_rpdo_msgs)[i].timeout = emb::chrono::milliseconds(0);
-        (*_rpdo_msgs)[i].timepoint = emb::chrono::milliseconds(0);
-    }
-
-    for (size_t i = 0; i < _handlers.size(); ++i) {
-        _handlers[i] = reinterpret_cast<void(*)(const can_payload& data)>(NULL);
+RpdoService::RpdoService(impl::Server& server)
+        : server_(server) {
+    for (size_t i = 0; i < rpdo_msgs_.size(); ++i) {
+        rpdo_msgs_[i].timeout = emb::chrono::milliseconds(0);
+        rpdo_msgs_[i].timepoint = emb::chrono::milliseconds(0);
+        rpdo_msgs_[i].unhandled = false;
+        rpdo_msgs_[i].handler = NULL;
     }
 }
 
-
-void RpdoService::register_rpdo(CobRpdo rpdo, emb::chrono::milliseconds timeout, unsigned int id) {
-    assert(_server._ipc_role == mcu::c28x::ipc::Role::primary);
-
-    (*_rpdo_msgs)[rpdo.underlying_value()].timeout = timeout;
-    (*_rpdo_msgs)[rpdo.underlying_value()].timepoint = mcu::c28x::chrono::steady_clock::now();
+void RpdoService::register_rpdo(CobRpdo rpdo,
+                                emb::chrono::milliseconds timeout,
+                                void (*handler)(const can_payload&),
+                                can_id id) {
+    const size_t idx = rpdo.underlying_value();
+    rpdo_msgs_[idx].timeout = timeout;
+    rpdo_msgs_[idx].timepoint = emb::chrono::steady_clock::now();
+    rpdo_msgs_[idx].handler = handler;
     if (id != 0) {
         Cob cob = to_cob(rpdo);
-        _server._message_objects[cob.underlying_value()].frame_id = id;
-        _server._can_module->setup_message_object(_server._message_objects[cob.underlying_value()]);
+        server_.message_objects_[cob.underlying_value()].frame_id = id;
+        server_.can_module_.setup_message_object(
+                server_.message_objects_[cob.underlying_value()]);
     }
 }
 
+void RpdoService::recv_frame(Cob cob) {
+    if (cob != Cob::rpdo1 &&
+        cob != Cob::rpdo2 &&
+        cob != Cob::rpdo3 &&
+        cob != Cob::rpdo4) {
+        return;
+    }
 
-void RpdoService::register_rpdo_handler(CobRpdo rpdo, void (*handler)(const can_payload& data)) {
-    assert(_server._ipc_mode == mcu::c28x::ipc::Mode::singlecore || _server._ipc_role == mcu::c28x::ipc::Role::secondary);
+    const CobRpdo rpdo = CobRpdo((cob.underlying_value() - Cob::rpdo1) / 2);
+    const size_t idx = rpdo.underlying_value();
 
-    _handlers[rpdo.underlying_value()] = handler;
-}
-
-
-void RpdoService::recv(Cob cob) {
-    assert(_server._ipc_role == mcu::c28x::ipc::Role::primary);
-
-    if (cob != Cob::rpdo1
-     && cob != Cob::rpdo2
-     && cob != Cob::rpdo3
-     && cob != Cob::rpdo4) { return; }
-
-    CobRpdo rpdo((cob.underlying_value() - static_cast<unsigned int>(Cob::rpdo1)) / 2);
-
-    (*_rpdo_msgs)[rpdo.underlying_value()].timepoint = mcu::c28x::chrono::steady_clock::now();
-    if (_received_flags[rpdo.underlying_value()].is_set()) {
-        _server.on_rpdo_overrun();
+    if (rpdo_msgs_[idx].unhandled) {
+        server_.on_rpdo_overrun();
     } else {
         // there is no unprocessed RPDO of this type
-        _server._can_module->recv(cob.underlying_value(), (*_rpdo_msgs)[rpdo.underlying_value()].payload.data);
-        _received_flags[rpdo.underlying_value()].set();
+        rpdo_msgs_[idx].timepoint = emb::chrono::steady_clock::now();
+        server_.can_module_.recv(cob.underlying_value(),
+                                 rpdo_msgs_[idx].payload.data);
+        rpdo_msgs_[idx].unhandled = true;
     }
 }
 
-
-void RpdoService::handle_received() {
-    assert(_server._ipc_mode == mcu::c28x::ipc::Mode::singlecore || _server._ipc_role == mcu::c28x::ipc::Role::secondary);
-
-    for (size_t i = 0; i < _rpdo_msgs->size(); ++i) {
-        if (!_handlers[i]) { continue; }
-        if (_received_flags[i].is_set()) {
-            _handlers[i]((*_rpdo_msgs)[i].payload);
-            _received_flags[i].clear();
+void RpdoService::handle_recv_frames() {
+    for (size_t i = 0; i < rpdo_msgs_.size(); ++i) {
+        if (rpdo_msgs_[i].unhandled && rpdo_msgs_[i].handler != NULL) {
+            rpdo_msgs_[i].handler(rpdo_msgs_[i].payload);
+            rpdo_msgs_[i].unhandled = false;
         }
     }
 }
 
-
 } // namespace ucanopen
-
 
 #endif

@@ -1,48 +1,48 @@
 #ifdef MCUDRV_C28X
 
-
 #include "tpdo_service.h"
-
 
 namespace ucanopen {
 
-
 TpdoService::TpdoService(impl::Server& server)
-        : _server(server) {
-    for (size_t i = 0; i < _tpdo_msgs.size(); ++i) {
-        _tpdo_msgs[i].period = emb::chrono::milliseconds(0);
-        _tpdo_msgs[i].timepoint = emb::chrono::milliseconds(0);
-        _tpdo_msgs[i].creator = reinterpret_cast<can_payload(*)()>(NULL);
+        : server_(server) {
+    for (size_t i = 0; i < tpdo_msgs_.size(); ++i) {
+        tpdo_msgs_[i].period = emb::chrono::milliseconds(0);
+        tpdo_msgs_[i].timepoint = emb::chrono::milliseconds(0);
+        tpdo_msgs_[i].creator = NULL;
     }
 }
 
-
-void TpdoService::register_tpdo(CobTpdo tpdo, emb::chrono::milliseconds period, can_payload (*creator)()) {
-    assert(_server._ipc_role == mcu::c28x::ipc::Role::primary);
-
-    _tpdo_msgs[tpdo.underlying_value()].period = period;
-    _tpdo_msgs[tpdo.underlying_value()].timepoint = mcu::c28x::chrono::steady_clock::now();
-    _tpdo_msgs[tpdo.underlying_value()].creator = creator;
+void TpdoService::register_tpdo(CobTpdo tpdo,
+                                emb::chrono::milliseconds period,
+                                can_payload (*creator)()) {
+    const size_t idx = tpdo.underlying_value();
+    tpdo_msgs_[idx].period = period;
+    tpdo_msgs_[idx].timepoint = emb::chrono::steady_clock::now();
+    tpdo_msgs_[idx].creator = creator;
 }
-
 
 void TpdoService::send() {
-    assert(_server._ipc_role == mcu::c28x::ipc::Role::primary);
+    emb::chrono::milliseconds now = emb::chrono::steady_clock::now();
 
-    emb::chrono::milliseconds now = mcu::c28x::chrono::steady_clock::now();
-    for (size_t i = 0; i < _tpdo_msgs.size(); ++i) {
-        if (!_tpdo_msgs[i].creator || _tpdo_msgs[i].period.count() <= 0) { continue; }
-        if (now < _tpdo_msgs[i].timepoint + _tpdo_msgs[i].period) { continue; }
+    for (size_t i = 0; i < tpdo_msgs_.size(); ++i) {
+        if (!tpdo_msgs_[i].creator || tpdo_msgs_[i].period.count() <= 0) {
+            continue;
+        }
 
-        can_payload payload = _tpdo_msgs[i].creator();
-        Cob cob = to_cob(CobTpdo(i));
-        _server._can_module->send(cob.underlying_value(), payload.data, cob_data_len[cob.underlying_value()]);
-        _tpdo_msgs[i].timepoint = now;
+        if (now < tpdo_msgs_[i].timepoint + tpdo_msgs_[i].period) {
+            continue;
+        }
+
+        const can_payload payload = tpdo_msgs_[i].creator();
+        const Cob cob = to_cob(CobTpdo(i));
+        server_.can_module_.send(cob.underlying_value(),
+                                 payload.data,
+                                 cob_data_len[cob.underlying_value()]);
+        tpdo_msgs_[i].timepoint = now;
     }
 }
 
-
 } // namespace ucanopen
-
 
 #endif
