@@ -19,6 +19,10 @@ impl::Server::Server(mcu::c28x::can::Module& can_module,
 
 void impl::Server::init_message_objects() {
     for (size_t i = 0; i < cob_count; ++i) {
+        message_objects_.push_back(mcu::c28x::can::MessageObject());
+    }
+
+    for (size_t i = 0; i < cob_count; ++i) {
         message_objects_[i].obj_id = i;
         message_objects_[i].frame_id = calculate_cob_id(Cob(i), this->node_id_);
         message_objects_[i].frame_type = CAN_MSG_FRAME_STD;

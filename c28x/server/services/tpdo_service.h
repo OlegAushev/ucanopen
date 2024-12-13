@@ -14,7 +14,7 @@ private:
     struct Message {
         emb::chrono::milliseconds period;
         emb::chrono::milliseconds timepoint;
-        can_payload(*creator)();
+        can_payload (*creator)();
     };
     emb::array<Message, 4> tpdo_msgs_;
 public:

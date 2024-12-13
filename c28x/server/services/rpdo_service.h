@@ -16,7 +16,7 @@ private:
         emb::chrono::milliseconds timepoint;
         bool unhandled;
         can_payload payload;
-        void(*handler)(const can_payload&);
+        void (*handler)(const can_payload&);
     };
     emb::array<Message, 4> rpdo_msgs_;
 public:

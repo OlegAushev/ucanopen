@@ -5,6 +5,7 @@
 #include <mcudrv/c28x/f2837xd/can/can.h>
 #include <ucanopen/c28x/ucanopen_def.h>
 #include <algorithm>
+#include <emblib/static_vector.h>
 
 namespace ucanopen {
 
@@ -12,6 +13,7 @@ class HeartbeatService;
 class TpdoService;
 class RpdoService;
 class SdoService;
+class Node;
 
 namespace impl {
 
@@ -20,6 +22,7 @@ class Server {
     friend class ucanopen::TpdoService;
     friend class ucanopen::RpdoService;
     friend class ucanopen::SdoService;
+    friend class ucanopen::Node;
 protected:
     NodeId node_id_;
     mcu::c28x::can::Module& can_module_;
@@ -27,7 +30,7 @@ protected:
     size_t dictionary_size_;
     NmtState nmt_state_;
 private:
-    emb::array<mcu::c28x::can::MessageObject, cob_count> message_objects_;
+    emb::static_vector<mcu::c28x::can::MessageObject, 32> message_objects_;
 public:
     Server(mcu::c28x::can::Module& can_module,
            NodeId node_id,

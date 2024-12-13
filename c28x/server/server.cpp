@@ -23,6 +23,8 @@ Server::Server(mcu::c28x::can::Module& can_module,
     rpdo_service = new RpdoService(*this);
     sdo_service = new SdoService(*this);
 
+    node_map_.fill(NULL);
+
     this->can_module_.register_interrupt_callback(on_frame_received);
 
     this->nmt_state_ = NmtState::pre_operational;
@@ -34,6 +36,11 @@ void Server::run() {
     sdo_service->send();
     rpdo_service->handle_recv_frames();
     sdo_service->handle_recv_frames();
+
+    for (size_t i = 0; i < nodes_.size(); ++i) {
+        nodes_[i]->send();
+    }
+
     on_run();
 }
 
@@ -69,6 +76,12 @@ void Server::on_frame_received(mcu::c28x::can::Module* can_module,
         server->sdo_service->recv_frame();
         break;
     default:
+        if ((interrupt_cause - cob_count) < server->node_map_.size()){
+            const size_t idx = interrupt_cause - cob_count;
+            if (server->node_map_[idx] != NULL) {
+                server->node_map_[idx]->recv_frame(interrupt_cause);
+            }
+        }
         break;
     }
 }

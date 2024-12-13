@@ -8,6 +8,7 @@
 #include "services/rpdo_service.h"
 #include "services/sdo_service.h"
 #include "services/tpdo_service.h"
+#include "../node/node.h"
 
 namespace ucanopen {
 
@@ -61,6 +62,20 @@ private:
     static void on_frame_received(mcu::c28x::can::Module* can_module,
                                   uint32_t interrupt_cause,
                                   uint16_t status);
+private:
+    emb::array<Node*, 16> node_map_;
+    emb::static_vector<Node*, 8> nodes_;
+public:
+    void add_node(Node* node) {
+        nodes_.push_back(node);
+    }
+
+    void register_node_cob(Node* node, uint32_t obj_id) {
+        if (obj_id >= node_map_.size()) {
+            return;
+        }
+        node_map_[obj_id] = node;
+    }
 };
 
 } // namespace ucanopen
