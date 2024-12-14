@@ -30,29 +30,24 @@ void RpdoService::register_rpdo(CobRpdo rpdo,
     }
 }
 
-void RpdoService::recv_frame(Cob cob) {
-    if (cob != Cob::rpdo1 &&
-        cob != Cob::rpdo2 &&
-        cob != Cob::rpdo3 &&
-        cob != Cob::rpdo4) {
-        return;
-    }
+void RpdoService::recv(uint32_t obj_id) {
+    assert(obj_id == Cob::rpdo1 ||
+           obj_id == Cob::rpdo2 ||
+           obj_id == Cob::rpdo3 ||
+           obj_id == Cob::rpdo4);
 
-    const CobRpdo rpdo = CobRpdo((cob.underlying_value() - Cob::rpdo1) / 2);
-    const size_t idx = rpdo.underlying_value();
+    const size_t idx = (obj_id - Cob::rpdo1) / 2;
 
     if (rpdo_msgs_[idx].unhandled) {
         server_.on_rpdo_overrun();
     } else {
-        // there is no unprocessed RPDO of this type
         rpdo_msgs_[idx].timepoint = emb::chrono::steady_clock::now();
-        server_.can_module_.recv(cob.underlying_value(),
-                                 rpdo_msgs_[idx].payload.data);
+        server_.can_module_.recv(obj_id, rpdo_msgs_[idx].payload.data);
         rpdo_msgs_[idx].unhandled = true;
     }
 }
 
-void RpdoService::handle_recv_frames() {
+void RpdoService::handle() {
     for (size_t i = 0; i < rpdo_msgs_.size(); ++i) {
         if (rpdo_msgs_[i].unhandled && rpdo_msgs_[i].handler != NULL) {
             rpdo_msgs_[i].handler(rpdo_msgs_[i].payload);

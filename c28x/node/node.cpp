@@ -13,6 +13,8 @@ void Node::register_rx_message(can_id id,
                                uint16_t len,
                                emb::chrono::milliseconds timeout,
                                void (*handler)(const can_payload&)) {
+    assert(!server_.message_objects_.full());
+
     mcu::c28x::can::MessageObject msg_obj;
     msg_obj.obj_id = server_.message_objects_.size();
     msg_obj.frame_id = id;
@@ -40,6 +42,8 @@ void Node::register_tx_message(can_id id,
                                uint16_t len,
                                emb::chrono::milliseconds period,
                                can_payload (*creator)()) {
+    assert(!server_.message_objects_.full());
+
     mcu::c28x::can::MessageObject msg_obj;
     msg_obj.obj_id = server_.message_objects_.size();
     msg_obj.frame_id = id;
@@ -60,7 +64,7 @@ void Node::register_tx_message(can_id id,
     tx_msgs_.push_back(tx_msg);
 }
 
-void Node::recv_frame(uint32_t obj_id) {
+void Node::recv(uint32_t obj_id) {
     size_t idx;
     for (size_t i = 0; i < rx_msgs_.size(); ++i) {
         if (obj_id == rx_msgs_[i].obj_id) {
@@ -69,6 +73,7 @@ void Node::recv_frame(uint32_t obj_id) {
             } else {
                 rx_msgs_[i].timepoint = emb::chrono::steady_clock::now();
                 server_.can_module_.recv(obj_id, rx_msgs_[i].payload.data);
+                rx_msgs_[i].unhandled = true;
                 return;
             }
         }
@@ -92,6 +97,15 @@ void Node::send() {
                                  payload.data,
                                  tx_msgs_[i].len);
         tx_msgs_[i].timepoint = now;
+    }
+}
+
+void Node::handle() {
+    for (size_t i = 0; i < rx_msgs_.size(); ++i) {
+        if (rx_msgs_[i].unhandled && rx_msgs_[i].handler != NULL) {
+            rx_msgs_[i].handler(rx_msgs_[i].payload);
+            rx_msgs_[i].unhandled = false;
+        }
     }
 }
 

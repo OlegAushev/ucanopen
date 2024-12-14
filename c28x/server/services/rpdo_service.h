@@ -25,8 +25,8 @@ public:
                        emb::chrono::milliseconds timeout,
                        void (*handler)(const can_payload&),
                        can_id id = 0);
-    void recv_frame(Cob cob);
-    void handle_recv_frames();
+    void recv(uint32_t obj_id);
+    void handle();
 
     bool good(CobRpdo rpdo) const {
         const size_t idx = rpdo.underlying_value();

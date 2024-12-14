@@ -43,8 +43,9 @@ public:
                              uint16_t len,
                              emb::chrono::milliseconds period,
                              can_payload (*creator)());
-    void recv_frame(uint32_t obj_id);
+    void recv(uint32_t obj_id);
     void send();
+    void handle();
 };
 
 } // namespace ucanopen

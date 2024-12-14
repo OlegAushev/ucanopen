@@ -9,12 +9,14 @@ const ODObjectKey SdoService::restore_default_parameter_key = {0x1011, 0x04};
 SdoService::SdoService(impl::Server& server) : server_(server) {}
 
 
-void SdoService::recv_frame() {
+void SdoService::recv(uint32_t obj_id) {
+    assert(obj_id == Cob::rsdo);
+
     if (rsdo_queue_.full()) {
         server_.on_sdo_overrun();
     } else {
         can_payload payload;
-        server_.can_module_.recv(Cob::rsdo, payload.data);
+        server_.can_module_.recv(obj_id, payload.data);
         rsdo_queue_.push(payload);
     }
 }
@@ -30,7 +32,7 @@ void SdoService::send() {
 }
 
 
-void SdoService::handle_recv_frames() {
+void SdoService::handle() {
     while (!rsdo_queue_.empty()) {
         can_payload rsdo_payload = rsdo_queue_.front();
         ExpeditedSdo rsdo = from_payload<ExpeditedSdo>(rsdo_payload);

@@ -34,11 +34,12 @@ void Server::run() {
     heartbeat_service->send();
     tpdo_service->send();
     sdo_service->send();
-    rpdo_service->handle_recv_frames();
-    sdo_service->handle_recv_frames();
+    rpdo_service->handle();
+    sdo_service->handle();
 
     for (size_t i = 0; i < nodes_.size(); ++i) {
         nodes_[i]->send();
+        nodes_[i]->handle();
     }
 
     on_run();
@@ -70,16 +71,16 @@ void Server::on_frame_received(mcu::c28x::can::Module* can_module,
     case Cob::rpdo2:
     case Cob::rpdo3:
     case Cob::rpdo4:
-        server->rpdo_service->recv_frame(Cob(interrupt_cause));
+        server->rpdo_service->recv(interrupt_cause);
         break;
     case Cob::rsdo:
-        server->sdo_service->recv_frame();
+        server->sdo_service->recv(interrupt_cause);
         break;
     default:
         if ((interrupt_cause - cob_count) < server->node_map_.size()){
             const size_t idx = interrupt_cause - cob_count;
             if (server->node_map_[idx] != NULL) {
-                server->node_map_[idx]->recv_frame(interrupt_cause);
+                server->node_map_[idx]->recv(interrupt_cause);
             }
         }
         break;

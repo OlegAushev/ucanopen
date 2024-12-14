@@ -16,9 +16,9 @@ private:
     emb::queue<can_payload, 16> tsdo_queue_;
 public:
     SdoService(impl::Server& server);
-    void recv_frame();
+    void recv(uint32_t obj_id);
     void send();
-    void handle_recv_frames();
+    void handle();
 private:
     SdoAbortCode read_expedited(const ODEntry* od_entry,
                                 ExpeditedSdo& tsdo,

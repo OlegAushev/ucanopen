@@ -63,10 +63,11 @@ private:
                                   uint32_t interrupt_cause,
                                   uint16_t status);
 private:
-    emb::array<Node*, 16> node_map_;
     emb::static_vector<Node*, 8> nodes_;
+    emb::array<Node*, 16> node_map_;
 public:
     void add_node(Node* node) {
+        assert(!nodes_.full());
         nodes_.push_back(node);
     }
 
