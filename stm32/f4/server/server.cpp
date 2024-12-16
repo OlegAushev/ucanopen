@@ -11,7 +11,7 @@ namespace ucanopen {
 Server::Server(mcu::can::Module& can_module, const ServerConfig& config,
                ODEntry* object_dictionary, size_t object_dictionary_size)
         : impl::Server(can_module, NodeId(config.node_id), object_dictionary, object_dictionary_size)
-        , emb::interrupt_invoker_array<Server, mcu::can::peripheral_count>(this, std::to_underlying(can_module.peripheral()))
+        , emb::singleton_array<Server, mcu::can::peripheral_count>(this, std::to_underlying(can_module.peripheral()))
 {
     heartbeat_service = new HeartbeatService(*this, std::chrono::milliseconds(config.heartbeat_period_ms));
     sync_service = new SyncService(*this, std::chrono::milliseconds(config.sync_period_ms));

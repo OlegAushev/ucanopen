@@ -31,7 +31,7 @@ struct ServerConfig {
 
 class Server
         : public impl::Server,
-          public emb::interrupt_invoker_array<Server, mcu::c28x::can::peripheral_count> {
+          public emb::singleton_array<Server, mcu::c28x::can::peripheral_count> {
 protected:
     HeartbeatService* heartbeat_service;
     TpdoService* tpdo_service;

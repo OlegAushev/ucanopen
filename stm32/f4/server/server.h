@@ -40,7 +40,7 @@ struct ServerConfig {
 };
 
 
-class Server : public impl::Server, public emb::interrupt_invoker_array<Server, mcu::can::peripheral_count> {
+class Server : public impl::Server, public emb::singleton_array<Server, mcu::can::peripheral_count> {
 protected:
     HeartbeatService* heartbeat_service;
     SyncService* sync_service;
@@ -59,7 +59,7 @@ public:
            ODEntry* object_dictionary, size_t object_dictionary_size);
 
     static Server* instance(mcu::can::Peripheral peripheral) {
-        return emb::interrupt_invoker_array<Server, mcu::can::peripheral_count>::instance(std::to_underlying(peripheral));
+        return emb::singleton_array<Server, mcu::can::peripheral_count>::instance(std::to_underlying(peripheral));
     }
 
     void add_node(Node* node_);

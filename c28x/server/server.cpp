@@ -12,7 +12,7 @@ Server::Server(mcu::c28x::can::Module& can_module,
                        NodeId(config.node_id),
                        object_dictionary,
                        object_dictionary_size)
-        , emb::interrupt_invoker_array<Server, mcu::c28x::can::peripheral_count>(
+        , emb::singleton_array<Server, mcu::c28x::can::peripheral_count>(
                 this,
                 can_module.peripheral().underlying_value()) {
     heartbeat_service =
