@@ -42,8 +42,8 @@ public:
 
 class IdleState final : public AbstractState {
 protected:
-    virtual void _initiate(SdoBlockService* _service) override {}
-    virtual void _finalize(SdoBlockService* _service) override {}
+    virtual void initiate(SdoBlockService* _service) override {}
+    virtual void finalize(SdoBlockService* _service) override {}
 public:
     IdleState() : AbstractState(State::idle) {}
     virtual void handle_message(SdoBlockService* _service, const can_payload& payload) override;
@@ -53,8 +53,8 @@ public:
 
 class DownloadState final : public AbstractState {
 protected:
-    virtual void _initiate(SdoBlockService* _service) override {}
-    virtual void _finalize(SdoBlockService* _service) override {}
+    virtual void initiate(SdoBlockService* _service) override {}
+    virtual void finalize(SdoBlockService* _service) override {}
 public:
     DownloadState() : AbstractState(State::download) {}
     virtual void handle_message(SdoBlockService* _service, const can_payload& payload) override;
@@ -64,8 +64,8 @@ public:
 
 class DownloadEndState final : public AbstractState {
 protected:
-    virtual void _initiate(SdoBlockService* _service) override {}
-    virtual void _finalize(SdoBlockService* _service) override {}
+    virtual void initiate(SdoBlockService* _service) override {}
+    virtual void finalize(SdoBlockService* _service) override {}
 public:
     DownloadEndState() : AbstractState(State::download_end) {}
     virtual void handle_message(SdoBlockService* _service, const can_payload& payload) override;

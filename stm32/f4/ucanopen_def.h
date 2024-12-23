@@ -5,13 +5,13 @@
 #if defined(STM32F4xx) || defined(APM32F4xx)
 
 
+#include <mcudrv/generic/can.hpp>
 #include <cstdint>
 #include <cstddef>
 #include <cstring>
 #include <array>
 #include <optional>
 #include <utility>
-#include <emblib/interfaces/can.h>
 
 
 namespace ucanopen {
@@ -138,7 +138,7 @@ enum class CobRpdo : unsigned int {
     rpdo1,
     rpdo2,
     rpdo3,
-    rpdo4,	
+    rpdo4,
 };
 
 
