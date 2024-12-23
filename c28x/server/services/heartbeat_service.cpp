@@ -1,6 +1,6 @@
 #ifdef MCUDRV_C28X
 
-#include "heartbeat_service.h"
+#include <ucanopen/c28x/server/services/heartbeat_service.hpp>
 
 namespace ucanopen {
 

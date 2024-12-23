@@ -2,7 +2,7 @@
 
 #ifdef MCUDRV_C28X
 
-#include "../ucanopen_def.h"
+#include <ucanopen/c28x/ucanopen_def.hpp>
 #include <emblib/chrono.hpp>
 #include <emblib/static_vector.hpp>
 

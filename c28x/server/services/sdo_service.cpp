@@ -1,6 +1,6 @@
 #ifdef MCUDRV_C28X
 
-#include "sdo_service.h"
+#include <ucanopen/c28x/server/services/sdo_service.hpp>
 
 namespace ucanopen {
 

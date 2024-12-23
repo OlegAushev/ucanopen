@@ -2,13 +2,13 @@
 
 #ifdef MCUDRV_C28X
 
-#include "../ucanopen_def.h"
-#include "impl/impl_server.h"
-#include "services/heartbeat_service.h"
-#include "services/rpdo_service.h"
-#include "services/sdo_service.h"
-#include "services/tpdo_service.h"
-#include "../node/node.h"
+#include <ucanopen/c28x/ucanopen_def.hpp>
+#include <ucanopen/c28x/server/impl/impl_server.hpp>
+#include <ucanopen/c28x/server/services/heartbeat_service.hpp>
+#include <ucanopen/c28x/server/services/rpdo_service.hpp>
+#include <ucanopen/c28x/server/services/sdo_service.hpp>
+#include <ucanopen/c28x/server/services/tpdo_service.hpp>
+#include <ucanopen/c28x/node/node.hpp>
 
 namespace ucanopen {
 

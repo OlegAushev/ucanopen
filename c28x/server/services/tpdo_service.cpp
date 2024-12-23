@@ -1,6 +1,6 @@
 #ifdef MCUDRV_C28X
 
-#include "tpdo_service.h"
+#include <ucanopen/c28x/server/services/tpdo_service.hpp>
 
 namespace ucanopen {
 

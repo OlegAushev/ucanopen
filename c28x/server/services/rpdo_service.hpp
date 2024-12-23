@@ -2,7 +2,7 @@
 
 #ifdef MCUDRV_C28X
 
-#include "../impl/impl_server.h"
+#include <ucanopen/c28x/server/impl/impl_server.hpp>
 #include <emblib/chrono.hpp>
 
 namespace ucanopen {

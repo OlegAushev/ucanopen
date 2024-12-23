@@ -1,7 +1,7 @@
 #ifdef MCUDRV_C28X
 
-#include "node.h"
-#include "../server/server.h"
+#include <ucanopen/c28x/node/node.hpp>
+#include <ucanopen/c28x/server/server.hpp>
 
 namespace ucanopen {
 

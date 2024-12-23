@@ -1,6 +1,6 @@
 #ifdef MCUDRV_C28X
 
-#include "rpdo_service.h"
+#include <ucanopen/c28x/server/services/rpdo_service.hpp>
 
 namespace ucanopen {
 
