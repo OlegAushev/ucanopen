@@ -4,7 +4,7 @@
 #ifdef MCUDRV_C28X
 
 
-#include <emblib/interfaces/can.hpp>
+#include <mcudrv/generic/can.hpp>
 #include <emblib/core.hpp>
 #include <emblib/optional.hpp>
 #include <emblib/pair.hpp>
