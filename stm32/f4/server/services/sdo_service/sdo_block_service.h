@@ -7,7 +7,7 @@
 
 #include <ucanopen/stm32/f4/server/impl/impl_server.h>
 #include <ucanopen/stm32/f4/server/services/sdo_service/sdo_block_service_def.h>
-#include <emblib/fsm.h>
+#include <emblib/fsm.hpp>
 
 
 namespace ucanopen {

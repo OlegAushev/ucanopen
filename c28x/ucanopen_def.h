@@ -4,10 +4,10 @@
 #ifdef MCUDRV_C28X
 
 
-#include <emblib/interfaces/can.h>
-#include <emblib/core.h>
-#include <emblib/optional.h>
-#include <emblib/pair.h>
+#include <emblib/interfaces/can.hpp>
+#include <emblib/core.hpp>
+#include <emblib/optional.hpp>
+#include <emblib/pair.hpp>
 #include <cstring>
 
 

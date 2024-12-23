@@ -5,7 +5,7 @@
 #include <mcudrv/c28x/f2837xd/can/can.h>
 #include <ucanopen/c28x/ucanopen_def.h>
 #include <algorithm>
-#include <emblib/static_vector.h>
+#include <emblib/static_vector.hpp>
 
 namespace ucanopen {
 

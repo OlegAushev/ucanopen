@@ -7,7 +7,7 @@
 
 #include "../impl/impl_server.h"
 #include <mcudrv/stm32/h7/chrono/chrono.h>
-#include <emblib/algorithm.h>
+#include <emblib/algorithm.hpp>
 
 
 namespace ucanopen {

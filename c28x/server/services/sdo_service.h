@@ -3,8 +3,8 @@
 #ifdef MCUDRV_C28X
 
 #include "../impl/impl_server.h"
-#include <emblib/algorithm.h>
-#include <emblib/queue.h>
+#include <emblib/algorithm.hpp>
+#include <emblib/queue.hpp>
 
 namespace ucanopen {
 
