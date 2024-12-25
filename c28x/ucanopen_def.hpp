@@ -7,8 +7,8 @@
 #include <mcudrv/generic/can.hpp>
 #include <emblib/core.hpp>
 #include <emblib/optional.hpp>
-#include <emblib/pair.hpp>
 #include <cstring>
+#include <utility>
 
 
 namespace ucanopen {
@@ -256,12 +256,12 @@ enum ODObjectAccessPermission {
 
 
 // Used in OD-entries which doesn't have direct access to data through pointer.
-#define OD_NO_DIRECT_ACCESS emb::pair<uint32_t*, uint32_t**>(NULL, NULL)
+#define OD_NO_DIRECT_ACCESS std::pair<uint32_t*, uint32_t**>(NULL, NULL)
 
 
 // Used in OD-entries which have direct access to data through pointer.
-#define OD_PTR(ptr) emb::pair<uint32_t*, uint32_t**>(reinterpret_cast<uint32_t*>(ptr), NULL)
-#define OD_DPTR(dptr) emb::pair<uint32_t*, uint32_t**>(NULL, reinterpret_cast<uint32_t**>(dptr))
+#define OD_PTR(ptr) std::pair<uint32_t*, uint32_t**>(reinterpret_cast<uint32_t*>(ptr), NULL)
+#define OD_DPTR(dptr) std::pair<uint32_t*, uint32_t**>(NULL, reinterpret_cast<uint32_t**>(dptr))
 
 
 // Used in OD-entries which don't have read access to data through function.
@@ -291,7 +291,7 @@ struct ODObject {
     ODObjectAccessPermission access_permission;
     ODObjectDataType data_type;
     emb::optional<ExpeditedSdoData> default_value;
-    emb::pair<uint32_t*, uint32_t**> ptr;
+    std::pair<uint32_t*, uint32_t**> ptr;
     SdoAbortCode (*read_func)(ExpeditedSdoData& retval);
     SdoAbortCode (*write_func)(ExpeditedSdoData val);
 
