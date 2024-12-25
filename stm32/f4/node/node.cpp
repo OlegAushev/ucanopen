@@ -22,7 +22,7 @@ void Node::register_rx_message(CAN_FilterConfig_T& filter, std::chrono::millisec
     auto attr = _can_module.register_rxmessage(filter);
     _rx_messages.push_back({.attr = attr,
                             .timeout = timeout,
-                            .timepoint = mcu::chrono::steady_clock::now(),
+                            .timepoint = emb::chrono::steady_clock::now(),
                             .is_unhandled = false,
                             .frame= {},
                             .handler = handler});
@@ -31,7 +31,7 @@ void Node::register_rx_message(CAN_FilterConfig_T& filter, std::chrono::millisec
 
 void Node::register_tx_message(can_id id, uint8_t len, std::chrono::milliseconds period, can_payload (*creator)()) {
     _tx_messages.push_back({.period = period,
-                            .timepoint = mcu::chrono::steady_clock::now(),
+                            .timepoint = emb::chrono::steady_clock::now(),
                             .id = id,
                             .len = len,
                             .creator = creator});
@@ -39,7 +39,7 @@ void Node::register_tx_message(can_id id, uint8_t len, std::chrono::milliseconds
 
 
 void Node::send() {
-    auto now = mcu::chrono::steady_clock::now();
+    auto now = emb::chrono::steady_clock::now();
     for (auto& message : _tx_messages) {
         if (message.period.count() <= 0) { continue; }
         if (now < message.timepoint + message.period) { continue; }
@@ -67,7 +67,7 @@ FrameRecvStatus Node::recv_frame(const ucan::RxMessageAttribute& attr, const can
         return FrameRecvStatus::attr_mismatch;
     }
 
-    received_msg->timepoint = mcu::chrono::steady_clock::now();
+    received_msg->timepoint = emb::chrono::steady_clock::now();
     received_msg->frame = frame;
     received_msg->is_unhandled = true;
     return FrameRecvStatus::success;
@@ -85,7 +85,7 @@ void Node::handle_recv_frames() {
 
 
 bool Node::connection_ok() {
-    auto now = mcu::chrono::steady_clock::now();
+    auto now = emb::chrono::steady_clock::now();
     for (const auto& msg : _rx_messages) {
         if (now > msg.timepoint + msg.timeout) {
             return false;

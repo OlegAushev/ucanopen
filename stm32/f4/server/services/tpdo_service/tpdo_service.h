@@ -6,11 +6,7 @@
 
 
 #include <ucanopen/stm32/f4/server/impl/impl_server.h>
-#if defined(MCUDRV_STM32)
-#include <mcudrv/stm32/f4/chrono/chrono.h>
-#elif defined(MCUDRV_APM32)
-#include <mcudrv/apm32/f4/chrono/chrono.h>
-#endif
+#include <emblib/chrono.hpp>
 
 
 namespace ucanopen {

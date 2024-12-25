@@ -109,7 +109,7 @@ inline SdoAbortCode get_syslog_message(ExpeditedSdoData& retval) {
 }
 
 inline SdoAbortCode get_uptime(ExpeditedSdoData& retval) {
-    retval.f32 = float(mcu::chrono::steady_clock::now().count()) / 1000.f;
+    retval.f32 = float(emb::chrono::steady_clock::now().count()) / 1000.f;
     return SdoAbortCode::no_error;
 }
 

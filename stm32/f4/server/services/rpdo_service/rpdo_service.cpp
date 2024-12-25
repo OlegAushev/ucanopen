@@ -53,7 +53,7 @@ void RpdoService::register_rpdo(CobRpdo rpdo, std::chrono::milliseconds timeout,
     auto idx = std::to_underlying(rpdo);
     _rpdo_msgs[idx].attr = _server._can_module.register_rxmessage(filter);
     _rpdo_msgs[idx].timeout = timeout;
-    _rpdo_msgs[idx].timepoint = mcu::chrono::steady_clock::now();
+    _rpdo_msgs[idx].timepoint = emb::chrono::steady_clock::now();
     _rpdo_msgs[idx].handler = handler;
 }
 
@@ -76,7 +76,7 @@ FrameRecvStatus RpdoService::recv_frame(const ucan::RxMessageAttribute& attr, co
         return FrameRecvStatus::attr_mismatch;
     }
 
-    received_rpdo->timepoint = mcu::chrono::steady_clock::now();
+    received_rpdo->timepoint = emb::chrono::steady_clock::now();
     received_rpdo->frame = frame;
     received_rpdo->is_unhandled = true;
     return FrameRecvStatus::success;

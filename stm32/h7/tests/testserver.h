@@ -165,10 +165,10 @@ public:
         // if (syslog::has_warning(sys::Warning::can_bus_connection_lost)) {
         //     if (!warning_detected) {
         //         warning_detected = true;
-        //         warning_timepoint = mcu::chrono::steady_clock::now();
+        //         warning_timepoint = emb::chrono::steady_clock::now();
         //     }
 
-        //     if (mcu::chrono::steady_clock::now() > warning_timepoint + std::chrono::milliseconds(5000)) {
+        //     if (emb::chrono::steady_clock::now() > warning_timepoint + std::chrono::milliseconds(5000)) {
         //         syslog::set_error(sys::Error::can_bus_connection_lost);
         //     }
         // } else {
@@ -184,14 +184,14 @@ private:
 
     static can_payload _create_tpdo1() {
         CobTpdo1 tpdo;
-        tpdo.clock = mcu::chrono::steady_clock::now().count();
+        tpdo.clock = emb::chrono::steady_clock::now().count();
         return to_payload<CobTpdo1>(tpdo);
     }
 
     static can_payload _create_tpdo2() {
         CobTpdo2 tpdo;
-        tpdo.seconds = static_cast<uint32_t>(mcu::chrono::steady_clock::now().count() / 1000);
-        tpdo.milliseconds = static_cast<uint32_t>(mcu::chrono::steady_clock::now().count() - 1000 * tpdo.seconds);
+        tpdo.seconds = static_cast<uint32_t>(emb::chrono::steady_clock::now().count() / 1000);
+        tpdo.milliseconds = static_cast<uint32_t>(emb::chrono::steady_clock::now().count() - 1000 * tpdo.seconds);
         return to_payload<CobTpdo2>(tpdo);
     }
 

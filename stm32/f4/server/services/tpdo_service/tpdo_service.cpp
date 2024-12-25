@@ -21,13 +21,13 @@ TpdoService::TpdoService(impl::Server& server)
 
 void TpdoService::register_tpdo(CobTpdo tpdo, std::chrono::milliseconds period, can_payload (*creator)()) {
     _tpdo_msgs[std::to_underlying(tpdo)].period = period;
-    _tpdo_msgs[std::to_underlying(tpdo)].timepoint = mcu::chrono::steady_clock::now();
+    _tpdo_msgs[std::to_underlying(tpdo)].timepoint = emb::chrono::steady_clock::now();
     _tpdo_msgs[std::to_underlying(tpdo)].creator = creator;
 }
 
 
 void TpdoService::send() {
-    auto now = mcu::chrono::steady_clock::now();
+    auto now = emb::chrono::steady_clock::now();
     for (auto& msg : _tpdo_msgs) {
         if (!msg.creator || msg.period.count() <= 0) { continue; }
         if (now < msg.timepoint + msg.period) { continue; }

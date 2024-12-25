@@ -6,11 +6,7 @@
 
 
 #include <ucanopen/stm32/f4/server/impl/impl_server.h>
-#if defined(MCUDRV_STM32)
-#include <mcudrv/stm32/f4/chrono/chrono.h>
-#elif defined(MCUDRV_APM32)
-#include <mcudrv/apm32/f4/chrono/chrono.h>
-#endif
+#include <emblib/chrono.hpp>
 
 
 namespace ucanopen {
@@ -42,7 +38,7 @@ public:
         if (_rpdo_msgs[std::to_underlying(rpdo)].timeout.count() <= 0) {
             return true;
         }
-        if (mcu::chrono::steady_clock::now() <= _rpdo_msgs[std::to_underlying(rpdo)].timepoint + _rpdo_msgs[std::to_underlying(rpdo)].timeout) {
+        if (emb::chrono::steady_clock::now() <= _rpdo_msgs[std::to_underlying(rpdo)].timepoint + _rpdo_msgs[std::to_underlying(rpdo)].timeout) {
             return true;
         }
         return false;

@@ -38,7 +38,7 @@ public:
         if (_rpdo_msgs[std::to_underlying(rpdo)].timeout.count() <= 0) {
             return true;
         }
-        if (mcu::chrono::steady_clock::now() <= _rpdo_msgs[std::to_underlying(rpdo)].timepoint + _rpdo_msgs[std::to_underlying(rpdo)].timeout) {
+        if (emb::chrono::steady_clock::now() <= _rpdo_msgs[std::to_underlying(rpdo)].timepoint + _rpdo_msgs[std::to_underlying(rpdo)].timeout) {
             return true;
         }
         return false;

@@ -12,21 +12,21 @@ SyncService::SyncService(impl::Server& server, std::chrono::milliseconds period)
         : _server(server)
         , _period(period) {
     _id = calculate_cob_id(Cob::sync, _server.node_id());
-    _timepoint = mcu::chrono::steady_clock::now();
+    _timepoint = emb::chrono::steady_clock::now();
 }
 
 
 void SyncService::send() {
     if (_period.count() <= 0) { return; }
 
-    auto now = mcu::chrono::steady_clock::now();
+    auto now = emb::chrono::steady_clock::now();
     if (now >= _timepoint + _period) {
         can_payload payload = {};
         _server._can_module.put_frame({_id, _len, payload});
         _timepoint = now;
     }
 }
-    
+
 
 } // namespace ucanopen
 
