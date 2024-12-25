@@ -18,7 +18,7 @@ private:
     impl::Server& _server;
 
     struct RxMessage {
-        mcu::can::RxMessageAttribute attr;
+        ucan::RxMessageAttribute attr;
         bool is_unhandled;
         can_frame frame;
     } _rsdo;
@@ -30,8 +30,8 @@ private:
     } _tsdo;
 public:
     SdoService(impl::Server& server);
-    virtual std::vector<mcu::can::RxMessageAttribute> get_rx_attr() const override;
-    virtual FrameRecvStatus recv_frame(const mcu::can::RxMessageAttribute& attr, const can_frame& frame) override;
+    virtual std::vector<ucan::RxMessageAttribute> get_rx_attr() const override;
+    virtual FrameRecvStatus recv_frame(const ucan::RxMessageAttribute& attr, const can_frame& frame) override;
     virtual void handle_recv_frames() override;
     void send();
 private:

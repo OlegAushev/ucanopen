@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <vector>
 
+namespace ucan = mcu::stm32::can;
 
 namespace ucanopen {
 
@@ -34,16 +35,16 @@ class Server {
     friend class ucanopen::Node;
 protected:
     NodeId _node_id;
-    mcu::can::Module& _can_module;
+    ucan::Module& _can_module;
 
     ODEntry* _dictionary;
     size_t _dictionary_size;
 
     NmtState _nmt_state;
 public:
-    Server(mcu::can::Module& can_module, NodeId node_id,
+    Server(ucan::Module& can_module, NodeId node_id,
            ODEntry* object_dictionary, size_t object_dictionary_size);
-    
+
     NodeId node_id() const { return _node_id; }
     NmtState nmt_state() const { return _nmt_state; }
 private:
@@ -69,8 +70,8 @@ namespace impl {
 
 class FrameReceiver {
 public:
-    virtual std::vector<mcu::can::RxMessageAttribute> get_rx_attr() const = 0;
-    virtual FrameRecvStatus recv_frame(const mcu::can::RxMessageAttribute&, const can_frame&) = 0;
+    virtual std::vector<ucan::RxMessageAttribute> get_rx_attr() const = 0;
+    virtual FrameRecvStatus recv_frame(const ucan::RxMessageAttribute&, const can_frame&) = 0;
     virtual void handle_recv_frames() = 0;
 };
 

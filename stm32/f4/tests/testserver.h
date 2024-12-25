@@ -144,7 +144,7 @@ const inline ucanopen::ServerConfig config2 = {
 
 class Server : public ucanopen::Server {
 public:
-    Server(mcu::can::Module& can_module, const ServerConfig& config)
+    Server(ucan::Module& can_module, const ServerConfig& config)
             : ucanopen::Server(can_module, config, object_dictionary, object_dictionary_size) {
         tpdo_service->register_tpdo(CobTpdo::tpdo1, std::chrono::milliseconds(config.tpdo1_period_ms), _create_tpdo1);
         tpdo_service->register_tpdo(CobTpdo::tpdo2, std::chrono::milliseconds(config.tpdo2_period_ms), _create_tpdo2);

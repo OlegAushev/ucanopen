@@ -36,17 +36,17 @@ SdoService::SdoService(impl::Server& server)
         .FDFormat = FDCAN_CLASSIC_CAN,
         .TxEventFifoControl = FDCAN_NO_TX_EVENTS,
         .MessageMarker = 0
-    };    
+    };
     _tsdo.not_sent = false;
 }
 
 
-std::vector<mcu::can::RxMessageAttribute> SdoService::get_rx_attr() const {
+std::vector<ucan::RxMessageAttribute> SdoService::get_rx_attr() const {
     return {_rsdo.attr};
 }
 
 
-FrameRecvStatus SdoService::recv_frame(const mcu::can::RxMessageAttribute& attr, const can_frame& frame) {
+FrameRecvStatus SdoService::recv_frame(const ucan::RxMessageAttribute& attr, const can_frame& frame) {
     if (attr != _rsdo.attr) {
         return FrameRecvStatus::attr_mismatch;
     }

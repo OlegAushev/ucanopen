@@ -18,10 +18,10 @@ class Server;
 
 class Node : public impl::FrameReceiver {
 private:
-    mcu::can::Module& _can_module;
+    ucan::Module& _can_module;
 
     struct RxMessage {
-        mcu::can::RxMessageAttribute attr;
+        ucan::RxMessageAttribute attr;
         std::chrono::milliseconds timeout;
         std::chrono::milliseconds timepoint;
         bool is_unhandled;
@@ -47,8 +47,8 @@ public:
 #endif
     void register_tx_message(can_id id, uint8_t len, std::chrono::milliseconds period, can_payload (*creator)());
 
-    virtual std::vector<mcu::can::RxMessageAttribute> get_rx_attr() const override;
-    virtual FrameRecvStatus recv_frame(const mcu::can::RxMessageAttribute& attr, const can_frame& frame) override;
+    virtual std::vector<ucan::RxMessageAttribute> get_rx_attr() const override;
+    virtual FrameRecvStatus recv_frame(const ucan::RxMessageAttribute& attr, const can_frame& frame) override;
     virtual void handle_recv_frames() override;
 
     void send();

@@ -40,7 +40,7 @@ struct ServerConfig {
 };
 
 
-class Server : public impl::Server, public emb::singleton_array<Server, mcu::can::peripheral_count> {
+class Server : public impl::Server, public emb::singleton_array<Server, ucan::peripheral_count> {
 protected:
     HeartbeatService* heartbeat_service;
     SyncService* sync_service;
@@ -49,17 +49,17 @@ protected:
     SdoService* sdo_service;
 
     std::vector<Node*> nodes;
-    std::vector<std::pair<mcu::can::RxMessageAttribute, impl::FrameReceiver*>> _attr_map;
+    std::vector<std::pair<ucan::RxMessageAttribute, impl::FrameReceiver*>> _attr_map;
     virtual void on_run() {}
 
     uint64_t _errcount = 0;
     std::bitset<32> _connection_status = 0;
 public:
-    Server(mcu::can::Module& can_module, const ServerConfig& config,
+    Server(ucan::Module& can_module, const ServerConfig& config,
            ODEntry* object_dictionary, size_t object_dictionary_size);
 
-    static Server* instance(mcu::can::Peripheral peripheral) {
-        return emb::singleton_array<Server, mcu::can::peripheral_count>::instance(std::to_underlying(peripheral));
+    static Server* instance(ucan::Peripheral peripheral) {
+        return emb::singleton_array<Server, ucan::peripheral_count>::instance(std::to_underlying(peripheral));
     }
 
     void add_node(Node* node_);
@@ -67,7 +67,7 @@ public:
     void stop();
     void run();
 
-    static void on_frame_received(mcu::can::Module& can_module, const mcu::can::RxMessageAttribute& attr, const can_frame& frame);
+    static void on_frame_received(ucan::Module& can_module, const ucan::RxMessageAttribute& attr, const can_frame& frame);
 };
 
 

@@ -8,10 +8,10 @@
 namespace ucanopen {
 
 
-Server::Server(mcu::can::Module& can_module, const ServerConfig& config,
+Server::Server(ucan::Module& can_module, const ServerConfig& config,
                ODEntry* object_dictionary, size_t object_dictionary_size)
         : impl::Server(can_module, NodeId(config.node_id), object_dictionary, object_dictionary_size)
-        , emb::singleton_array<Server, mcu::can::peripheral_count>(this, std::to_underlying(can_module.peripheral()))
+        , emb::singleton_array<Server, ucan::peripheral_count>(this, std::to_underlying(can_module.peripheral()))
 {
     heartbeat_service = new HeartbeatService(*this, std::chrono::milliseconds(config.heartbeat_period_ms));
     sync_service = new SyncService(*this, std::chrono::milliseconds(config.sync_period_ms));
@@ -84,7 +84,7 @@ void Server::run() {
 }
 
 
-void Server::on_frame_received(mcu::can::Module& can_module, const mcu::can::RxMessageAttribute& attr, const can_frame& frame) {
+void Server::on_frame_received(ucan::Module& can_module, const ucan::RxMessageAttribute& attr, const can_frame& frame) {
     auto server = Server::instance(can_module.peripheral());
     auto receiver = std::find_if(server->_attr_map.begin(), server->_attr_map.end(),
                                  [attr](const auto& item){ return item.first == attr; });

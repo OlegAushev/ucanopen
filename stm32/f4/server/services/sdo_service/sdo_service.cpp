@@ -44,12 +44,12 @@ SdoService::SdoService(impl::Server& server)
 }
 
 
-std::vector<mcu::can::RxMessageAttribute> SdoService::get_rx_attr() const {
+std::vector<ucan::RxMessageAttribute> SdoService::get_rx_attr() const {
     return {_rsdo_rxattr};
 }
 
 
-FrameRecvStatus SdoService::recv_frame(const mcu::can::RxMessageAttribute& attr, const can_frame& frame) {
+FrameRecvStatus SdoService::recv_frame(const ucan::RxMessageAttribute& attr, const can_frame& frame) {
     if (attr != _rsdo_rxattr) {
         return FrameRecvStatus::attr_mismatch;
     }

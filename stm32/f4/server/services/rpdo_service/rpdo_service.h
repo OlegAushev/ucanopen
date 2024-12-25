@@ -21,7 +21,7 @@ private:
     impl::Server& _server;
 
     struct Message {
-        mcu::can::RxMessageAttribute attr;
+        ucan::RxMessageAttribute attr;
         std::chrono::milliseconds timeout;
         std::chrono::milliseconds timepoint;
         bool is_unhandled;
@@ -31,11 +31,11 @@ private:
     std::array<Message, 4> _rpdo_msgs;
 public:
     RpdoService(impl::Server& server);
-    
+
     void register_rpdo(CobRpdo rpdo, std::chrono::milliseconds timeout, void(*handler)(const can_payload&), can_id id = 0);
-    
-    virtual std::vector<mcu::can::RxMessageAttribute> get_rx_attr() const override;
-    virtual FrameRecvStatus recv_frame(const mcu::can::RxMessageAttribute& attr, const can_frame& frame) override;
+
+    virtual std::vector<ucan::RxMessageAttribute> get_rx_attr() const override;
+    virtual FrameRecvStatus recv_frame(const ucan::RxMessageAttribute& attr, const can_frame& frame) override;
     virtual void handle_recv_frames() override;
 
     bool good(CobRpdo rpdo) {

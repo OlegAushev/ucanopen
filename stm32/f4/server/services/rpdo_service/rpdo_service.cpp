@@ -58,8 +58,8 @@ void RpdoService::register_rpdo(CobRpdo rpdo, std::chrono::milliseconds timeout,
 }
 
 
-std::vector<mcu::can::RxMessageAttribute> RpdoService::get_rx_attr() const {
-    std::vector<mcu::can::RxMessageAttribute> attributes;
+std::vector<ucan::RxMessageAttribute> RpdoService::get_rx_attr() const {
+    std::vector<ucan::RxMessageAttribute> attributes;
     for (const auto& rpdo : _rpdo_msgs) {
         if (rpdo.handler != nullptr) {
             attributes.push_back(rpdo.attr);
@@ -69,7 +69,7 @@ std::vector<mcu::can::RxMessageAttribute> RpdoService::get_rx_attr() const {
 }
 
 
-FrameRecvStatus RpdoService::recv_frame(const mcu::can::RxMessageAttribute& attr, const can_frame& frame) {
+FrameRecvStatus RpdoService::recv_frame(const ucan::RxMessageAttribute& attr, const can_frame& frame) {
     auto received_rpdo = std::find_if(_rpdo_msgs.begin(), _rpdo_msgs.end(),
                                       [attr](const auto& rpdo) { return rpdo.attr == attr; });
     if (received_rpdo == _rpdo_msgs.end()) {
