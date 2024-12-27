@@ -38,7 +38,7 @@ protected:
     RpdoService* rpdo_service;
     SdoService* sdo_service;
 
-    virtual void on_run() {}
+    virtual void inspect() {}
     virtual void on_can_bus_error() {}
 public:
     Server(mcu::c28x::can::Module& can_module,

@@ -46,6 +46,9 @@ public:
     void recv(uint32_t obj_id);
     void send();
     void handle();
+
+    virtual void inspect() {}
+    bool good() const;
 };
 
 } // namespace ucanopen

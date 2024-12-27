@@ -18,7 +18,11 @@ void Node::register_rx_message(can_id id,
     mcu::c28x::can::MessageObject msg_obj;
     msg_obj.obj_id = server_.message_objects_.size();
     msg_obj.frame_id = id;
-    msg_obj.frame_type = CAN_MSG_FRAME_STD;
+    if (id <= 0x7FF) {
+        msg_obj.frame_type = CAN_MSG_FRAME_STD;
+    } else {
+        msg_obj.frame_type = CAN_MSG_FRAME_EXT;
+    }
     msg_obj.obj_type = CAN_MSG_OBJ_TYPE_RX;
     msg_obj.frame_idmask = 0;
     msg_obj.flags = CAN_MSG_OBJ_RX_INT_ENABLE;
@@ -47,7 +51,11 @@ void Node::register_tx_message(can_id id,
     mcu::c28x::can::MessageObject msg_obj;
     msg_obj.obj_id = server_.message_objects_.size();
     msg_obj.frame_id = id;
-    msg_obj.frame_type = CAN_MSG_FRAME_STD;
+    if (id <= 0x7FF) {
+        msg_obj.frame_type = CAN_MSG_FRAME_STD;
+    } else {
+        msg_obj.frame_type = CAN_MSG_FRAME_EXT;
+    }
     msg_obj.obj_type = CAN_MSG_OBJ_TYPE_TX;
     msg_obj.frame_idmask = 0;
     msg_obj.flags = CAN_MSG_OBJ_NO_FLAGS;
@@ -107,6 +115,16 @@ void Node::handle() {
             rx_msgs_[i].unhandled = false;
         }
     }
+}
+
+bool Node::good() const {
+    emb::chrono::milliseconds now = emb::chrono::steady_clock::now();
+    for (size_t i = 0; i < rx_msgs_.size(); ++i) {
+        if (now > rx_msgs_[i].timepoint + rx_msgs_[i].timeout) {
+            return false;
+        }
+    }
+    return true;
 }
 
 } // namespace ucanopen

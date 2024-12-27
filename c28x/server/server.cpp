@@ -36,13 +36,14 @@ void Server::run() {
     sdo_service->send();
     rpdo_service->handle();
     sdo_service->handle();
+    inspect();
 
     for (size_t i = 0; i < nodes_.size(); ++i) {
         nodes_[i]->send();
         nodes_[i]->handle();
+        nodes_[i]->inspect();
     }
 
-    on_run();
 }
 
 
