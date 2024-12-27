@@ -1,23 +1,21 @@
 #if defined(MCUDRV_STM32) || defined(MCUDRV_APM32)
 #if defined(STM32F4xx) || defined(APM32F4xx)
 
-
-#include "heartbeat_service.h"
-
+#include <ucanopen/stm32/f4/server/services/heartbeat_service/heartbeat_service.hpp>
 
 namespace ucanopen {
 
-
-HeartbeatService::HeartbeatService(impl::Server& server, std::chrono::milliseconds period)
-        : _server(server)
-        , _period(period) {
+HeartbeatService::HeartbeatService(impl::Server& server,
+                                   std::chrono::milliseconds period)
+        : _server(server), _period(period) {
     _id = calculate_cob_id(Cob::heartbeat, _server.node_id());
     _timepoint = emb::chrono::steady_clock::now();
 }
 
-
 void HeartbeatService::send() {
-    if (_period.count() <= 0) { return; }
+    if (_period.count() <= 0) {
+        return;
+    }
 
     auto now = emb::chrono::steady_clock::now();
     if (now >= _timepoint + _period) {
@@ -28,9 +26,7 @@ void HeartbeatService::send() {
     }
 }
 
-
 } // namespace ucanopen
-
 
 #endif
 #endif

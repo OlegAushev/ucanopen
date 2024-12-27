@@ -1,20 +1,24 @@
 #if defined(MCUDRV_STM32) || defined(MCUDRV_APM32)
 #if defined(STM32F4xx) || defined(APM32F4xx)
 
-
-#include "server.h"
-
+#include <ucanopen/stm32/f4/server/server.hpp>
 
 namespace ucanopen {
 
-
-Server::Server(ucan::Module& can_module, const ServerConfig& config,
-               ODEntry* object_dictionary, size_t object_dictionary_size)
-        : impl::Server(can_module, NodeId(config.node_id), object_dictionary, object_dictionary_size)
-        , emb::singleton_array<Server, ucan::peripheral_count>(this, std::to_underlying(can_module.peripheral()))
-{
-    heartbeat_service = new HeartbeatService(*this, std::chrono::milliseconds(config.heartbeat_period_ms));
-    sync_service = new SyncService(*this, std::chrono::milliseconds(config.sync_period_ms));
+Server::Server(ucan::Module& can_module,
+               const ServerConfig& config,
+               ODEntry* object_dictionary,
+               size_t object_dictionary_size)
+        : impl::Server(can_module,
+                       NodeId(config.node_id),
+                       object_dictionary,
+                       object_dictionary_size),
+          emb::singleton_array<Server, ucan::peripheral_count>(
+                  this, std::to_underlying(can_module.peripheral())) {
+    heartbeat_service = new HeartbeatService(
+            *this, std::chrono::milliseconds(config.heartbeat_period_ms));
+    sync_service = new SyncService(
+            *this, std::chrono::milliseconds(config.sync_period_ms));
     tpdo_service = new TpdoService(*this);
     rpdo_service = new RpdoService(*this);
     sdo_service = new SdoService(*this);
@@ -23,20 +27,17 @@ Server::Server(ucan::Module& can_module, const ServerConfig& config,
     _attr_map.reserve(64);
 
 #if defined(MCUDRV_STM32)
-    can_module.init_interrupts(CAN_IT_RX_FIFO0_MSG_PENDING | CAN_IT_RX_FIFO1_MSG_PENDING | CAN_IT_TX_MAILBOX_EMPTY);
+    can_module.init_interrupts(CAN_IT_RX_FIFO0_MSG_PENDING |
+                               CAN_IT_RX_FIFO1_MSG_PENDING |
+                               CAN_IT_TX_MAILBOX_EMPTY);
 #elif defined(MCUDRV_APM32)
     can_module.init_interrupts(CAN_INT_F0MP | CAN_INT_F1MP | CAN_INT_TXME);
 #endif
 
-
     _nmt_state = NmtState::pre_operational;
 }
 
-
-void Server::add_node(Node* node_) {
-    nodes.push_back(node_);
-}
-
+void Server::add_node(Node* node_) { nodes.push_back(node_); }
 
 void Server::start() {
     if (_attr_map.empty()) {
@@ -60,13 +61,11 @@ void Server::start() {
     _nmt_state = NmtState::operational;
 }
 
-
 void Server::stop() {
     _can_module.stop();
     _can_module.disable_interrupts();
     _nmt_state = NmtState::stopped;
 }
-
 
 void Server::run() {
     heartbeat_service->send();
@@ -86,10 +85,13 @@ void Server::run() {
     on_run();
 }
 
-
-void Server::on_frame_received(ucan::Module& can_module, const ucan::RxMessageAttribute& attr, const can_frame& frame) {
-    auto receiver = std::find_if(_attr_map.begin(), _attr_map.end(),
-                                 [attr](const auto& item){ return item.first == attr; });
+void Server::on_frame_received(ucan::Module& can_module,
+                               const ucan::RxMessageAttribute& attr,
+                               const can_frame& frame) {
+    auto receiver = std::find_if(
+            _attr_map.begin(), _attr_map.end(), [attr](const auto& item) {
+                return item.first == attr;
+            });
     if (receiver != _attr_map.end()) {
         auto status = receiver->second->recv_frame(attr, frame);
         if (status != FrameRecvStatus::success) {
@@ -98,9 +100,7 @@ void Server::on_frame_received(ucan::Module& can_module, const ucan::RxMessageAt
     }
 }
 
-
 } // namespace ucanopen
-
 
 #endif
 #endif

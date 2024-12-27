@@ -1,18 +1,13 @@
 #if defined(MCUDRV_STM32) || defined(MCUDRV_APM32)
 #if defined(STM32F4xx) || defined(APM32F4xx)
 
-
-#include "sdo_service.h"
-
+#include <ucanopen/stm32/f4/server/services/sdo_service/sdo_service.hpp>
 
 namespace ucanopen {
 
-
 const ODObjectKey SdoService::restore_default_parameter_key = {0x1011, 0x04};
 
-
-SdoService::SdoService(impl::Server& server)
-        : _server(server) {
+SdoService::SdoService(impl::Server& server) : _server(server) {
 #if defined(MCUDRV_STM32)
     CAN_FilterTypeDef rsdo_filter = {
         .FilterIdHigh = calculate_cob_id(Cob::rsdo, _server.node_id()) << 5,
@@ -24,32 +19,30 @@ SdoService::SdoService(impl::Server& server)
         .FilterMode = CAN_FILTERMODE_IDMASK,
         .FilterScale = CAN_FILTERSCALE_32BIT,
         .FilterActivation = {},
-        .SlaveStartFilterBank = {}
-    };
+        .SlaveStartFilterBank = {}};
 #elif defined(MCUDRV_APM32)
     CAN_FilterConfig_T rsdo_filter = {
         .filterNumber{},
-        .filterIdHigh = uint16_t(calculate_cob_id(Cob::rsdo, _server.node_id()) << 5),
+        .filterIdHigh =
+                uint16_t(calculate_cob_id(Cob::rsdo, _server.node_id()) << 5),
         .filterIdLow = 0,
         .filterMaskIdHigh = 0x7FF << 5,
         .filterMaskIdLow = 0,
         .filterActivation{},
         .filterFIFO = CAN_FILTER_FIFO_0,
         .filterMode = CAN_FILTER_MODE_IDMASK,
-        .filterScale = CAN_FILTER_SCALE_32BIT
-    };
+        .filterScale = CAN_FILTER_SCALE_32BIT};
 #endif
     _rsdo_rxattr = _server._can_module.register_rxmessage(rsdo_filter);
     _tsdo_id = calculate_cob_id(Cob::tsdo, _server.node_id());
 }
 
-
 std::vector<ucan::RxMessageAttribute> SdoService::get_rx_attr() const {
     return {_rsdo_rxattr};
 }
 
-
-FrameRecvStatus SdoService::recv_frame(const ucan::RxMessageAttribute& attr, const can_frame& frame) {
+FrameRecvStatus SdoService::recv_frame(const ucan::RxMessageAttribute& attr,
+                                       const can_frame& frame) {
     if (attr != _rsdo_rxattr) {
         return FrameRecvStatus::attr_mismatch;
     }
@@ -61,7 +54,6 @@ FrameRecvStatus SdoService::recv_frame(const ucan::RxMessageAttribute& attr, con
     _rsdo_queue.push(frame.payload);
     return FrameRecvStatus::success;
 }
-
 
 void SdoService::handle_recv_frames() {
     while (!_rsdo_queue.empty()) {
@@ -75,15 +67,17 @@ void SdoService::handle_recv_frames() {
 
         ExpeditedSdo tsdo;
         SdoAbortCode abort_code = SdoAbortCode::general_error;
-        ODEntry* dictionary_end = _server._dictionary + _server._dictionary_size;
-        ODObjectKey key = {static_cast<uint16_t>(rsdo.index), static_cast<uint8_t>(rsdo.subindex)};
+        ODEntry* dictionary_end =
+                _server._dictionary + _server._dictionary_size;
+        ODObjectKey key = {static_cast<uint16_t>(rsdo.index),
+                           static_cast<uint8_t>(rsdo.subindex)};
 
-        const ODEntry* od_entry = emb::binary_find(_server._dictionary, dictionary_end, key);
+        const ODEntry* od_entry =
+                emb::binary_find(_server._dictionary, dictionary_end, key);
 
         if (od_entry == dictionary_end) {
             abort_code = SdoAbortCode::object_not_found;
-        }
-        else if (rsdo.cs == sdo_cs_codes::client_init_read) {
+        } else if (rsdo.cs == sdo_cs_codes::client_init_read) {
             abort_code = _read_expedited(od_entry, tsdo, rsdo);
         } else if (rsdo.cs == sdo_cs_codes::client_init_write) {
             abort_code = _write_expedited(od_entry, tsdo, rsdo);
@@ -108,8 +102,9 @@ void SdoService::handle_recv_frames() {
     }
 }
 
-
-SdoAbortCode SdoService::_read_expedited(const ODEntry* od_entry, ExpeditedSdo& tsdo, const ExpeditedSdo& rsdo) {
+SdoAbortCode SdoService::_read_expedited(const ODEntry* od_entry,
+                                         ExpeditedSdo& tsdo,
+                                         const ExpeditedSdo& rsdo) {
     if (!od_entry->object.has_read_permission()) {
         return SdoAbortCode::read_access_wo;
     }
@@ -117,9 +112,13 @@ SdoAbortCode SdoService::_read_expedited(const ODEntry* od_entry, ExpeditedSdo& 
     SdoAbortCode abort_code;
     if (od_entry->object.has_direct_access()) {
         if (od_entry->object.ptr.first) {
-            memcpy(&tsdo.data.u32, od_entry->object.ptr.first, od_object_type_sizes[od_entry->object.data_type]);
+            memcpy(&tsdo.data.u32,
+                   od_entry->object.ptr.first,
+                   od_object_type_sizes[od_entry->object.data_type]);
         } else {
-            memcpy(&tsdo.data.u32, *od_entry->object.ptr.second, od_object_type_sizes[od_entry->object.data_type]);
+            memcpy(&tsdo.data.u32,
+                   *od_entry->object.ptr.second,
+                   od_object_type_sizes[od_entry->object.data_type]);
         }
         abort_code = SdoAbortCode::no_error;
     } else {
@@ -132,13 +131,15 @@ SdoAbortCode SdoService::_read_expedited(const ODEntry* od_entry, ExpeditedSdo& 
         tsdo.cs = sdo_cs_codes::server_init_read;
         tsdo.expedited_transfer = 1;
         tsdo.data_size_indicated = 1;
-        tsdo.data_empty_bytes = (4 - od_object_type_sizes[od_entry->object.data_type]) & 0x3;
+        tsdo.data_empty_bytes =
+                (4 - od_object_type_sizes[od_entry->object.data_type]) & 0x3;
     }
     return abort_code;
 }
 
-
-SdoAbortCode SdoService::_write_expedited(const ODEntry* od_entry, ExpeditedSdo& tsdo, const ExpeditedSdo& rsdo) {
+SdoAbortCode SdoService::_write_expedited(const ODEntry* od_entry,
+                                          ExpeditedSdo& tsdo,
+                                          const ExpeditedSdo& rsdo) {
     if (!od_entry->object.has_write_permission()) {
         return SdoAbortCode::write_access_ro;
     }
@@ -146,9 +147,13 @@ SdoAbortCode SdoService::_write_expedited(const ODEntry* od_entry, ExpeditedSdo&
     SdoAbortCode abort_code;
     if (od_entry->object.has_direct_access()) {
         if (od_entry->object.ptr.first) {
-            memcpy(od_entry->object.ptr.first, &rsdo.data.u32, od_object_type_sizes[od_entry->object.data_type]);
+            memcpy(od_entry->object.ptr.first,
+                   &rsdo.data.u32,
+                   od_object_type_sizes[od_entry->object.data_type]);
         } else {
-            memcpy(*od_entry->object.ptr.second, &rsdo.data.u32, od_object_type_sizes[od_entry->object.data_type]);
+            memcpy(*od_entry->object.ptr.second,
+                   &rsdo.data.u32,
+                   od_object_type_sizes[od_entry->object.data_type]);
         }
         abort_code = SdoAbortCode::no_error;
     } else {
@@ -171,10 +176,10 @@ SdoAbortCode SdoService::_write_expedited(const ODEntry* od_entry, ExpeditedSdo&
     return abort_code;
 }
 
-
 SdoAbortCode SdoService::_restore_default_parameter(ODObjectKey key) {
     ODEntry* dictionary_end = _server._dictionary + _server._dictionary_size;
-    const ODEntry* od_entry = emb::binary_find(_server._dictionary, dictionary_end, key);
+    const ODEntry* od_entry =
+            emb::binary_find(_server._dictionary, dictionary_end, key);
 
     if (od_entry == dictionary_end) {
         return SdoAbortCode::object_not_found;
@@ -190,16 +195,19 @@ SdoAbortCode SdoService::_restore_default_parameter(ODObjectKey key) {
 
     if (od_entry->object.has_direct_access()) {
         if (od_entry->object.ptr.first) {
-            memcpy(od_entry->object.ptr.first, &od_entry->object.default_value->u32, od_object_type_sizes[od_entry->object.data_type]);
+            memcpy(od_entry->object.ptr.first,
+                   &od_entry->object.default_value->u32,
+                   od_object_type_sizes[od_entry->object.data_type]);
         } else {
-            memcpy(*od_entry->object.ptr.second, &od_entry->object.default_value->u32, od_object_type_sizes[od_entry->object.data_type]);
+            memcpy(*od_entry->object.ptr.second,
+                   &od_entry->object.default_value->u32,
+                   od_object_type_sizes[od_entry->object.data_type]);
         }
         return SdoAbortCode::no_error;
     } else {
         return od_entry->object.write_func(*od_entry->object.default_value);
     }
 }
-
 
 void SdoService::send() {
     while (!_tsdo_queue.empty()) {
@@ -209,9 +217,7 @@ void SdoService::send() {
     }
 }
 
-
 } // namespace ucanopen
-
 
 #endif
 #endif
