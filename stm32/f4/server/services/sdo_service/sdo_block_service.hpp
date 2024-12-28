@@ -76,7 +76,7 @@ private:
 public:
     SdoBlockService(impl::Server& server);
     void handle_message(const can_payload& payload) {
-        _current_state->handle_message(this, payload);
+        current_state_->handle_message(this, payload);
     }
 };
 
