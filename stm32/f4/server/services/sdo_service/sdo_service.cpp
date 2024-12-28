@@ -7,7 +7,7 @@ namespace ucanopen {
 
 const ODObjectKey SdoService::restore_default_parameter_key = {0x1011, 0x04};
 
-SdoService::SdoService(impl::Server& server) : _server(server) {
+SdoService::SdoService(impl::Server& server) : server_(server) {
 #if defined(MCUDRV_STM32)
     CAN_FilterTypeDef rsdo_filter = {
         .FilterIdHigh = calculate_cob_id(Cob::rsdo, _server.node_id()) << 5,
@@ -24,7 +24,7 @@ SdoService::SdoService(impl::Server& server) : _server(server) {
     CAN_FilterConfig_T rsdo_filter = {
         .filterNumber{},
         .filterIdHigh =
-                uint16_t(calculate_cob_id(Cob::rsdo, _server.node_id()) << 5),
+                uint16_t(calculate_cob_id(Cob::rsdo, server_.node_id()) << 5),
         .filterIdLow = 0,
         .filterMaskIdHigh = 0x7FF << 5,
         .filterMaskIdLow = 0,
@@ -33,33 +33,33 @@ SdoService::SdoService(impl::Server& server) : _server(server) {
         .filterMode = CAN_FILTER_MODE_IDMASK,
         .filterScale = CAN_FILTER_SCALE_32BIT};
 #endif
-    _rsdo_rxattr = _server._can_module.register_rxmessage(rsdo_filter);
-    _tsdo_id = calculate_cob_id(Cob::tsdo, _server.node_id());
+    rsdo_rxattr_ = server_.can_module_.register_rxmessage(rsdo_filter);
+    tsdo_id_ = calculate_cob_id(Cob::tsdo, server_.node_id());
 }
 
 std::vector<ucan::RxMessageAttribute> SdoService::get_rx_attr() const {
-    return {_rsdo_rxattr};
+    return {rsdo_rxattr_};
 }
 
-FrameRecvStatus SdoService::recv_frame(const ucan::RxMessageAttribute& attr,
-                                       const can_frame& frame) {
-    if (attr != _rsdo_rxattr) {
-        return FrameRecvStatus::attr_mismatch;
+void SdoService::recv(const ucan::RxMessageAttribute& attr,
+                      const can_frame& frame) {
+    if (attr != rsdo_rxattr_) {
+        return;
     }
 
-    if (_rsdo_queue.full()) {
-        return FrameRecvStatus::overrun;
+    if (rsdo_queue_.full()) {
+        server_.on_sdo_overrun();
+        return;
     }
 
-    _rsdo_queue.push(frame.payload);
-    return FrameRecvStatus::success;
+    rsdo_queue_.push(frame.payload);
 }
 
-void SdoService::handle_recv_frames() {
-    while (!_rsdo_queue.empty()) {
-        can_payload rsdo_payload = _rsdo_queue.front();
+void SdoService::handle() {
+    while (!rsdo_queue_.empty()) {
+        can_payload rsdo_payload = rsdo_queue_.front();
         ExpeditedSdo rsdo = from_payload<ExpeditedSdo>(rsdo_payload);
-        _rsdo_queue.pop();
+        rsdo_queue_.pop();
 
         if (rsdo.cs == sdo_cs_codes::abort) {
             continue;
@@ -68,19 +68,19 @@ void SdoService::handle_recv_frames() {
         ExpeditedSdo tsdo;
         SdoAbortCode abort_code = SdoAbortCode::general_error;
         ODEntry* dictionary_end =
-                _server._dictionary + _server._dictionary_size;
+                server_.dictionary_ + server_.dictionary_size_;
         ODObjectKey key = {static_cast<uint16_t>(rsdo.index),
                            static_cast<uint8_t>(rsdo.subindex)};
 
         const ODEntry* od_entry =
-                emb::binary_find(_server._dictionary, dictionary_end, key);
+                emb::binary_find(server_.dictionary_, dictionary_end, key);
 
         if (od_entry == dictionary_end) {
             abort_code = SdoAbortCode::object_not_found;
         } else if (rsdo.cs == sdo_cs_codes::client_init_read) {
-            abort_code = _read_expedited(od_entry, tsdo, rsdo);
+            abort_code = read_expedited(od_entry, tsdo, rsdo);
         } else if (rsdo.cs == sdo_cs_codes::client_init_write) {
-            abort_code = _write_expedited(od_entry, tsdo, rsdo);
+            abort_code = write_expedited(od_entry, tsdo, rsdo);
         } else {
             abort_code = SdoAbortCode::invalid_cs;
         }
@@ -96,13 +96,13 @@ void SdoService::handle_recv_frames() {
             break;
         }
 
-        if (!_tsdo_queue.full()) {
-            _tsdo_queue.push(tsdo_payload);
+        if (!tsdo_queue_.full()) {
+            tsdo_queue_.push(tsdo_payload);
         }
     }
 }
 
-SdoAbortCode SdoService::_read_expedited(const ODEntry* od_entry,
+SdoAbortCode SdoService::read_expedited(const ODEntry* od_entry,
                                          ExpeditedSdo& tsdo,
                                          const ExpeditedSdo& rsdo) {
     if (!od_entry->object.has_read_permission()) {
@@ -137,7 +137,7 @@ SdoAbortCode SdoService::_read_expedited(const ODEntry* od_entry,
     return abort_code;
 }
 
-SdoAbortCode SdoService::_write_expedited(const ODEntry* od_entry,
+SdoAbortCode SdoService::write_expedited(const ODEntry* od_entry,
                                           ExpeditedSdo& tsdo,
                                           const ExpeditedSdo& rsdo) {
     if (!od_entry->object.has_write_permission()) {
@@ -164,7 +164,7 @@ SdoAbortCode SdoService::_write_expedited(const ODEntry* od_entry,
         if (od_entry->key == restore_default_parameter_key) {
             ODObjectKey arg_key = {};
             memcpy(&arg_key, &rsdo.data.u32, sizeof(arg_key));
-            abort_code = _restore_default_parameter(arg_key);
+            abort_code = restore_default_parameter(arg_key);
         }
     }
 
@@ -176,10 +176,10 @@ SdoAbortCode SdoService::_write_expedited(const ODEntry* od_entry,
     return abort_code;
 }
 
-SdoAbortCode SdoService::_restore_default_parameter(ODObjectKey key) {
-    ODEntry* dictionary_end = _server._dictionary + _server._dictionary_size;
+SdoAbortCode SdoService::restore_default_parameter(ODObjectKey key) {
+    ODEntry* dictionary_end = server_.dictionary_ + server_.dictionary_size_;
     const ODEntry* od_entry =
-            emb::binary_find(_server._dictionary, dictionary_end, key);
+            emb::binary_find(server_.dictionary_, dictionary_end, key);
 
     if (od_entry == dictionary_end) {
         return SdoAbortCode::object_not_found;
@@ -210,10 +210,10 @@ SdoAbortCode SdoService::_restore_default_parameter(ODObjectKey key) {
 }
 
 void SdoService::send() {
-    while (!_tsdo_queue.empty()) {
-        can_payload payload = _tsdo_queue.front();
-        _server._can_module.put_frame({_tsdo_id, _tsdo_len, payload});
-        _tsdo_queue.pop();
+    while (!tsdo_queue_.empty()) {
+        can_payload payload = tsdo_queue_.front();
+        server_.can_module_.put_frame({tsdo_id_, tsdo_len_, payload});
+        tsdo_queue_.pop();
     }
 }
 

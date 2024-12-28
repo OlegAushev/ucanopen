@@ -11,17 +11,17 @@ namespace ucanopen {
 
 class RpdoService : public impl::FrameReceiver {
 private:
-    impl::Server& _server;
+    impl::Server& server_;
 
     struct Message {
         ucan::RxMessageAttribute attr;
         std::chrono::milliseconds timeout;
         std::chrono::milliseconds timepoint;
-        bool is_unhandled;
+        bool unhandled;
         can_frame frame;
         void (*handler)(const can_payload&);
     };
-    std::array<Message, 4> _rpdo_msgs;
+    std::array<Message, 4> messages_;
 public:
     RpdoService(impl::Server& server);
 
@@ -31,17 +31,17 @@ public:
                        can_id id = 0);
 
     virtual std::vector<ucan::RxMessageAttribute> get_rx_attr() const override;
-    virtual FrameRecvStatus recv_frame(const ucan::RxMessageAttribute& attr,
-                                       const can_frame& frame) override;
-    virtual void handle_recv_frames() override;
+    virtual void recv(const ucan::RxMessageAttribute& attr,
+                      const can_frame& frame) override;
+    virtual void handle() override;
 
     bool good(CobRpdo rpdo) {
-        if (_rpdo_msgs[std::to_underlying(rpdo)].timeout.count() <= 0) {
+        if (messages_[std::to_underlying(rpdo)].timeout.count() <= 0) {
             return true;
         }
         if (emb::chrono::steady_clock::now() <=
-            _rpdo_msgs[std::to_underlying(rpdo)].timepoint +
-                    _rpdo_msgs[std::to_underlying(rpdo)].timeout) {
+            messages_[std::to_underlying(rpdo)].timepoint +
+                    messages_[std::to_underlying(rpdo)].timeout) {
             return true;
         }
         return false;

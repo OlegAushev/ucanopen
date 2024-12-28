@@ -11,11 +11,11 @@ namespace ucanopen {
 
 class SyncService {
 private:
-    impl::Server& _server;
-    can_id _id;
-    static constexpr uint8_t _len = cob_sizes[std::to_underlying(Cob::sync)];
-    std::chrono::milliseconds _period;
-    std::chrono::milliseconds _timepoint;
+    impl::Server& server_;
+    can_id id_;
+    static constexpr uint8_t len_ = cob_sizes[std::to_underlying(Cob::sync)];
+    std::chrono::milliseconds period_;
+    std::chrono::milliseconds timepoint_;
 public:
     SyncService(impl::Server& server, std::chrono::milliseconds period);
     void send();

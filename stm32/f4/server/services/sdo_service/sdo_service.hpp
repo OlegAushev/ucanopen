@@ -12,30 +12,30 @@ namespace ucanopen {
 
 class SdoService : public impl::FrameReceiver {
 private:
-    impl::Server& _server;
+    impl::Server& server_;
 
-    ucan::RxMessageAttribute _rsdo_rxattr;
-    emb::queue<can_payload, 16> _rsdo_queue;
+    ucan::RxMessageAttribute rsdo_rxattr_;
+    emb::queue<can_payload, 16> rsdo_queue_;
 
-    can_id _tsdo_id;
-    static constexpr uint8_t _tsdo_len =
+    can_id tsdo_id_;
+    static constexpr uint8_t tsdo_len_ =
             cob_sizes[std::to_underlying(Cob::tsdo)];
-    emb::queue<can_payload, 16> _tsdo_queue;
+    emb::queue<can_payload, 16> tsdo_queue_;
 public:
     SdoService(impl::Server& server);
     virtual std::vector<ucan::RxMessageAttribute> get_rx_attr() const override;
-    virtual FrameRecvStatus recv_frame(const ucan::RxMessageAttribute& attr,
-                                       const can_frame& frame) override;
-    virtual void handle_recv_frames() override;
+    virtual void recv(const ucan::RxMessageAttribute& attr,
+                      const can_frame& frame) override;
+    virtual void handle() override;
     void send();
 private:
-    SdoAbortCode _read_expedited(const ODEntry* od_entry,
+    SdoAbortCode read_expedited(const ODEntry* od_entry,
+                                ExpeditedSdo& tsdo,
+                                const ExpeditedSdo& rsdo);
+    SdoAbortCode write_expedited(const ODEntry* od_entry,
                                  ExpeditedSdo& tsdo,
                                  const ExpeditedSdo& rsdo);
-    SdoAbortCode _write_expedited(const ODEntry* od_entry,
-                                  ExpeditedSdo& tsdo,
-                                  const ExpeditedSdo& rsdo);
-    SdoAbortCode _restore_default_parameter(ODObjectKey key);
+    SdoAbortCode restore_default_parameter(ODObjectKey key);
 
     static const ODObjectKey restore_default_parameter_key;
 };
@@ -43,10 +43,10 @@ private:
 template<typename T, size_t Size>
 class SdoProvider {
 private:
-    static inline uint32_t _dummy_data = 42;
+    static inline uint32_t dummy_data_ = 42;
 protected:
     SdoProvider() {
-        std::fill(std::begin(sdo_data), std::end(sdo_data), &_dummy_data);
+        std::fill(std::begin(sdo_data), std::end(sdo_data), &dummy_data_);
     }
 
     template<typename V>

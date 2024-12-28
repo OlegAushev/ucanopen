@@ -31,11 +31,11 @@ inline T from_payload(const can_payload& payload) {
 
 class NodeId {
 private:
-    unsigned int _id;
+    unsigned int id_;
 public:
-    explicit NodeId(unsigned int id) : _id(id) {}
-    unsigned int get() const { return _id; }
-    bool valid() const { return (_id >= 1) && (_id <= 127); }
+    explicit NodeId(unsigned int id) : id_(id) {}
+    unsigned int get() const { return id_; }
+    bool valid() const { return (id_ >= 1) && (id_ <= 127); }
 };
 
 enum class NmtState : uint8_t {

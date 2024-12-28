@@ -5,12 +5,12 @@
 
 namespace ucanopen {
 
-RpdoService::RpdoService(impl::Server& server) : _server(server) {
-    for (size_t i = 0; i < _rpdo_msgs.size(); ++i) {
-        _rpdo_msgs[i].timeout = std::chrono::milliseconds(0);
-        _rpdo_msgs[i].timepoint = std::chrono::milliseconds(0);
-        _rpdo_msgs[i].is_unhandled = false;
-        _rpdo_msgs[i].handler = nullptr;
+RpdoService::RpdoService(impl::Server& server) : server_(server) {
+    for (size_t i = 0; i < messages_.size(); ++i) {
+        messages_[i].timeout = std::chrono::milliseconds(0);
+        messages_[i].timepoint = std::chrono::milliseconds(0);
+        messages_[i].unhandled = false;
+        messages_[i].handler = nullptr;
     }
 }
 
@@ -19,7 +19,7 @@ void RpdoService::register_rpdo(CobRpdo rpdo,
                                 void (*handler)(const can_payload&),
                                 can_id id) {
     if (id == 0) {
-        id = calculate_cob_id(to_cob(rpdo), _server.node_id());
+        id = calculate_cob_id(to_cob(rpdo), server_.node_id());
     }
 #if defined(MCUDRV_STM32)
     CAN_FilterTypeDef filter = {.FilterIdHigh = id << 5,
@@ -45,43 +45,47 @@ void RpdoService::register_rpdo(CobRpdo rpdo,
 #endif
 
     auto idx = std::to_underlying(rpdo);
-    _rpdo_msgs[idx].attr = _server._can_module.register_rxmessage(filter);
-    _rpdo_msgs[idx].timeout = timeout;
-    _rpdo_msgs[idx].timepoint = emb::chrono::steady_clock::now();
-    _rpdo_msgs[idx].handler = handler;
+    messages_[idx].attr = server_.can_module_.register_rxmessage(filter);
+    messages_[idx].timeout = timeout;
+    messages_[idx].timepoint = emb::chrono::steady_clock::now();
+    messages_[idx].handler = handler;
 }
 
 std::vector<ucan::RxMessageAttribute> RpdoService::get_rx_attr() const {
     std::vector<ucan::RxMessageAttribute> attributes;
-    for (const auto& rpdo : _rpdo_msgs) {
-        if (rpdo.handler != nullptr) {
-            attributes.push_back(rpdo.attr);
+    for (const auto& msg : messages_) {
+        if (msg.handler != nullptr) {
+            attributes.push_back(msg.attr);
         }
     }
     return attributes;
 }
 
-FrameRecvStatus RpdoService::recv_frame(const ucan::RxMessageAttribute& attr,
-                                        const can_frame& frame) {
-    auto received_rpdo = std::find_if(
-            _rpdo_msgs.begin(), _rpdo_msgs.end(), [attr](const auto& rpdo) {
+void RpdoService::recv(const ucan::RxMessageAttribute& attr,
+                       const can_frame& frame) {
+    auto msg_it = std::find_if(
+            messages_.begin(), messages_.end(), [attr](const auto& rpdo) {
                 return rpdo.attr == attr;
             });
-    if (received_rpdo == _rpdo_msgs.end()) {
-        return FrameRecvStatus::attr_mismatch;
+    if (msg_it == messages_.end()) {
+        return;
     }
 
-    received_rpdo->timepoint = emb::chrono::steady_clock::now();
-    received_rpdo->frame = frame;
-    received_rpdo->is_unhandled = true;
-    return FrameRecvStatus::success;
+    if (msg_it->unhandled) {
+        server_.on_rpdo_overrun();
+        return;
+    }
+
+    msg_it->timepoint = emb::chrono::steady_clock::now();
+    msg_it->frame = frame;
+    msg_it->unhandled = true;
 }
 
-void RpdoService::handle_recv_frames() {
-    for (auto& rpdo : _rpdo_msgs) {
-        if (rpdo.is_unhandled && rpdo.handler != nullptr) {
-            rpdo.handler(rpdo.frame.payload);
-            rpdo.is_unhandled = false;
+void RpdoService::handle() {
+    for (auto& msg : messages_) {
+        if (msg.unhandled && msg.handler != nullptr) {
+            msg.handler(msg.frame.payload);
+            msg.unhandled = false;
         }
     }
 }

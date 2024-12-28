@@ -33,48 +33,36 @@ class Server {
     friend class ucanopen::SdoService;
     friend class ucanopen::Node;
 protected:
-    NodeId _node_id;
-    ucan::Module& _can_module;
+    NodeId node_id_;
+    ucan::Module& can_module_;
 
-    ODEntry* _dictionary;
-    size_t _dictionary_size;
+    ODEntry* dictionary_;
+    size_t dictionary_size_;
 
-    NmtState _nmt_state;
+    NmtState nmt_state_;
 public:
     Server(ucan::Module& can_module,
            NodeId node_id,
            ODEntry* object_dictionary,
            size_t object_dictionary_size);
 
-    NodeId node_id() const { return _node_id; }
-    NmtState nmt_state() const { return _nmt_state; }
+    NodeId node_id() const { return node_id_; }
+    NmtState nmt_state() const { return nmt_state_; }
+protected:
+    virtual void on_sdo_overrun() {}
+    virtual void on_rpdo_overrun() {}
 private:
-    void _init_object_dictionary();
+    void init_object_dictionary();
 };
-
-} // namespace impl
-
-enum class FrameRecvStatus {
-    success,
-    attr_mismatch,
-    overrun,
-    //invalid_format,
-    //object_not_found,
-    //irrelevant_frame
-};
-
-namespace impl {
 
 class FrameReceiver {
 public:
     virtual std::vector<ucan::RxMessageAttribute> get_rx_attr() const = 0;
-    virtual FrameRecvStatus recv_frame(const ucan::RxMessageAttribute&,
-                                       const can_frame&) = 0;
-    virtual void handle_recv_frames() = 0;
+    virtual void recv(const ucan::RxMessageAttribute&, const can_frame&) = 0;
+    virtual void handle() = 0;
 };
 
 } // namespace impl
-
 } // namespace ucanopen
 
 #endif

@@ -12,7 +12,6 @@
 #include <ucanopen/stm32/f4/server/services/tpdo_service/tpdo_service.hpp>
 #include <ucanopen/stm32/f4/ucanopen_def.hpp>
 
-#include <bitset>
 #include <vector>
 
 namespace ucanopen {
@@ -45,17 +44,18 @@ protected:
     SdoService* sdo_service;
 
     std::vector<Node*> nodes;
-    std::vector<std::pair<ucan::RxMessageAttribute, impl::FrameReceiver*>>
-            _attr_map;
-    virtual void on_run() {}
 
-    uint64_t _errcount = 0;
-    std::bitset<32> _connection_status = 0;
+    std::vector<std::pair<ucan::RxMessageAttribute, impl::FrameReceiver*>>
+            rxattr_map_;
+
+    virtual void inspect() {}
 public:
     Server(ucan::Module& can_module,
            const ServerConfig& config,
            ODEntry* object_dictionary,
            size_t object_dictionary_size);
+
+    virtual ~Server() = default;
 
     static Server* instance(ucan::Peripheral peripheral) {
         return emb::singleton_array<Server, ucan::peripheral_count>::instance(
@@ -63,11 +63,11 @@ public:
     }
 
     void add_node(Node* node_);
+
     void start();
     void stop();
     void run();
-    void check_connection();
-
+public:
     void on_frame_received(ucan::Module& can_module,
                            const ucan::RxMessageAttribute& attr,
                            const can_frame& frame);

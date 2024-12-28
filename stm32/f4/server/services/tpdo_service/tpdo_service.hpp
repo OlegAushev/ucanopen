@@ -11,7 +11,7 @@ namespace ucanopen {
 
 class TpdoService {
 private:
-    impl::Server& _server;
+    impl::Server& server_;
 
     struct Message {
         can_id id;
@@ -20,7 +20,7 @@ private:
         std::chrono::milliseconds timepoint;
         can_payload (*creator)();
     };
-    std::array<Message, 4> _tpdo_msgs;
+    std::array<Message, 4> messages_;
 public:
     TpdoService(impl::Server& server);
     void register_tpdo(CobTpdo tpdo,

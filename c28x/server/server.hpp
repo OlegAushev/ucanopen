@@ -45,14 +45,15 @@ public:
            const ServerConfig& config,
            ODEntry* object_dictionary,
            size_t object_dictionary_size);
+
     virtual ~Server() {}
 
-    void enable() {
+    void start() {
         this->can_module_.enable_interrupts();
         this->nmt_state_ = NmtState::operational;
     }
 
-    void disable() {
+    void stop() {
         this->can_module_.disable_interrupts();
         this->nmt_state_ = NmtState::stopped;
     }

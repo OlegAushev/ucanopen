@@ -7,22 +7,22 @@ namespace ucanopen {
 
 HeartbeatService::HeartbeatService(impl::Server& server,
                                    std::chrono::milliseconds period)
-        : _server(server), _period(period) {
-    _id = calculate_cob_id(Cob::heartbeat, _server.node_id());
-    _timepoint = emb::chrono::steady_clock::now();
+        : server_(server), period_(period) {
+    id_ = calculate_cob_id(Cob::heartbeat, server_.node_id());
+    timepoint_ = emb::chrono::steady_clock::now();
 }
 
 void HeartbeatService::send() {
-    if (_period.count() <= 0) {
+    if (period_.count() <= 0) {
         return;
     }
 
     auto now = emb::chrono::steady_clock::now();
-    if (now >= _timepoint + _period) {
+    if (now >= timepoint_ + period_) {
         can_payload payload = {};
-        payload[0] = std::to_underlying(_server.nmt_state());
-        _server._can_module.put_frame({_id, _len, payload});
-        _timepoint = now;
+        payload[0] = std::to_underlying(server_.nmt_state());
+        server_.can_module_.put_frame({id_, len_, payload});
+        timepoint_ = now;
     }
 }
 

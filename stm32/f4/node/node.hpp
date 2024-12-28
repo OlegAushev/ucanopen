@@ -14,17 +14,17 @@ class Server;
 
 class Node : public impl::FrameReceiver {
 private:
-    ucan::Module& _can_module;
+    ucan::Module& can_module_;
 
     struct RxMessage {
         ucan::RxMessageAttribute attr;
         std::chrono::milliseconds timeout;
         std::chrono::milliseconds timepoint;
-        bool is_unhandled;
+        bool unhandled;
         can_frame frame;
         void (*handler)(const can_payload&);
     };
-    std::vector<RxMessage> _rx_messages;
+    std::vector<RxMessage> rx_messages_;
 
     struct TxMessage {
         std::chrono::milliseconds period;
@@ -33,7 +33,7 @@ private:
         uint8_t len;
         can_payload (*creator)();
     };
-    std::vector<TxMessage> _tx_messages;
+    std::vector<TxMessage> tx_messages_;
 public:
     Node(Server& server);
 #if defined(MCUDRV_STM32)
@@ -51,13 +51,14 @@ public:
                              can_payload (*creator)());
 
     virtual std::vector<ucan::RxMessageAttribute> get_rx_attr() const override;
-    virtual FrameRecvStatus recv_frame(const ucan::RxMessageAttribute& attr,
-                                       const can_frame& frame) override;
-    virtual void handle_recv_frames() override;
+    virtual void recv(const ucan::RxMessageAttribute& attr,
+                      const can_frame& frame) override;
+    virtual void handle() override;
 
     void send();
 
-    bool connection_ok();
+    virtual void inspect() {}
+    bool good();
 };
 
 } // namespace ucanopen

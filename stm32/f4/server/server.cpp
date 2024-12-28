@@ -24,7 +24,7 @@ Server::Server(ucan::Module& can_module,
     sdo_service = new SdoService(*this);
 
     nodes.reserve(16);
-    _attr_map.reserve(64);
+    rxattr_map_.reserve(64);
 
 #if defined(MCUDRV_STM32)
     can_module.init_interrupts(CAN_IT_RX_FIFO0_MSG_PENDING |
@@ -34,37 +34,37 @@ Server::Server(ucan::Module& can_module,
     can_module.init_interrupts(CAN_INT_F0MP | CAN_INT_F1MP | CAN_INT_TXME);
 #endif
 
-    _nmt_state = NmtState::pre_operational;
+    nmt_state_ = NmtState::pre_operational;
 }
 
 void Server::add_node(Node* node_) { nodes.push_back(node_); }
 
 void Server::start() {
-    if (_attr_map.empty()) {
+    if (rxattr_map_.empty()) {
         for (auto attr : rpdo_service->get_rx_attr()) {
-            _attr_map.push_back(std::make_pair(attr, rpdo_service));
+            rxattr_map_.push_back(std::make_pair(attr, rpdo_service));
         }
 
         for (auto attr : sdo_service->get_rx_attr()) {
-            _attr_map.push_back(std::make_pair(attr, sdo_service));
+            rxattr_map_.push_back(std::make_pair(attr, sdo_service));
         }
 
         for (const auto& node : nodes) {
             for (auto attr : node->get_rx_attr()) {
-                _attr_map.push_back(std::make_pair(attr, node));
+                rxattr_map_.push_back(std::make_pair(attr, node));
             }
         }
     }
 
-    _can_module.start();
-    _can_module.enable_interrupts();
-    _nmt_state = NmtState::operational;
+    can_module_.start();
+    can_module_.enable_interrupts();
+    nmt_state_ = NmtState::operational;
 }
 
 void Server::stop() {
-    _can_module.stop();
-    _can_module.disable_interrupts();
-    _nmt_state = NmtState::stopped;
+    can_module_.stop();
+    can_module_.disable_interrupts();
+    nmt_state_ = NmtState::stopped;
 }
 
 void Server::run() {
@@ -72,31 +72,26 @@ void Server::run() {
     sync_service->send();
     tpdo_service->send();
     sdo_service->send();
+    rpdo_service->handle();
+    sdo_service->handle();
+    inspect();
+
     for (auto node : nodes) {
         node->send();
+        node->handle();
+        node->inspect();
     }
-
-    rpdo_service->handle_recv_frames();
-    sdo_service->handle_recv_frames();
-    for (auto node : nodes) {
-        node->handle_recv_frames();
-    }
-
-    on_run();
 }
 
 void Server::on_frame_received(ucan::Module& can_module,
                                const ucan::RxMessageAttribute& attr,
                                const can_frame& frame) {
     auto receiver = std::find_if(
-            _attr_map.begin(), _attr_map.end(), [attr](const auto& item) {
+            rxattr_map_.begin(), rxattr_map_.end(), [attr](const auto& item) {
                 return item.first == attr;
             });
-    if (receiver != _attr_map.end()) {
-        auto status = receiver->second->recv_frame(attr, frame);
-        if (status != FrameRecvStatus::success) {
-            ++_errcount;
-        }
+    if (receiver != rxattr_map_.end()) {
+        receiver->second->recv(attr, frame);
     }
 }
 
