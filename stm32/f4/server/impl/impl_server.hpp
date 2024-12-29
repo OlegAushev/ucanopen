@@ -52,13 +52,13 @@ private:
     void init_object_dictionary();
 public:
     const ODEntry* find_od_entry(ODObjectKey key) {
-        auto find_res = std::equal_range(dictionary_.begin(),
-                                         dictionary_.end(),
-                                         key);
-        if (find_res.first == find_res.second) {
+        auto res = std::equal_range(dictionary_.begin(),
+                                    dictionary_.end(),
+                                    key);
+        if (res.first == res.second) {
             return nullptr;
         }
-        return &(*find_res.first);
+        return &(*res.first);
     }
 };
 

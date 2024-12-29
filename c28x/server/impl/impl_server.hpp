@@ -45,6 +45,15 @@ protected:
 private:
     void init_message_objects();
     void init_object_dictionary();
+public:
+    const ODEntry* find_od_entry(ODObjectKey key) {
+        std::pair<ODEntry*, ODEntry*> res = std::equal_range(
+                dictionary_, dictionary_ + dictionary_size_, key);
+        if (res.first == res.second) {
+            return NULL;
+        }
+        return res.first;
+    }
 };
 
 } // namesppace impl

@@ -1,8 +1,6 @@
 #pragma once
 
-
 #ifdef MCUDRV_C28X
-
 
 #include <mcudrv/generic/can.hpp>
 #include <emblib/core.hpp>
@@ -10,9 +8,7 @@
 #include <cstring>
 #include <utility>
 
-
 namespace ucanopen {
-
 
 template <typename T>
 inline can_payload to_payload(const T& message) {
@@ -23,14 +19,12 @@ inline can_payload to_payload(const T& message) {
     return payload;
 }
 
-
 template <typename T>
 inline void to_payload(can_payload& payload, const T& message) {
     EMB_STATIC_ASSERT(sizeof(T) <= 4);
     payload.fill(0);
     emb::c28x::to_bytes(payload.data, message);
 }
-
 
 template <typename T>
 inline T from_payload(const can_payload& payload) {
@@ -40,16 +34,14 @@ inline T from_payload(const can_payload& payload) {
     return message;
 }
 
-
 class NodeId {
 private:
-    unsigned int _id;
+    unsigned int id_;
 public:
-    explicit NodeId(unsigned int id) : _id(id) {}
-    unsigned int get() const { return _id; }
-    bool valid() const { return (_id >= 1) && (_id <= 127); }
+    explicit NodeId(unsigned int id) : id_(id) {}
+    unsigned int get() const { return id_; }
+    bool valid() const { return (id_ >= 1) && (id_ <= 127); }
 };
-
 
 SCOPED_ENUM_DECLARE_BEGIN(NmtState) {
     initializing = 0x00,
@@ -58,7 +50,7 @@ SCOPED_ENUM_DECLARE_BEGIN(NmtState) {
     pre_operational = 0x7F
 } SCOPED_ENUM_DECLARE_END(NmtState)
 
-
+const size_t cob_count = 16;
 SCOPED_ENUM_DECLARE_BEGIN(Cob) {
     dummy,
     nmt,
@@ -77,10 +69,6 @@ SCOPED_ENUM_DECLARE_BEGIN(Cob) {
     rsdo,
     heartbeat
 } SCOPED_ENUM_DECLARE_END(Cob)
-
-
-const size_t cob_count = 16;
-
 
 const emb::array<uint32_t, cob_count> cob_function_codes = {
     0x000,  // DUMMY
@@ -101,14 +89,12 @@ const emb::array<uint32_t, cob_count> cob_function_codes = {
     0x700   // HEARTBEAT
 };
 
-
 inline uint32_t calculate_cob_id(Cob cob, NodeId node_id) {
     if ((cob == Cob::nmt) || (cob == Cob::sync) || (cob == Cob::time)) {
         return cob_function_codes[cob.underlying_value()];
     }
     return cob_function_codes[cob.underlying_value()] + node_id.get();
 }
-
 
 const emb::array<int, cob_count> cob_data_len = {
     0,  // DUMMY
@@ -129,7 +115,6 @@ const emb::array<int, cob_count> cob_data_len = {
     1   // HEARTBEAT
 };
 
-
 SCOPED_ENUM_DECLARE_BEGIN(CobTpdo) {
     tpdo1,
     tpdo2,
@@ -137,11 +122,10 @@ SCOPED_ENUM_DECLARE_BEGIN(CobTpdo) {
     tpdo4,
 } SCOPED_ENUM_DECLARE_END(CobTpdo)
 
-
 inline Cob to_cob(CobTpdo tpdo) {
-    return static_cast<Cob>(static_cast<unsigned int>(Cob::tpdo1) + 2 * tpdo.underlying_value());
+    return static_cast<Cob>(static_cast<unsigned int>(Cob::tpdo1) +
+                            2 * tpdo.underlying_value());
 }
-
 
 SCOPED_ENUM_DECLARE_BEGIN(CobRpdo) {
     rpdo1,
@@ -150,11 +134,9 @@ SCOPED_ENUM_DECLARE_BEGIN(CobRpdo) {
     rpdo4,
 } SCOPED_ENUM_DECLARE_END(CobRpdo)
 
-
 inline Cob to_cob(CobRpdo rpdo) {
     return static_cast<Cob>(static_cast<unsigned int>(Cob::rpdo1) + 2 * rpdo.underlying_value());
 }
-
 
 namespace sdo_cs_codes {
 const uint32_t client_init_write = 1;
@@ -164,7 +146,6 @@ const uint32_t server_init_read = 2;
 
 const uint32_t abort = 4;
 }
-
 
 union ExpeditedSdoData {
     bool bl;
@@ -183,7 +164,6 @@ union ExpeditedSdoData {
     ExpeditedSdoData(float value) : f32(value) {}
 };
 
-
 struct ExpeditedSdo {
     uint32_t data_size_indicated : 1;
     uint32_t expedited_transfer : 1;
@@ -196,7 +176,6 @@ struct ExpeditedSdo {
     ExpeditedSdo() { memset(this, 0, sizeof(ExpeditedSdo)); }
 };
 
-
 struct AbortSdo {
     uint32_t _reserved : 5;
     uint32_t cs : 3;
@@ -208,7 +187,6 @@ struct AbortSdo {
         cs = sdo_cs_codes::abort;
     }
 };
-
 
 SCOPED_ENUM_UT_DECLARE_BEGIN(SdoAbortCode, uint32_t) {
     no_error                = 0,
@@ -227,7 +205,6 @@ SCOPED_ENUM_UT_DECLARE_BEGIN(SdoAbortCode, uint32_t) {
     state_error             = 0x08000022
 } SCOPED_ENUM_DECLARE_END(SdoAbortCode)
 
-
 enum ODObjectDataType {
     OD_BOOL,
     OD_INT8,
@@ -241,7 +218,6 @@ enum ODObjectDataType {
     OD_STRING
 };
 
-
 enum ODObjectAccessPermission {
     OD_ACCESS_RW,
     OD_ACCESS_RO,
@@ -249,39 +225,44 @@ enum ODObjectAccessPermission {
     OD_ACCESS_CONST
 };
 
-
 // Used in OD-entries for default values definition
 #define OD_NO_DEFAULT_VALUE emb::nullopt
 #define OD_DEFAULT_VALUE(value) ExpeditedSdoData(value)
 
-
 // Used in OD-entries which doesn't have direct access to data through pointer.
 #define OD_NO_DIRECT_ACCESS std::pair<uint32_t*, uint32_t**>(NULL, NULL)
 
-
 // Used in OD-entries which have direct access to data through pointer.
-#define OD_PTR(ptr) std::pair<uint32_t*, uint32_t**>(reinterpret_cast<uint32_t*>(ptr), NULL)
-#define OD_DPTR(dptr) std::pair<uint32_t*, uint32_t**>(NULL, reinterpret_cast<uint32_t**>(dptr))
-
+#define OD_PTR(ptr) \
+    std::pair<uint32_t*, uint32_t**>(reinterpret_cast<uint32_t*>(ptr), NULL)
+#define OD_DPTR(dptr) \
+    std::pair<uint32_t*, uint32_t**>(NULL, reinterpret_cast<uint32_t**>(dptr))
 
 // Used in OD-entries which don't have read access to data through function.
-inline SdoAbortCode OD_NO_INDIRECT_READ_ACCESS(ExpeditedSdoData& retval) { return SdoAbortCode::unsupported_access; }
-
+inline SdoAbortCode OD_NO_INDIRECT_READ_ACCESS(ExpeditedSdoData& retval) {
+    return SdoAbortCode::unsupported_access;
+}
 
 // Used in OD-entries which don't have write access to data through function.
-inline SdoAbortCode OD_NO_INDIRECT_WRITE_ACCESS(ExpeditedSdoData val) { return SdoAbortCode::unsupported_access; }
+inline SdoAbortCode OD_NO_INDIRECT_WRITE_ACCESS(ExpeditedSdoData val) {
+    return SdoAbortCode::unsupported_access;
+}
 
-
-const size_t od_object_type_sizes[10] = {sizeof(bool), sizeof(int8_t), sizeof(int16_t), sizeof(int32_t),
-                                         sizeof(uint8_t), sizeof(uint16_t), sizeof(uint32_t), sizeof(float),
-                                         2, 2};
-
+const size_t od_object_type_sizes[10] = {sizeof(bool),
+                                         sizeof(int8_t),
+                                         sizeof(int16_t),
+                                         sizeof(int32_t),
+                                         sizeof(uint8_t),
+                                         sizeof(uint16_t),
+                                         sizeof(uint32_t),
+                                         sizeof(float),
+                                         2,
+                                         2};
 
 struct ODObjectKey {
     uint16_t index;
     uint8_t subindex;
 };
-
 
 struct ODObject {
     const char* category;
@@ -304,33 +285,35 @@ struct ODObject {
     }
 
     bool has_write_permission() const {
-        return (access_permission == OD_ACCESS_RW) || (access_permission == OD_ACCESS_WO);
+        return (access_permission == OD_ACCESS_RW) ||
+               (access_permission == OD_ACCESS_WO);
     }
 };
-
 
 struct ODEntry {
     ODObjectKey key;
     ODObject object;
 };
 
-
 inline bool operator<(const ODEntry& lhs, const ODEntry& rhs) {
-    return (lhs.key.index < rhs.key.index)
-        || ((lhs.key.index == rhs.key.index) && (lhs.key.subindex < rhs.key.subindex));
+    return (lhs.key.index < rhs.key.index) ||
+           ((lhs.key.index == rhs.key.index) &&
+            (lhs.key.subindex < rhs.key.subindex));
 }
 
+inline bool operator<(const ODEntry& lhs, const ODObjectKey& rhs) {
+    return (lhs.key.index < rhs.index) ||
+           ((lhs.key.index == rhs.index) && (lhs.key.subindex < rhs.subindex));
+}
 
 inline bool operator<(const ODObjectKey& lhs, const ODEntry& rhs) {
     return (lhs.index < rhs.key.index)
         || ((lhs.index == rhs.key.index) && (lhs.subindex < rhs.key.subindex));
 }
 
-
 inline bool operator==(const ODObjectKey& lhs, const ODEntry& rhs) {
     return (lhs.index == rhs.key.index) && (lhs.subindex == rhs.key.subindex);
 }
-
 
 inline bool operator==(const ODObjectKey& lhs, const ODObjectKey& rhs) {
     return (lhs.index == rhs.index) && (lhs.subindex == rhs.subindex);
