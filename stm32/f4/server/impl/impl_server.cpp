@@ -7,29 +7,25 @@ namespace ucanopen {
 
 impl::Server::Server(ucan::Module& can_module,
                      NodeId node_id,
-                     ODEntry* object_dictionary,
-                     size_t object_dictionary_size)
+                     std::vector<ODEntry>& object_dictionary)
         : node_id_(node_id),
           can_module_(can_module),
-          dictionary_(object_dictionary),
-          dictionary_size_(object_dictionary_size) {
+          dictionary_(object_dictionary) {
     nmt_state_ = NmtState::initializing;
     init_object_dictionary();
 }
 
 void impl::Server::init_object_dictionary() {
-    assert(dictionary_ != nullptr);
-
-    std::sort(dictionary_, dictionary_ + dictionary_size_);
+    std::sort(dictionary_.begin(), dictionary_.end());
 
     // Check OBJECT DICTIONARY correctness
-    for (size_t i = 0; i < dictionary_size_; ++i) {
+    for (size_t i = 0; i < dictionary_.size(); ++i) {
         // OD is sorted
-        if (i < (dictionary_size_ - 1)) {
+        if (i < (dictionary_.size() - 1)) {
             assert(dictionary_[i] < dictionary_[i + 1]);
         }
 
-        for (size_t j = i + 1; j < dictionary_size_; ++j) {
+        for (size_t j = i + 1; j < dictionary_.size(); ++j) {
             // no od-entries with equal {index, subinex}
             assert((dictionary_[i].key.index != dictionary_[j].key.index) ||
                    (dictionary_[i].key.subindex !=

@@ -36,16 +36,12 @@ class Server {
 protected:
     NodeId node_id_;
     ucan::Module& can_module_;
-
-    ODEntry* dictionary_;
-    size_t dictionary_size_;
-
+    std::vector<ODEntry>& dictionary_;
     NmtState nmt_state_;
 public:
     Server(ucan::Module& can_module,
            NodeId node_id,
-           ODEntry* object_dictionary,
-           size_t object_dictionary_size);
+           std::vector<ODEntry>& object_dictionary);
 
     NodeId node_id() const { return node_id_; }
     NmtState nmt_state() const { return nmt_state_; }
@@ -55,13 +51,15 @@ protected:
 private:
     void init_object_dictionary();
 public:
-    // const ODEntry* find_od_entry(ODObjectKey key) {
-        // const ODEntry*
-        // const ODEntry* entry = emb::binary_find(dictionary_,
-        //                                         dictionary_ + dictionary_size_,
-        //                                         key);
-        // if (entry == dictionary_)
-    // }
+    const ODEntry* find_od_entry(ODObjectKey key) {
+        auto find_res = std::equal_range(dictionary_.begin(),
+                                         dictionary_.end(),
+                                         key);
+        if (find_res.first == find_res.second) {
+            return nullptr;
+        }
+        return &(*find_res.first);
+    }
 };
 
 class FrameReceiver {

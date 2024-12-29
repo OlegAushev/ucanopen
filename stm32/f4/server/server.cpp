@@ -7,12 +7,10 @@ namespace ucanopen {
 
 Server::Server(ucan::Module& can_module,
                const ServerConfig& config,
-               ODEntry* object_dictionary,
-               size_t object_dictionary_size)
+               std::vector<ODEntry>& object_dictionary)
         : impl::Server(can_module,
                        NodeId(config.node_id),
-                       object_dictionary,
-                       object_dictionary_size),
+                       object_dictionary),
           emb::singleton_array<Server, ucan::peripheral_count>(
                   this, std::to_underlying(can_module.peripheral())) {
     heartbeat_service = new HeartbeatService(

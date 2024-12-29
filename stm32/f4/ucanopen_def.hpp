@@ -316,6 +316,11 @@ inline bool operator<(const ODEntry& lhs, const ODEntry& rhs) {
             (lhs.key.subindex < rhs.key.subindex));
 }
 
+inline bool operator<(const ODEntry& lhs, const ODObjectKey& rhs) {
+    return (lhs.key.index < rhs.index) ||
+           ((lhs.key.index == rhs.index) && (lhs.key.subindex < rhs.subindex));
+}
+
 inline bool operator<(const ODObjectKey& lhs, const ODEntry& rhs) {
     return (lhs.index < rhs.key.index) ||
            ((lhs.index == rhs.key.index) && (lhs.subindex < rhs.key.subindex));

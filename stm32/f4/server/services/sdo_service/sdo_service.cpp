@@ -67,15 +67,11 @@ void SdoService::handle() {
 
         ExpeditedSdo tsdo;
         SdoAbortCode abort_code = SdoAbortCode::general_error;
-        ODEntry* dictionary_end =
-                server_.dictionary_ + server_.dictionary_size_;
         ODObjectKey key = {static_cast<uint16_t>(rsdo.index),
                            static_cast<uint8_t>(rsdo.subindex)};
+        const ODEntry* od_entry = server_.find_od_entry(key);
 
-        const ODEntry* od_entry =
-                emb::binary_find(server_.dictionary_, dictionary_end, key);
-
-        if (od_entry == dictionary_end) {
+        if (od_entry == nullptr) {
             abort_code = SdoAbortCode::object_not_found;
         } else if (rsdo.cs == sdo_cs_codes::client_init_read) {
             abort_code = read_expedited(od_entry, tsdo, rsdo);
@@ -177,11 +173,9 @@ SdoAbortCode SdoService::write_expedited(const ODEntry* od_entry,
 }
 
 SdoAbortCode SdoService::restore_default_parameter(ODObjectKey key) {
-    ODEntry* dictionary_end = server_.dictionary_ + server_.dictionary_size_;
-    const ODEntry* od_entry =
-            emb::binary_find(server_.dictionary_, dictionary_end, key);
+    const ODEntry* od_entry = server_.find_od_entry(key);
 
-    if (od_entry == dictionary_end) {
+    if (od_entry == nullptr) {
         return SdoAbortCode::object_not_found;
     }
 

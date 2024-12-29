@@ -52,8 +52,7 @@ protected:
 public:
     Server(ucan::Module& can_module,
            const ServerConfig& config,
-           ODEntry* object_dictionary,
-           size_t object_dictionary_size);
+           std::vector<ODEntry>& object_dictionary);
 
     virtual ~Server() = default;
 
