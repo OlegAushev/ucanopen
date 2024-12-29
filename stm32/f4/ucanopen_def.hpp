@@ -148,7 +148,7 @@ const uint32_t server_block_read = 6;
 } // namespace sdo_cs_codes
 
 inline uint32_t get_cs_code(const can_frame& frame) {
-    return frame.payload[0] >> 5;
+    return (frame.payload[0] >> 5) & 0x07;
 }
 
 union ExpeditedSdoData {

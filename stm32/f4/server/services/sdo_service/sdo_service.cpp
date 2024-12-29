@@ -103,8 +103,8 @@ void SdoService::handle() {
 }
 
 SdoAbortCode SdoService::read_expedited(const ODEntry* od_entry,
-                                         ExpeditedSdo& tsdo,
-                                         const ExpeditedSdo& rsdo) {
+                                        ExpeditedSdo& tsdo,
+                                        const ExpeditedSdo& rsdo) {
     if (!od_entry->object.has_read_permission()) {
         return SdoAbortCode::read_access_wo;
     }
@@ -138,8 +138,8 @@ SdoAbortCode SdoService::read_expedited(const ODEntry* od_entry,
 }
 
 SdoAbortCode SdoService::write_expedited(const ODEntry* od_entry,
-                                          ExpeditedSdo& tsdo,
-                                          const ExpeditedSdo& rsdo) {
+                                         ExpeditedSdo& tsdo,
+                                         const ExpeditedSdo& rsdo) {
     if (!od_entry->object.has_write_permission()) {
         return SdoAbortCode::write_access_ro;
     }

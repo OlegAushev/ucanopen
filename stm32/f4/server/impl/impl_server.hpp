@@ -12,6 +12,7 @@ namespace ucan = mcu::stm32::can;
 namespace ucan = mcu::apm32::can;
 #endif
 #include <algorithm>
+#include <emblib/algorithm.hpp>
 #include <vector>
 
 namespace ucanopen {
@@ -53,6 +54,14 @@ protected:
     virtual void on_rpdo_overrun() {}
 private:
     void init_object_dictionary();
+public:
+    // const ODEntry* find_od_entry(ODObjectKey key) {
+        // const ODEntry*
+        // const ODEntry* entry = emb::binary_find(dictionary_,
+        //                                         dictionary_ + dictionary_size_,
+        //                                         key);
+        // if (entry == dictionary_)
+    // }
 };
 
 class FrameReceiver {

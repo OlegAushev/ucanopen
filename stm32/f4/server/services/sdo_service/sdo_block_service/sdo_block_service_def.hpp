@@ -38,7 +38,7 @@ struct ServerResponseSdo {
     bool valid() const {
         return server_subcommand == 0 &&
                scs == sdo_cs_codes::server_block_write && block_size >= 1 &&
-               block_size <= 128;
+               block_size <= 127;
     }
 };
 

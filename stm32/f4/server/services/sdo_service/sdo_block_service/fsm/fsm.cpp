@@ -1,17 +1,10 @@
 #if defined(MCUDRV_STM32) || defined(MCUDRV_APM32)
 #if defined(STM32F4xx) || defined(APM32F4xx)
 
-#include <ucanopen/stm32/f4/server/services/sdo_service/sdo_block_service.hpp>
+#include <ucanopen/stm32/f4/server/services/sdo_service/sdo_block_service/fsm/fsm.hpp>
 
 namespace ucanopen {
-namespace blk {
-
-SdoBlockService::SdoBlockService(impl::Server& server)
-        : emb::fsm::abstract_object<State, fsm::AbstractState, state_count>(
-                  State::idle),
-          _server(server) {}
-
-namespace fsm {
+namespace blk_fsm {
 
 AbstractState* AbstractState::create(State state) {
     switch (state) {
@@ -29,18 +22,16 @@ void AbstractState::destroy(State state, AbstractState* stateobj) {
     delete stateobj;
 }
 
-void IdleState::handle_message(SdoBlockService* _service,
+void IdleState::handle(SdoBlockService* _service,
                                const can_payload& payload) {}
 
-void DownloadState::handle_message(SdoBlockService* _service,
+void DownloadState::handle(SdoBlockService* _service,
                                    const can_payload& payload) {}
 
-void DownloadEndState::handle_message(SdoBlockService* _service,
+void DownloadEndState::handle(SdoBlockService* _service,
                                       const can_payload& payload) {}
 
-} // namespace fsm
-
-} // namespace blk
+} // namespace blk_fsm
 } // namespace ucanopen
 
 #endif

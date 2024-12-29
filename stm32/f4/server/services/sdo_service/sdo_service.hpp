@@ -40,7 +40,7 @@ private:
     static const ODObjectKey restore_default_parameter_key;
 };
 
-template<typename T, size_t Size>
+template<typename Derived, size_t DataCount>
 class SdoProvider {
 private:
     static inline uint32_t dummy_data_ = 42;
@@ -50,12 +50,12 @@ protected:
     }
 
     template<typename V>
-    void _register_sdo_data(size_t idx, V& dataobj) {
+    void register_sdo_data(size_t idx, V& dataobj) {
         sdo_data[idx] = reinterpret_cast<uint32_t*>(&dataobj);
     }
 public:
-    static inline uint32_t* sdo_data[Size];
-    size_t capacity() const { return Size; }
+    static inline uint32_t* sdo_data[DataCount];
+    size_t capacity() const { return DataCount; }
 };
 
 } // namespace ucanopen
