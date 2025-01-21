@@ -43,7 +43,7 @@ public:
     bool valid() const { return (id_ >= 1) && (id_ <= 127); }
 };
 
-SCOPED_ENUM_DECLARE_BEGIN(NmtState) {
+SCOPED_ENUM_UT_DECLARE_BEGIN(NmtState, uint32_t) {
     initializing = 0x00,
     stopped = 0x04,
     operational = 0x05,
@@ -51,7 +51,7 @@ SCOPED_ENUM_DECLARE_BEGIN(NmtState) {
 } SCOPED_ENUM_DECLARE_END(NmtState)
 
 const size_t cob_count = 16;
-SCOPED_ENUM_DECLARE_BEGIN(Cob) {
+SCOPED_ENUM_UT_DECLARE_BEGIN(Cob, uint32_t) {
     dummy,
     nmt,
     sync,
@@ -115,7 +115,7 @@ const emb::array<int, cob_count> cob_data_len = {
     1   // HEARTBEAT
 };
 
-SCOPED_ENUM_DECLARE_BEGIN(CobTpdo) {
+SCOPED_ENUM_UT_DECLARE_BEGIN(CobTpdo, uint32_t) {
     tpdo1,
     tpdo2,
     tpdo3,
@@ -123,11 +123,10 @@ SCOPED_ENUM_DECLARE_BEGIN(CobTpdo) {
 } SCOPED_ENUM_DECLARE_END(CobTpdo)
 
 inline Cob to_cob(CobTpdo tpdo) {
-    return static_cast<Cob>(static_cast<unsigned int>(Cob::tpdo1) +
-                            2 * tpdo.underlying_value());
+    return Cob(static_cast<uint32_t>(Cob::tpdo1) + 2 * tpdo.underlying_value());
 }
 
-SCOPED_ENUM_DECLARE_BEGIN(CobRpdo) {
+SCOPED_ENUM_UT_DECLARE_BEGIN(CobRpdo, uint32_t) {
     rpdo1,
     rpdo2,
     rpdo3,
@@ -135,7 +134,7 @@ SCOPED_ENUM_DECLARE_BEGIN(CobRpdo) {
 } SCOPED_ENUM_DECLARE_END(CobRpdo)
 
 inline Cob to_cob(CobRpdo rpdo) {
-    return static_cast<Cob>(static_cast<unsigned int>(Cob::rpdo1) + 2 * rpdo.underlying_value());
+    return Cob(static_cast<uint32_t>(Cob::rpdo1) + 2 * rpdo.underlying_value());
 }
 
 namespace sdo_cs_codes {
