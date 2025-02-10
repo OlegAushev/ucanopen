@@ -319,6 +319,12 @@ inline bool operator==(const ODObjectKey& lhs, const ODObjectKey& rhs) {
 }
 
 
+struct ODView {
+    ODEntry* begin;
+    size_t size;
+};
+
+
 } // namespace ucanopen
 
 

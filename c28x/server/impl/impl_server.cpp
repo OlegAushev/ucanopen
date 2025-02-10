@@ -6,12 +6,10 @@ namespace ucanopen {
 
 impl::Server::Server(mcu::c28x::can::Module& can_module,
                      NodeId node_id,
-                     ODEntry* object_dictionary,
-                     size_t object_dictionary_size)
+                     const std::vector<ODView>& object_dictionaries)
         : node_id_(node_id),
           can_module_(can_module),
-          dictionary_(object_dictionary),
-          dictionary_size_(object_dictionary_size) {
+          dicts_(object_dictionaries) {
     nmt_state_ = NmtState::initializing;
     init_message_objects();
     init_object_dictionary();
@@ -75,42 +73,50 @@ void impl::Server::init_message_objects() {
 }
 
 void impl::Server::init_object_dictionary() {
-    assert(dictionary_ != NULL);
+    assert(!dicts_.empty());
 
-    std::sort(dictionary_, dictionary_ + dictionary_size_);
+    for (size_t page = 0; page < dicts_.size(); ++page) {
+        assert(dicts_[page].begin != NULL);
+        assert(dicts_[page].size != 0);
+        std::sort(dicts_[page].begin, dicts_[page].begin + dicts_[page].size);
+    }
 
-    // Check OBJECT DICTIONARY correctness
-    for (size_t i = 0; i < dictionary_size_; ++i) {
-        // OD is sorted
-        if (i < (dictionary_size_ - 1)) {
-            assert(dictionary_[i] < dictionary_[i+1]);
-        }
 
-        for (int j = i+1; j < dictionary_size_; ++j) {
-            // no od-entries with equal {index, subinex}
-            assert((dictionary_[i].key.index != dictionary_[j].key.index)
-                || (dictionary_[i].key.subindex != dictionary_[j].key.subindex));
+    for (size_t page = 0; page < dicts_.size(); ++page) {
+        const ODView& dict = dicts_[page];
+        // Check OBJECT DICTIONARY correctness
+        for (size_t i = 0; i < dict.size; ++i) {
+            // OD is sorted
+            if (i < (dict.size - 1)) {
+                assert(dict.begin[i] < dict.begin[i+1]);
+            }
 
-            // no od-entries with equal {category, subcategory, name}
-            bool categoryEqual = ((strcmp(dictionary_[i].object.category, dictionary_[j].object.category) == 0) ? true : false);
-            bool subcategoryEqual = ((strcmp(dictionary_[i].object.subcategory, dictionary_[j].object.subcategory) == 0) ? true : false);
-            bool nameEqual = ((strcmp(dictionary_[i].object.name, dictionary_[j].object.name) == 0) ? true : false);
-            assert(!categoryEqual || !subcategoryEqual || !nameEqual);
-        }
+            for (int j = i+1; j < dict.size; ++j) {
+                // no od-entries with equal {index, subinex}
+                assert((dict.begin[i].key.index != dict.begin[j].key.index)
+                    || (dict.begin[i].key.subindex != dict.begin[j].key.subindex));
 
-        if (dictionary_[i].object.has_read_permission()) {
-            assert((dictionary_[i].object.read_func != OD_NO_INDIRECT_READ_ACCESS)
-                || (dictionary_[i].object.ptr != OD_NO_DIRECT_ACCESS));
-        }
+                // no od-entries with equal {category, subcategory, name}
+                bool categoryEqual = ((strcmp(dict.begin[i].object.category, dict.begin[j].object.category) == 0) ? true : false);
+                bool subcategoryEqual = ((strcmp(dict.begin[i].object.subcategory, dict.begin[j].object.subcategory) == 0) ? true : false);
+                bool nameEqual = ((strcmp(dict.begin[i].object.name, dict.begin[j].object.name) == 0) ? true : false);
+                assert(!categoryEqual || !subcategoryEqual || !nameEqual);
+            }
 
-        if (dictionary_[i].object.has_write_permission()) {
-            assert(dictionary_[i].object.write_func != OD_NO_INDIRECT_WRITE_ACCESS
-               || (dictionary_[i].object.ptr != OD_NO_DIRECT_ACCESS));
-        }
+            if (dict.begin[i].object.has_read_permission()) {
+                assert((dict.begin[i].object.read_func != OD_NO_INDIRECT_READ_ACCESS)
+                    || (dict.begin[i].object.ptr != OD_NO_DIRECT_ACCESS));
+            }
 
-        if (dictionary_[i].object.default_value.has_value()) {
-            ODObjectDataType data_type = dictionary_[i].object.data_type;
-            assert(data_type != OD_EXEC && data_type != OD_STRING);
+            if (dict.begin[i].object.has_write_permission()) {
+                assert(dict.begin[i].object.write_func != OD_NO_INDIRECT_WRITE_ACCESS
+                   || (dict.begin[i].object.ptr != OD_NO_DIRECT_ACCESS));
+            }
+
+            if (dict.begin[i].object.default_value.has_value()) {
+                ODObjectDataType data_type = dict.begin[i].object.data_type;
+                assert(data_type != OD_EXEC && data_type != OD_STRING);
+            }
         }
     }
 }

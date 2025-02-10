@@ -6,12 +6,10 @@ namespace ucanopen {
 
 Server::Server(mcu::c28x::can::Module& can_module,
                const ServerConfig& config,
-               ODEntry* object_dictionary,
-               size_t object_dictionary_size)
+               const std::vector<ODView>& object_dictionaries)
         : impl::Server(can_module,
                        NodeId(config.node_id),
-                       object_dictionary,
-                       object_dictionary_size)
+                       object_dictionaries)
         , emb::singleton_array<Server, mcu::c28x::can::peripheral_count>(
                 this,
                 can_module.peripheral().underlying_value()) {

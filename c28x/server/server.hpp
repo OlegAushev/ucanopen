@@ -43,8 +43,7 @@ protected:
 public:
     Server(mcu::c28x::can::Module& can_module,
            const ServerConfig& config,
-           ODEntry* object_dictionary,
-           size_t object_dictionary_size);
+           const std::vector<ODView>& object_dictionaries);
 
     virtual ~Server() {}
 
