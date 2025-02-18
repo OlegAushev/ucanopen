@@ -16,8 +16,8 @@ RpdoService::RpdoService(impl::Server& server)
 
 void RpdoService::register_rpdo(CobRpdo rpdo,
                                 emb::chrono::milliseconds timeout,
-                                void (*handler)(const can_payload&),
-                                can_id id) {
+                                void (*handler)(const canpayload_t&),
+                                canid_t id) {
     const size_t idx = rpdo.underlying_value();
     rpdo_msgs_[idx].timeout = timeout;
     rpdo_msgs_[idx].timepoint = emb::chrono::steady_clock::now();

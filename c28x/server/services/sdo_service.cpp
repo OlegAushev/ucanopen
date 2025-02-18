@@ -15,7 +15,7 @@ void SdoService::recv(uint32_t obj_id) {
     if (rsdo_queue_.full()) {
         server_.on_sdo_overrun();
     } else {
-        can_payload payload;
+        canpayload_t payload;
         server_.can_module_.recv(obj_id, payload.data);
         rsdo_queue_.push(payload);
     }
@@ -23,7 +23,7 @@ void SdoService::recv(uint32_t obj_id) {
 
 void SdoService::send() {
     while (!tsdo_queue_.empty()) {
-        can_payload payload = tsdo_queue_.front();
+        canpayload_t payload = tsdo_queue_.front();
         server_.can_module_.send(Cob::tsdo,
                                  payload.data,
                                  cob_data_len[Cob::tsdo]);
@@ -34,7 +34,7 @@ void SdoService::send() {
 
 void SdoService::handle() {
     while (!rsdo_queue_.empty()) {
-        can_payload rsdo_payload = rsdo_queue_.front();
+        canpayload_t rsdo_payload = rsdo_queue_.front();
         ExpeditedSdo rsdo = from_payload<ExpeditedSdo>(rsdo_payload);
         rsdo_queue_.pop();
 
@@ -58,7 +58,7 @@ void SdoService::handle() {
             abort_code = SdoAbortCode::invalid_cs;
         }
 
-        can_payload tsdo_payload;
+        canpayload_t tsdo_payload;
         switch (abort_code.native_value()) {
         case SdoAbortCode::no_error:
             tsdo_payload = to_payload<ExpeditedSdo>(tsdo);

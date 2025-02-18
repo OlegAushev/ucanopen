@@ -14,14 +14,14 @@ private:
     struct Message {
         emb::chrono::milliseconds period;
         emb::chrono::milliseconds timepoint;
-        can_payload (*creator)();
+        canpayload_t (*creator)();
     };
     emb::array<Message, 4> tpdo_msgs_;
 public:
     TpdoService(impl::Server& server);
     void register_tpdo(CobTpdo tpdo,
                        emb::chrono::milliseconds period,
-                       can_payload (*creator)());
+                       canpayload_t (*creator)());
     void send();
 };
 

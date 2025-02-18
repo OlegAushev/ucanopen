@@ -15,16 +15,16 @@ private:
         emb::chrono::milliseconds timeout;
         emb::chrono::milliseconds timepoint;
         bool unhandled;
-        can_payload payload;
-        void (*handler)(const can_payload&);
+        canpayload_t payload;
+        void (*handler)(const canpayload_t&);
     };
     emb::array<Message, 4> rpdo_msgs_;
 public:
     RpdoService(impl::Server& server);
     void register_rpdo(CobRpdo rpdo,
                        emb::chrono::milliseconds timeout,
-                       void (*handler)(const can_payload&),
-                       can_id id = 0);
+                       void (*handler)(const canpayload_t&),
+                       canid_t id = 0);
     void recv(uint32_t obj_id);
     void handle();
 

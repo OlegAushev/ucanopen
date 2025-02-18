@@ -15,7 +15,7 @@ TpdoService::TpdoService(impl::Server& server)
 
 void TpdoService::register_tpdo(CobTpdo tpdo,
                                 emb::chrono::milliseconds period,
-                                can_payload (*creator)()) {
+                                canpayload_t (*creator)()) {
     const size_t idx = tpdo.underlying_value();
     tpdo_msgs_[idx].period = period;
     tpdo_msgs_[idx].timepoint = emb::chrono::steady_clock::now();
@@ -34,7 +34,7 @@ void TpdoService::send() {
             continue;
         }
 
-        const can_payload payload = tpdo_msgs_[i].creator();
+        const canpayload_t payload = tpdo_msgs_[i].creator();
         const Cob cob = to_cob(CobTpdo(i));
         server_.can_module_.send(cob.underlying_value(),
                                  payload.data,

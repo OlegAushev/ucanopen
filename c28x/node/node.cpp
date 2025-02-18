@@ -9,10 +9,10 @@ Node::Node(Server& server) : server_(server) {
     server_.add_node(this);
 }
 
-void Node::register_rx_message(can_id id,
+void Node::register_rx_message(canid_t id,
                                uint16_t len,
                                emb::chrono::milliseconds timeout,
-                               void (*handler)(const can_payload&)) {
+                               void (*handler)(const canpayload_t&)) {
     assert(!server_.message_objects_.full());
 
     mcu::c28x::can::MessageObject msg_obj;
@@ -42,10 +42,10 @@ void Node::register_rx_message(can_id id,
     rx_msgs_.push_back(rx_msg);
 }
 
-void Node::register_tx_message(can_id id,
+void Node::register_tx_message(canid_t id,
                                uint16_t len,
                                emb::chrono::milliseconds period,
-                               can_payload (*creator)()) {
+                               canpayload_t (*creator)()) {
     assert(!server_.message_objects_.full());
 
     mcu::c28x::can::MessageObject msg_obj;
@@ -100,7 +100,7 @@ void Node::send() {
             continue;
         }
 
-        const can_payload payload = tx_msgs_[i].creator();
+        const canpayload_t payload = tx_msgs_[i].creator();
         server_.can_module_.send(tx_msgs_[i].obj_id,
                                  payload.data,
                                  tx_msgs_[i].len);

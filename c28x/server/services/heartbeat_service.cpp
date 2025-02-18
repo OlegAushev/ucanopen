@@ -4,7 +4,8 @@
 
 namespace ucanopen {
 
-HeartbeatService::HeartbeatService(impl::Server& server, emb::chrono::milliseconds period)
+HeartbeatService::HeartbeatService(impl::Server& server,
+                                   emb::chrono::milliseconds period)
         : server_(server)
         , period_(period) {
     timepoint_ = emb::chrono::steady_clock::now();
@@ -15,7 +16,7 @@ void HeartbeatService::send() {
 
     emb::chrono::milliseconds now = emb::chrono::steady_clock::now();
     if (now >= timepoint_ + period_) {
-        can_payload payload;
+        canpayload_t payload;
         payload[0] = server_.nmt_state().underlying_value();
         server_.can_module_.send(Cob::heartbeat,
                                  payload.data,

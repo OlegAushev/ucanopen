@@ -19,9 +19,9 @@ private:
         emb::chrono::milliseconds timeout;
         emb::chrono::milliseconds timepoint;
         bool unhandled;
-        can_payload payload;
+        canpayload_t payload;
         uint16_t len;
-        void (*handler)(const can_payload&);
+        void (*handler)(const canpayload_t&);
     };
     emb::static_vector<RxMessage, 4> rx_msgs_;
 
@@ -30,19 +30,19 @@ private:
         emb::chrono::milliseconds period;
         emb::chrono::milliseconds timepoint;
         uint16_t len;
-        can_payload (*creator)();
+        canpayload_t (*creator)();
     };
     emb::static_vector<TxMessage, 4> tx_msgs_;
 public:
     Node(Server& server);
-    void register_rx_message(can_id id,
+    void register_rx_message(canid_t id,
                              uint16_t len,
                              emb::chrono::milliseconds timeout,
-                             void (*handler)(const can_payload&));
-    void register_tx_message(can_id id,
+                             void (*handler)(const canpayload_t&));
+    void register_tx_message(canid_t id,
                              uint16_t len,
                              emb::chrono::milliseconds period,
-                             can_payload (*creator)());
+                             canpayload_t (*creator)());
     void recv(uint32_t obj_id);
     void send();
     void handle();

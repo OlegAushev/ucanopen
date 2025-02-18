@@ -12,8 +12,8 @@ class SdoService {
 private:
     impl::Server& server_;
 
-    emb::queue<can_payload, 16> rsdo_queue_;
-    emb::queue<can_payload, 16> tsdo_queue_;
+    emb::queue<canpayload_t, 16> rsdo_queue_;
+    emb::queue<canpayload_t, 16> tsdo_queue_;
 public:
     SdoService(impl::Server& server);
     void recv(uint32_t obj_id);

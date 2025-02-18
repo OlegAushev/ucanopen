@@ -11,23 +11,23 @@
 namespace ucanopen {
 
 template <typename T>
-inline can_payload to_payload(const T& message) {
+inline canpayload_t to_payload(const T& message) {
     EMB_STATIC_ASSERT(sizeof(T) <= 4);
-    can_payload payload;
+    canpayload_t payload;
     payload.fill(0);
     emb::c28x::to_bytes(payload.data, message);
     return payload;
 }
 
 template <typename T>
-inline void to_payload(can_payload& payload, const T& message) {
+inline void to_payload(canpayload_t& payload, const T& message) {
     EMB_STATIC_ASSERT(sizeof(T) <= 4);
     payload.fill(0);
     emb::c28x::to_bytes(payload.data, message);
 }
 
 template <typename T>
-inline T from_payload(const can_payload& payload) {
+inline T from_payload(const canpayload_t& payload) {
     EMB_STATIC_ASSERT(sizeof(T) <= 4);
     T message;
     emb::c28x::from_bytes(message, payload.data);
