@@ -120,6 +120,9 @@ void Node::handle() {
 bool Node::good() const {
     emb::chrono::milliseconds now = emb::chrono::steady_clock::now();
     for (size_t i = 0; i < rx_msgs_.size(); ++i) {
+        if (rx_msgs_[i].timeout.count() <=0) {
+            continue;
+        }
         if (now > rx_msgs_[i].timepoint + rx_msgs_[i].timeout) {
             return false;
         }
