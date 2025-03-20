@@ -66,17 +66,8 @@ private:
     emb::static_vector<Node*, 8> nodes_;
     emb::array<Node*, 16> node_map_;
 public:
-    void add_node(Node* node) {
-        assert(!nodes_.full());
-        nodes_.push_back(node);
-    }
-
-    void register_node_cob(Node* node, uint32_t obj_id) {
-        if (obj_id >= node_map_.size()) {
-            return;
-        }
-        node_map_[obj_id] = node;
-    }
+    void add_node(Node* node);
+    void register_node_cob(Node* node, uint32_t obj_id);
 };
 
 } // namespace ucanopen

@@ -11,8 +11,9 @@ namespace ucanopen {
 class Server;
 
 class Node {
+    friend class Server;
 private:
-    Server& server_;
+    Server* server_;
 
     struct RxMessage {
         uint32_t obj_id;
@@ -33,8 +34,18 @@ private:
         canpayload_t (*creator)();
     };
     emb::static_vector<TxMessage, 4> tx_msgs_;
+
+    virtual void register_messages() = 0;
 public:
-    Node(Server& server);
+    Node() {}
+    virtual ~Node() {}
+    void recv(uint32_t obj_id);
+    void send();
+    void handle();
+
+    virtual void inspect() {}
+    bool good() const;
+protected:
     void register_rx_message(canid_t id,
                              uint16_t len,
                              emb::chrono::milliseconds timeout,
@@ -43,12 +54,6 @@ public:
                              uint16_t len,
                              emb::chrono::milliseconds period,
                              canpayload_t (*creator)());
-    void recv(uint32_t obj_id);
-    void send();
-    void handle();
-
-    virtual void inspect() {}
-    bool good() const;
 };
 
 } // namespace ucanopen

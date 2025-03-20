@@ -5,18 +5,14 @@
 
 namespace ucanopen {
 
-Node::Node(Server& server) : server_(server) {
-    server_.add_node(this);
-}
-
 void Node::register_rx_message(canid_t id,
                                uint16_t len,
                                emb::chrono::milliseconds timeout,
                                void (*handler)(const canpayload_t&)) {
-    assert(!server_.message_objects_.full());
+    assert(!server_->message_objects_.full());
 
     mcu::c28x::can::MessageObject msg_obj;
-    msg_obj.obj_id = server_.message_objects_.size();
+    msg_obj.obj_id = server_->message_objects_.size();
     msg_obj.frame_id = id;
     if (id <= 0x7FF) {
         msg_obj.frame_type = CAN_MSG_FRAME_STD;
@@ -27,10 +23,10 @@ void Node::register_rx_message(canid_t id,
     msg_obj.frame_idmask = 0;
     msg_obj.flags = CAN_MSG_OBJ_RX_INT_ENABLE;
     msg_obj.data_len = len;
-    server_.message_objects_.push_back(msg_obj);
-    server_.can_module_.setup_message_object(msg_obj);
+    server_->message_objects_.push_back(msg_obj);
+    server_->can_module_.setup_message_object(msg_obj);
 
-    server_.register_node_cob(this, msg_obj.obj_id - cob_count);
+    server_->register_node_cob(this, msg_obj.obj_id - cob_count);
 
     RxMessage rx_msg;
     rx_msg.obj_id = msg_obj.obj_id;
@@ -46,10 +42,10 @@ void Node::register_tx_message(canid_t id,
                                uint16_t len,
                                emb::chrono::milliseconds period,
                                canpayload_t (*creator)()) {
-    assert(!server_.message_objects_.full());
+    assert(!server_->message_objects_.full());
 
     mcu::c28x::can::MessageObject msg_obj;
-    msg_obj.obj_id = server_.message_objects_.size();
+    msg_obj.obj_id = server_->message_objects_.size();
     msg_obj.frame_id = id;
     if (id <= 0x7FF) {
         msg_obj.frame_type = CAN_MSG_FRAME_STD;
@@ -60,8 +56,8 @@ void Node::register_tx_message(canid_t id,
     msg_obj.frame_idmask = 0;
     msg_obj.flags = CAN_MSG_OBJ_NO_FLAGS;
     msg_obj.data_len = len;
-    server_.message_objects_.push_back(msg_obj);
-    server_.can_module_.setup_message_object(msg_obj);
+    server_->message_objects_.push_back(msg_obj);
+    server_->can_module_.setup_message_object(msg_obj);
 
     TxMessage tx_msg;
     tx_msg.obj_id = msg_obj.obj_id;
@@ -80,7 +76,7 @@ void Node::recv(uint32_t obj_id) {
                 return;
             } else {
                 rx_msgs_[i].timepoint = emb::chrono::steady_clock::now();
-                server_.can_module_.recv(obj_id, rx_msgs_[i].payload.data);
+                server_->can_module_.recv(obj_id, rx_msgs_[i].payload.data);
                 rx_msgs_[i].unhandled = true;
                 return;
             }
@@ -101,7 +97,7 @@ void Node::send() {
         }
 
         const canpayload_t payload = tx_msgs_[i].creator();
-        server_.can_module_.send(tx_msgs_[i].obj_id,
+        server_->can_module_.send(tx_msgs_[i].obj_id,
                                  payload.data,
                                  tx_msgs_[i].len);
         tx_msgs_[i].timepoint = now;

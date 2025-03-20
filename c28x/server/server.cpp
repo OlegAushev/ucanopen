@@ -86,6 +86,25 @@ void Server::on_frame_received(mcu::c28x::can::Module* can_module,
     }
 }
 
+void Server::add_node(Node* node) {
+    if (node == NULL) {
+        return;
+    }
+
+    assert(!nodes_.full());
+
+    node->server_ = this;
+    nodes_.push_back(node);
+    node->register_messages();
+}
+
+void Server::register_node_cob(Node* node, uint32_t obj_id) {
+    if (obj_id >= node_map_.size()) {
+        return;
+    }
+    node_map_[obj_id] = node;
+}
+
 } // namespace ucanopen
 
 #endif
