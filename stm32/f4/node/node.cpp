@@ -13,11 +13,11 @@ Node::Node(Server& server) : can_module_(server.can_module_) {
 #if defined(MCUDRV_STM32)
 void Node::register_rx_message(CAN_FilterTypeDef& filter,
                                std::chrono::milliseconds timeout,
-                               void (*handler)(const can_payload&)) {
+                               void (*handler)(const canpayload_t&)) {
 #elif defined(MCUDRV_APM32)
 void Node::register_rx_message(CAN_FilterConfig_T& filter,
                                std::chrono::milliseconds timeout,
-                               void (*handler)(const can_payload&)) {
+                               void (*handler)(const canpayload_t&)) {
 #endif
     auto attr = can_module_.register_rxmessage(filter);
     rx_messages_.push_back({.attr = attr,
@@ -28,10 +28,10 @@ void Node::register_rx_message(CAN_FilterConfig_T& filter,
                             .handler = handler});
 }
 
-void Node::register_tx_message(can_id id,
+void Node::register_tx_message(canid_t id,
                                uint8_t len,
                                std::chrono::milliseconds period,
-                               can_payload (*creator)()) {
+                               canpayload_t (*creator)()) {
     tx_messages_.push_back({.period = period,
                             .timepoint = emb::chrono::steady_clock::now(),
                             .id = id,
@@ -49,7 +49,7 @@ void Node::send() {
             continue;
         }
 
-        can_payload payload = message.creator();
+        canpayload_t payload = message.creator();
         can_module_.put_frame({message.id, message.len, payload});
         message.timepoint = now;
     }

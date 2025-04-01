@@ -30,7 +30,7 @@ public:
     virtual ~AbstractState() {}
 
     virtual void handle(SdoBlockService* _service,
-                        const can_payload& payload) = 0;
+                        const canpayload_t& payload) = 0;
 };
 
 class IdleState final : public AbstractState {
@@ -40,7 +40,7 @@ protected:
 public:
     IdleState() : AbstractState(State::idle) {}
     virtual void handle(SdoBlockService* _service,
-                        const can_payload& payload) override;
+                        const canpayload_t& payload) override;
 };
 
 class DownloadState final : public AbstractState {
@@ -50,7 +50,7 @@ protected:
 public:
     DownloadState() : AbstractState(State::download) {}
     virtual void handle(SdoBlockService* _service,
-                        const can_payload& payload) override;
+                        const canpayload_t& payload) override;
 };
 
 class DownloadEndState final : public AbstractState {
@@ -60,7 +60,7 @@ protected:
 public:
     DownloadEndState() : AbstractState(State::download_end) {}
     virtual void handle(SdoBlockService* _service,
-                        const can_payload& payload) override;
+                        const canpayload_t& payload) override;
 };
 
 } // namespace blk_fsm

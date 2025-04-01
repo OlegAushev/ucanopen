@@ -57,7 +57,7 @@ void SdoService::recv(const ucan::RxMessageAttribute& attr,
 
 void SdoService::handle() {
     while (!rsdo_queue_.empty()) {
-        can_payload rsdo_payload = rsdo_queue_.front();
+        canpayload_t rsdo_payload = rsdo_queue_.front();
         ExpeditedSdo rsdo = from_payload<ExpeditedSdo>(rsdo_payload);
         rsdo_queue_.pop();
 
@@ -81,7 +81,7 @@ void SdoService::handle() {
             abort_code = SdoAbortCode::invalid_cs;
         }
 
-        can_payload tsdo_payload;
+        canpayload_t tsdo_payload;
         switch (abort_code) {
         case SdoAbortCode::no_error:
             tsdo_payload = to_payload<ExpeditedSdo>(tsdo);
@@ -205,7 +205,7 @@ SdoAbortCode SdoService::restore_default_parameter(ODObjectKey key) {
 
 void SdoService::send() {
     while (!tsdo_queue_.empty()) {
-        can_payload payload = tsdo_queue_.front();
+        canpayload_t payload = tsdo_queue_.front();
         server_.can_module_.put_frame({tsdo_id_, tsdo_len_, payload});
         tsdo_queue_.pop();
     }

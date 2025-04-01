@@ -12,7 +12,7 @@ namespace ucanopen {
 class HeartbeatService {
 private:
     impl::Server& server_;
-    can_id id_;
+    canid_t id_;
     static constexpr uint8_t len_ =
             cob_sizes[std::to_underlying(Cob::heartbeat)];
     std::chrono::milliseconds period_;

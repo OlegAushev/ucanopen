@@ -17,7 +17,7 @@ TpdoService::TpdoService(impl::Server& server) : server_(server) {
 
 void TpdoService::register_tpdo(CobTpdo tpdo,
                                 std::chrono::milliseconds period,
-                                can_payload (*creator)()) {
+                                canpayload_t (*creator)()) {
     messages_[std::to_underlying(tpdo)].period = period;
     messages_[std::to_underlying(tpdo)].timepoint =
             emb::chrono::steady_clock::now();
@@ -34,7 +34,7 @@ void TpdoService::send() {
             continue;
         }
 
-        can_payload payload = msg.creator();
+        canpayload_t payload = msg.creator();
         server_.can_module_.put_frame({msg.id, msg.len, payload});
         msg.timepoint = now;
     }

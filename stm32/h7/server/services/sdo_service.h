@@ -1,17 +1,13 @@
 #pragma once
 
-
 #ifdef MCUDRV_STM32
 #ifdef STM32H7xx
 
-
 #include "../impl/impl_server.h"
-#include <mcudrv/stm32/h7/chrono/chrono.h>
 #include <emblib/algorithm.hpp>
-
+#include <mcudrv/stm32/h7/chrono/chrono.h>
 
 namespace ucanopen {
-
 
 class SdoService : public impl::FrameReceiver {
 private:
@@ -26,25 +22,28 @@ private:
     struct TxMessage {
         FDCAN_TxHeaderTypeDef header;
         bool not_sent;
-        can_payload payload;
+        canpayload_t payload;
     } _tsdo;
 public:
     SdoService(impl::Server& server);
     virtual std::vector<ucan::RxMessageAttribute> get_rx_attr() const override;
-    virtual FrameRecvStatus recv_frame(const ucan::RxMessageAttribute& attr, const can_frame& frame) override;
+    virtual FrameRecvStatus recv_frame(const ucan::RxMessageAttribute& attr,
+                                       const can_frame& frame) override;
     virtual void handle_recv_frames() override;
     void send();
 private:
-    SdoAbortCode _read_expedited(const ODEntry* od_entry, ExpeditedSdo& tsdo, const ExpeditedSdo& rsdo);
-    SdoAbortCode _write_expedited(const ODEntry* od_entry, ExpeditedSdo& tsdo, const ExpeditedSdo& rsdo);
+    SdoAbortCode _read_expedited(const ODEntry* od_entry,
+                                 ExpeditedSdo& tsdo,
+                                 const ExpeditedSdo& rsdo);
+    SdoAbortCode _write_expedited(const ODEntry* od_entry,
+                                  ExpeditedSdo& tsdo,
+                                  const ExpeditedSdo& rsdo);
     SdoAbortCode _restore_default_parameter(ODObjectKey key);
 
     static const ODObjectKey restore_default_parameter_key;
 };
 
-
 } // namespace ucanopen
-
 
 #endif
 #endif

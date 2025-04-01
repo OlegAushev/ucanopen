@@ -22,16 +22,16 @@ private:
         std::chrono::milliseconds timepoint;
         bool unhandled;
         can_frame frame;
-        void (*handler)(const can_payload&);
+        void (*handler)(const canpayload_t&);
     };
     std::vector<RxMessage> rx_messages_;
 
     struct TxMessage {
         std::chrono::milliseconds period;
         std::chrono::milliseconds timepoint;
-        can_id id;
+        canid_t id;
         uint8_t len;
-        can_payload (*creator)();
+        canpayload_t (*creator)();
     };
     std::vector<TxMessage> tx_messages_;
 public:
@@ -39,16 +39,16 @@ public:
 #if defined(MCUDRV_STM32)
     void register_rx_message(CAN_FilterTypeDef& filter,
                              std::chrono::milliseconds timeout,
-                             void (*handler)(const can_payload&));
+                             void (*handler)(const canpayload_t&));
 #elif defined(MCUDRV_APM32)
     void register_rx_message(CAN_FilterConfig_T& filter,
                              std::chrono::milliseconds timeout,
-                             void (*handler)(const can_payload&));
+                             void (*handler)(const canpayload_t&));
 #endif
-    void register_tx_message(can_id id,
+    void register_tx_message(canid_t id,
                              uint8_t len,
                              std::chrono::milliseconds period,
-                             can_payload (*creator)());
+                             canpayload_t (*creator)());
 
     virtual std::vector<ucan::RxMessageAttribute> get_rx_attr() const override;
     virtual void recv(const ucan::RxMessageAttribute& attr,

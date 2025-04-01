@@ -14,15 +14,15 @@
 namespace ucanopen {
 
 template<typename T>
-inline can_payload to_payload(const T& message) {
+inline canpayload_t to_payload(const T& message) {
     static_assert(sizeof(T) <= 8);
-    can_payload payload{};
+    canpayload_t payload{};
     memcpy(payload.data(), &message, sizeof(T));
     return payload;
 }
 
 template<typename T>
-inline T from_payload(const can_payload& payload) {
+inline T from_payload(const canpayload_t& payload) {
     static_assert(sizeof(T) <= 8);
     T message{};
     memcpy(&message, payload.data(), sizeof(T));
@@ -65,7 +65,7 @@ enum class Cob : unsigned int {
 
 constexpr size_t cob_count = 15;
 
-constexpr std::array<can_id, cob_count> cob_function_codes = {
+constexpr std::array<canid_t, cob_count> cob_function_codes = {
     0x000, // NMT
     0x080, // SYNC
     0x080, // EMCY
@@ -83,7 +83,7 @@ constexpr std::array<can_id, cob_count> cob_function_codes = {
     0x700  // HEARTBEAT
 };
 
-inline can_id calculate_cob_id(Cob cob, NodeId node_id) {
+inline canid_t calculate_cob_id(Cob cob, NodeId node_id) {
     if ((cob == Cob::nmt) || (cob == Cob::sync) || (cob == Cob::time)) {
         return cob_function_codes[std::to_underlying(cob)];
     }

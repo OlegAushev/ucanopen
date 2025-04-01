@@ -22,14 +22,14 @@ void AbstractState::destroy(State state, AbstractState* stateobj) {
     delete stateobj;
 }
 
-void IdleState::handle(SdoBlockService* _service,
-                               const can_payload& payload) {}
+void IdleState::handle(SdoBlockService* _service, const canpayload_t& payload) {
+}
 
 void DownloadState::handle(SdoBlockService* _service,
-                                   const can_payload& payload) {}
+                           const canpayload_t& payload) {}
 
 void DownloadEndState::handle(SdoBlockService* _service,
-                                      const can_payload& payload) {}
+                              const canpayload_t& payload) {}
 
 } // namespace blk_fsm
 } // namespace ucanopen

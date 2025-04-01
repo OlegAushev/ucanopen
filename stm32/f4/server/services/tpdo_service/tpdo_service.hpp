@@ -14,18 +14,18 @@ private:
     impl::Server& server_;
 
     struct Message {
-        can_id id;
+        canid_t id;
         static constexpr uint8_t len = 8;
         std::chrono::milliseconds period;
         std::chrono::milliseconds timepoint;
-        can_payload (*creator)();
+        canpayload_t (*creator)();
     };
     std::array<Message, 4> messages_;
 public:
     TpdoService(impl::Server& server);
     void register_tpdo(CobTpdo tpdo,
                        std::chrono::milliseconds period,
-                       can_payload (*creator)());
+                       canpayload_t (*creator)());
     void send();
 };
 

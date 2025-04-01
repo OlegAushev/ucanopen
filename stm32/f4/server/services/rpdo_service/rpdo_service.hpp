@@ -19,7 +19,7 @@ private:
         std::chrono::milliseconds timepoint;
         bool unhandled;
         can_frame frame;
-        void (*handler)(const can_payload&);
+        void (*handler)(const canpayload_t&);
     };
     std::array<Message, 4> messages_;
 public:
@@ -27,8 +27,8 @@ public:
 
     void register_rpdo(CobRpdo rpdo,
                        std::chrono::milliseconds timeout,
-                       void (*handler)(const can_payload&),
-                       can_id id = 0);
+                       void (*handler)(const canpayload_t&),
+                       canid_t id = 0);
 
     virtual std::vector<ucan::RxMessageAttribute> get_rx_attr() const override;
     virtual void recv(const ucan::RxMessageAttribute& attr,

@@ -12,7 +12,7 @@ namespace ucanopen {
 class SyncService {
 private:
     impl::Server& server_;
-    can_id id_;
+    canid_t id_;
     static constexpr uint8_t len_ = cob_sizes[std::to_underlying(Cob::sync)];
     std::chrono::milliseconds period_;
     std::chrono::milliseconds timepoint_;

@@ -12,7 +12,7 @@
 
 namespace ucanopen {
 
-using PayloadBlock = emb::static_vector<can_payload, 127>;
+using PayloadBlock = emb::static_vector<canpayload_t, 127>;
 
 class SdoBlockConsumer {
 public:
@@ -29,7 +29,7 @@ private:
     std::unique_ptr<PayloadBlock> block_;
 public:
     SdoBlockService(impl::Server& server);
-    void handle(const can_payload& payload) {
+    void handle(const canpayload_t& payload) {
         current_state_->handle(this, payload);
     }
 };

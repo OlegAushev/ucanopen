@@ -15,12 +15,12 @@ private:
     impl::Server& server_;
 
     ucan::RxMessageAttribute rsdo_rxattr_;
-    emb::queue<can_payload, 16> rsdo_queue_;
+    emb::queue<canpayload_t, 16> rsdo_queue_;
 
-    can_id tsdo_id_;
+    canid_t tsdo_id_;
     static constexpr uint8_t tsdo_len_ =
             cob_sizes[std::to_underlying(Cob::tsdo)];
-    emb::queue<can_payload, 16> tsdo_queue_;
+    emb::queue<canpayload_t, 16> tsdo_queue_;
 public:
     SdoService(impl::Server& server);
     virtual std::vector<ucan::RxMessageAttribute> get_rx_attr() const override;

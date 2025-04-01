@@ -18,7 +18,7 @@ void SyncService::send() {
 
     auto now = emb::chrono::steady_clock::now();
     if (now >= timepoint_ + period_) {
-        can_payload payload = {};
+        canpayload_t payload = {};
         server_.can_module_.put_frame({id_, len_, payload});
         timepoint_ = now;
     }

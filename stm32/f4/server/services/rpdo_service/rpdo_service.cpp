@@ -16,8 +16,8 @@ RpdoService::RpdoService(impl::Server& server) : server_(server) {
 
 void RpdoService::register_rpdo(CobRpdo rpdo,
                                 std::chrono::milliseconds timeout,
-                                void (*handler)(const can_payload&),
-                                can_id id) {
+                                void (*handler)(const canpayload_t&),
+                                canid_t id) {
     if (id == 0) {
         id = calculate_cob_id(to_cob(rpdo), server_.node_id());
     }
