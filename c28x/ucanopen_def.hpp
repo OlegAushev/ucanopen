@@ -2,7 +2,7 @@
 
 #ifdef MCUDRV_C28X
 
-#include <mcudrv/generic/can.hpp>
+#include <emblib/can.hpp>
 #include <emblib/core.hpp>
 #include <emblib/optional.hpp>
 #include <cstring>
